@@ -237,6 +237,7 @@ def test_video_accuracy_is_a_new_file() -> None:
     text = written.read_text(encoding="utf-8")
     assert "MODEL ACCURACY" in text
     assert "VIDEO ACCURACY" in text
+    assert "GROUND TRUTH ACCURACY" in text
     assert first.read_text(encoding="utf-8") == "keep\n"
 
 
@@ -335,3 +336,40 @@ def test_standing_instructor_is_not_marked() -> None:
     front = _person(400, 520, 90)
     kept2, _, _ = _drop_instructors(students + [front], 1080, None, 0)
     assert len(kept2) == 9
+
+
+def test_nested_boxes_count_as_one_student() -> None:
+    from attention_pipeline.stages.detect_track import _suppress_duplicate_boxes
+
+    outer = np.array([100.0, 80.0, 280.0, 320.0], np.float32)
+    inner = np.array([140.0, 100.0, 220.0, 220.0], np.float32)
+    k_outer = np.zeros((17, 3), np.float32)
+    k_outer[0] = [190, 120, 0.9]
+    k_outer[1] = [175, 115, 0.8]
+    k_outer[2] = [205, 115, 0.8]
+    k_inner = np.zeros((17, 3), np.float32)
+    people = [(outer, 0.7, k_outer), (inner, 0.4, k_inner)]
+    kept = _suppress_duplicate_boxes(people, frame_w=1920)
+    assert len(kept) == 1
+
+
+def test_keep_real_students_drops_faceless_and_caps_count() -> None:
+    from attention_pipeline.stages.detect_track import DetectorTracker
+
+    det = DetectorTracker(require_face=True, min_det_conf=0.25, max_people=2)
+    face = np.zeros((17, 3), np.float32)
+    face[0] = [10, 10, 0.9]
+    face[1] = [8, 9, 0.8]
+    face[2] = [12, 9, 0.8]
+    blank = np.zeros((17, 3), np.float32)
+    people = [
+        (np.array([0, 0, 40, 60], np.float32), 0.9, face),
+        (np.array([50, 0, 90, 60], np.float32), 0.8, face.copy()),
+        (np.array([100, 0, 140, 60], np.float32), 0.7, face.copy()),
+        (np.array([150, 0, 190, 60], np.float32), 0.95, blank),
+        (np.array([200, 0, 240, 60], np.float32), 0.1, face.copy()),
+    ]
+    kept = det._keep_real_students(people)
+    assert len(kept) == 2
+    assert all(_c >= 0.25 for _b, _c, _k in kept)
+

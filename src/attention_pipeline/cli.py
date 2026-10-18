@@ -151,7 +151,9 @@ def infer_main() -> None:
     cap.release()
     writer.release()
     report_path = json_path.with_name(json_path.stem + "_report.txt")
-    _write_txt_report(report_path, video, written_path, json_path, pipe.dataset_status)
+    _write_txt_report(
+        report_path, video, written_path, json_path, pipe.dataset_status, pipe.cfg
+    )
     from attention_pipeline.video_accuracy import write_video_accuracy
 
     accuracy_path = write_video_accuracy(video, written_path, json_path)
@@ -167,6 +169,7 @@ def _write_txt_report(
     overlay: Path,
     jsonl: Path,
     status: dict | None,
+    cfg: dict | None = None,
 ) -> None:
     from collections import Counter
 
@@ -197,8 +200,12 @@ def _write_txt_report(
         f"Student labels: {sum(bands.values())}",
         "",
         "Weights",
-        f"  L2CS gaze : {'on' if (status or {}).get('l2cs_gaze') else 'off'}",
-        f"  SCB       : {'on' if (status or {}).get('scb_behavior') else 'off'}",
+        f"  L2CS gaze : {(cfg or {}).get('models', {}).get('gaze_weights', '')}  "
+        f"({'on' if (status or {}).get('l2cs_gaze') else 'off'})",
+        f"  SCB       : {(cfg or {}).get('models', {}).get('scb_weights', '')}  "
+        f"({'on' if (status or {}).get('scb_behavior') else 'off'})",
+        f"  Fusion    : {(cfg or {}).get('models', {}).get('fusion_weights', '')}  "
+        f"({'on' if (status or {}).get('fusion') else 'off'})",
         "",
         "Attention bands",
     ]
@@ -214,7 +221,12 @@ def _write_txt_report(
     for name, n in behaviors.most_common(8):
         lines.append(f"  {n:6d}  {name or '(none)'}")
 
-    from attention_pipeline.video_accuracy import load_model_metrics, measure_rows, model_lines
+    from attention_pipeline.video_accuracy import (
+        ground_truth_lines,
+        load_model_metrics,
+        measure_rows,
+        model_lines,
+    )
 
     metrics = measure_rows(
         [json.loads(line) for line in jsonl.read_text(encoding="utf-8").splitlines() if line.strip()]
@@ -222,7 +234,10 @@ def _write_txt_report(
         else []
     )
     macro = metrics["macro"]
-    lines.extend(["", *model_lines(load_model_metrics()), ""])
+    model = load_model_metrics()
+    overall_model = ((model or {}).get("overall") or {}).get("accuracy")
+    lines.extend(["", *model_lines(model), ""])
+    lines.extend([*ground_truth_lines(None), ""])
     lines.extend(
         [
             "=" * 72,
@@ -250,6 +265,9 @@ def _write_txt_report(
             "",
             f"VIDEO ACCURACY: {metrics['accuracy']*100:.2f}%",
             f"Students compared: {metrics['support']}",
+            "",
+            f"MODEL ACCURACY: {overall_model*100:.2f}%" if overall_model is not None else "MODEL ACCURACY: n/a",
+            "GROUND TRUTH ACCURACY: n/a  (run: python scripts/run_gt_video.py)",
             "=" * 72,
         ]
     )

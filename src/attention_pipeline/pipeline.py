@@ -58,6 +58,9 @@ class AttentionPipeline:
             n_init=track_cfg.get("n_init", 1),
             imgsz=int(detect_cfg.get("imgsz", 960)),
             tiles=bool(detect_cfg.get("tiles", True)),
+            min_det_conf=float(detect_cfg.get("min_det_conf", 0.25)),
+            require_face=bool(detect_cfg.get("require_face", True)),
+            max_people=detect_cfg.get("max_people"),
         )
         face_cfg = cfg.get("face", {})
         self.faces = FaceModalityExtractor(
@@ -188,6 +191,9 @@ class AttentionPipeline:
                     "emotion": obs.emotion_probs.tolist(),
                     "posture": obs.posture_probs.tolist(),
                     "behavior": POSTURE_LABELS[int(np.argmax(obs.posture_probs))],
+                    "eye_aspect": float(obs.eye_aspect),
+                    "mouth_aspect": float(obs.mouth_aspect),
+                    "motion": float(obs.motion),
                 }
             )
         return {

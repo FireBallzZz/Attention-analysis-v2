@@ -338,6 +338,9 @@ def main() -> None:
             minutes,
         )
         _set_weight("scb_weights", "checkpoints/scb_yolo11n.pt")
+        from attention_pipeline.trained_store import add_scb_images
+
+        print(f"Trained store SCB +{add_scb_images(images, source='train_all')}")
 
     if args.prepare_only and args.skip_l2cs and args.skip_daisee:
         return
@@ -357,6 +360,9 @@ def main() -> None:
                 minutes,
             )
             _set_weight("gaze_weights", "checkpoints/l2cs_finetuned.pt")
+            from attention_pipeline.trained_store import add_l2cs_npz
+
+            print(f"Trained store L2CS +{add_l2cs_npz(GAZE_NPZ, source='train_all')}")
 
     if not args.skip_daisee:
         build_fusion_npz(clips, FUSION_NPZ)
@@ -373,6 +379,12 @@ def main() -> None:
                 minutes,
             )
             _set_weight("fusion_weights", "checkpoints/fusion_daisee.pt")
+            from attention_pipeline.trained_store import add_daisee_clips
+
+            print(
+                "Trained store DAiSEE +"
+                f"{add_daisee_clips([path for path, _lab in clips], source='train_all')}"
+            )
 
     print("\nTraining covers SCB, L2CS-Net, and DAiSEE.")
     print("Re-run this command to resume after a power cut.")

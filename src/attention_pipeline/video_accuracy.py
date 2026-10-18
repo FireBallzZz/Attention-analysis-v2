@@ -170,6 +170,7 @@ def model_lines(data: dict | None) -> list[str]:
         ("SCB official YOLO", "scb_official_yolo"),
         ("DAiSEE fusion", "daisee_fusion"),
         ("L2CS gaze", "l2cs_gaze"),
+        ("Anno GT attention", "anno_gt_attention"),
     )
     lines.append(f"{'Component':<28} {'Prec':>8} {'Rec':>8} {'F1':>8} {'Acc':>8}")
     lines.append("-" * 72)
@@ -194,20 +195,69 @@ def model_lines(data: dict | None) -> list[str]:
     return lines
 
 
+def ground_truth_lines(gt_metrics: dict | None) -> list[str]:
+    lines = [
+        "=" * 72,
+        "GROUND TRUTH ACCURACY",
+        "=" * 72,
+        "",
+    ]
+    if not gt_metrics or "accuracy" not in gt_metrics:
+        lines.extend(
+            [
+                "No Anno ground-truth CSV/XML was found for this video.",
+                "Put ground_truth.csv and annotations.xml next to the video,",
+                "or run: python scripts/run_gt_video.py",
+                "",
+                "GROUND TRUTH ACCURACY: n/a",
+            ]
+        )
+        return lines
+    macro = gt_metrics["macro"]
+    lines.extend(
+        [
+            "Compared to the manual Anno labels for this video.",
+            "",
+            f"{'Band':<12} {'Prec':>8} {'Rec':>8} {'F1':>8} {'Support':>8}",
+            "-" * 72,
+        ]
+    )
+    for band in BANDS:
+        item = gt_metrics["per_band"][band]
+        lines.append(
+            f"{band:<12} {item['precision']*100:7.2f}% {item['recall']*100:7.2f}% "
+            f"{item['f1']*100:7.2f}% {item['support']:8d}"
+        )
+    lines.extend(
+        [
+            "-" * 72,
+            f"{'MACRO':<12} {macro['precision']*100:7.2f}% {macro['recall']*100:7.2f}% "
+            f"{macro['f1']*100:7.2f}%",
+            "",
+            f"GROUND TRUTH ACCURACY: {gt_metrics['accuracy']*100:.2f}%",
+            f"Students compared: {gt_metrics['support']}",
+        ]
+    )
+    return lines
+
+
 def render_report(
     video: Path,
     overlay: Path,
     scores: Path,
     metrics: dict,
+    gt_metrics: dict | None = None,
 ) -> str:
     macro = metrics["macro"]
+    model = load_model_metrics()
+    overall_model = ((model or {}).get("overall") or {}).get("accuracy")
     lines = [
         "=" * 72,
         "VIDEO ACCURACY REPORT",
         "=" * 72,
         "",
         "Model accuracy is the saved validation score.",
-        "Video accuracy is counted from the marked students in this input video.",
+        "Ground-truth accuracy uses Anno labels when available for this video.",
         "",
         f"Input video : {video.resolve()}",
         f"Overlay     : {overlay.resolve()}",
@@ -216,10 +266,10 @@ def render_report(
         f"Students compared : {metrics['support']}",
         "",
     ]
-    lines.extend(model_lines(load_model_metrics()))
+    lines.extend(model_lines(model))
+    lines.extend(["", *ground_truth_lines(gt_metrics), ""])
     lines.extend(
         [
-            "",
             "=" * 72,
             "VIDEO ACCURACY",
             "=" * 72,
@@ -245,8 +295,12 @@ def render_report(
             "",
             f"VIDEO ACCURACY: {metrics['accuracy']*100:.2f}%",
             "",
-            "Accuracy is the share of marked students whose overlay band matches",
-            "the check. Precision, recall, and F1 are per band, then averaged.",
+            f"MODEL ACCURACY: {overall_model*100:.2f}%" if overall_model is not None else "MODEL ACCURACY: n/a",
+            (
+                f"GROUND TRUTH ACCURACY: {gt_metrics['accuracy']*100:.2f}%"
+                if gt_metrics and "accuracy" in gt_metrics
+                else "GROUND TRUTH ACCURACY: n/a"
+            ),
             "=" * 72,
         ]
     )
@@ -258,8 +312,9 @@ def write_video_accuracy(
     overlay: Path,
     scores: Path,
     folder: Path | None = None,
+    gt_metrics: dict | None = None,
 ) -> Path:
     metrics = measure_rows(load_jsonl(scores))
     path = unique_report_path(video, folder)
-    path.write_text(render_report(video, overlay, scores, metrics), encoding="utf-8")
+    path.write_text(render_report(video, overlay, scores, metrics, gt_metrics), encoding="utf-8")
     return path

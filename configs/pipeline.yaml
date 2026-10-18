@@ -9,6 +9,8 @@ detect:
   iou: 0.45
   imgsz: 960
   tiles: true
+  min_det_conf: 0.12
+  require_face: true
 
 track:
   max_age: 45
