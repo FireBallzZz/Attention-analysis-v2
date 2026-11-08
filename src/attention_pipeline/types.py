@@ -48,6 +48,7 @@ class StudentFrame:
     eye_aspect: float
     mouth_aspect: float
     features: np.ndarray  # (FEAT_DIM,)
+    has_phone_obj: bool = False
 
 
 @dataclass
@@ -55,6 +56,7 @@ class TrackState:
     student_id: int
     feature_window: list[np.ndarray] = field(default_factory=list)
     scores: list[float] = field(default_factory=list)
+    fusion_scores: list[Optional[float]] = field(default_factory=list)
     timestamps: list[float] = field(default_factory=list)
     last_bbox: Optional[np.ndarray] = None
     last_event_ts: float = -1e9

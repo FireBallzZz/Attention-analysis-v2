@@ -1,0 +1,50 @@
+{
+  "investigation": "Phase 8 Candidate Zero-Recall & Bootstrap CI Forensic Audit",
+  "timestamp": "2026-10-23T15:53:00Z",
+  "status": "COMPLETED",
+  "historical_test_metrics_preserved": {
+    "majority_baseline": { "macro_f1": 0.4950, "bal_acc": 0.5000, "class_0_recall": 0.0000 },
+    "logistic_regression": { "macro_f1": 0.3839, "bal_acc": 0.3178, "class_0_recall": 0.0000 },
+    "active_production_v2_clean_default_0_50": { "macro_f1": 0.3411, "bal_acc": 0.4908, "class_0_recall": 0.5000 },
+    "active_production_v2_clean_calibrated_0_10": { "macro_f1": 0.4474, "bal_acc": 0.5967, "class_0_recall": 0.4714 },
+    "phase8_unweighted_candidate_default_0_50": { "macro_f1": 0.4770, "bal_acc": 0.4652, "class_0_recall": 0.0000 },
+    "phase8_class_weighted_candidate_default_0_50": { "macro_f1": 0.4113, "bal_acc": 0.3563, "class_0_recall": 0.0000 }
+  },
+  "root_cause_findings": {
+    "test_minority_sample_size": {
+      "total_test_sequences": 3563,
+      "class_0_test_sequences": 70,
+      "class_0_test_clips": 2,
+      "class_0_test_subjects": 1,
+      "subject_id": "110004",
+      "clips": ["1100042023", "1100042026"],
+      "finding": "The entire held-out test evaluation of Class 0 rests on exactly 2 physical video clips from a single student."
+    },
+    "behavioral_and_feature_profile": {
+      "head_pose_yaw": 0.13,
+      "head_pose_pitch": 0.19,
+      "gaze_direction": "Directly facing webcam/screen (pitch ~0.2, yaw ~0.0)",
+      "motion": "Stationary seated (0.002 - 0.005)",
+      "ear_eye_closure": 0.30,
+      "finding": "In both Class 0 test clips, the student is staring directly at the webcam with eyes open. Because public webcam models rely on gaze and head pose, a frontal upright pose is indistinguishable from attentive engagement without active FER emotion weights."
+    },
+    "cross_subject_feature_inversion": {
+      "head_roll_cohen_d_train": -1.1818,
+      "head_roll_cohen_d_val": 0.5466,
+      "finding": "Head pose direction correlates inconsistently across subjects. Head tilt indicates Non-Attentive in some subjects but Attentive in others."
+    },
+    "production_model_mechanism": {
+      "clip_1100042023_predicted_class": 1,
+      "clip_1100042023_prob_high": 0.9996,
+      "clip_1100042026_predicted_class": 0,
+      "clip_1100042026_prob_high": 0.0296,
+      "finding": "The production model's 50% recall is exactly 1 out of 2 clips. Clip 1100042026 had low keypoint confidence, triggering a conservative head penalty, whereas Clip 1100042023 was predicted Attentive with 99.96% probability."
+    },
+    "bootstrap_ci_statistical_audit": {
+      "resampling_unit": "Physical video clip (N=148)",
+      "minority_cluster_count": 2,
+      "subject_cluster_count": 1,
+      "finding": "Cluster bootstrap across clips fails to represent population variance when the minority class has K=2 clips from a single student. The wide CI [21.3%, 77.0%] is a two-sample Poisson ratio artifact."
+    }
+  }
+}

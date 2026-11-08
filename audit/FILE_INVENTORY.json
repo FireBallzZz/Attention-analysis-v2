@@ -1,0 +1,274 @@
+[
+  {
+    "path": "checkpoints/classroom_manual_binary_unquarantined.pt",
+    "purpose": "Champion production checkpoint (BiGRU + MultiPool)",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 468218,
+    "sha256": "46451d72a16ce1e26f3d06ce90f3adc484a1370c8fba1058b8260a8c973a8799"
+  },
+  {
+    "path": "checkpoints/scb_yolo.pt",
+    "purpose": "SCB-6 classroom behavior detection weights",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 74825045,
+    "sha256": "1f93f151286b21c89338fb8e229b218c5b1d061cc7361c042aca6d416a415857"
+  },
+  {
+    "path": "checkpoints/l2cs_finetuned.pt",
+    "purpose": "L2CS gaze estimation weights",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 95853565,
+    "sha256": "6524d7d53e26688cf4d7dca310c65e0fb8847bab60a6fc8614e9b643aef55528"
+  },
+  {
+    "path": "checkpoints/baseline/fusion_daisee.pt",
+    "purpose": "DAiSEE pre-trained temporal GRU backbone",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 266734,
+    "sha256": "b1d978ef12beda220b53c1ce14c1054ee50e9be636d5f336c7caaaa70b0116e7"
+  },
+  {
+    "path": "yolo11n-pose.pt",
+    "purpose": "YOLO11-Pose detector (input: 1920px)",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 6255593,
+    "sha256": "869e83fcdffdc7371fa4e34cd8e51c838cc729571d1635e5141e3075e9319dc0"
+  },
+  {
+    "path": "run_production_pipeline.py",
+    "purpose": "Production video inference entrypoint",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 10596,
+    "sha256": "73d8fcbc09d3846abd3a62f6a6a18f564229a8b925f7014d56c5d6d9608e442c"
+  },
+  {
+    "path": "src/attention_pipeline/pipeline.py",
+    "purpose": "Core multi-stage attention pipeline",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 13535,
+    "sha256": "a4faf3176cca12931e8484e6519c3e1ff70ffc1a60b961a06e6d8710e20053d3"
+  },
+  {
+    "path": "src/attention_pipeline/stages/detect_track.py",
+    "purpose": "YOLO11 pose & ByteTrack multi-object tracking",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 41376,
+    "sha256": "8e32451573e294d6e9c4ce4f3ed1525b0c91db5137dfa4e83c827c4f249562bb"
+  },
+  {
+    "path": "src/attention_pipeline/features.py",
+    "purpose": "32-D multimodal feature packer and geometry extractors",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 8925,
+    "sha256": "dccca727fc6465aa645c2ab451221df46de854388cd72147018fbe1084af5f2c"
+  },
+  {
+    "path": "src/attention_pipeline/rubric.py",
+    "purpose": "Classroom behavioral heuristic rubric & action priors",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 14946,
+    "sha256": "99472cd75e91f4093c2721448a15945ec79eb03f5ae06d907e6dab5d3820dcd7"
+  },
+  {
+    "path": "src/attention_pipeline/models/attention_fusion.py",
+    "purpose": "Base AttentionFusionNet (frame encoder + BiGRU)",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 2388,
+    "sha256": "8b470f0fd71dfa0f6a23b3bb8f06678f760af5659b04f178dc565391c9e69dda"
+  },
+  {
+    "path": "src/attention_pipeline/models/manual_binary.py",
+    "purpose": "ManualBinaryAttentionClassifier (Multi-Pool 384-D)",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 3269,
+    "sha256": "a5033b9c13ac6587aa199b8ee9eba5ff6968e4e3d06e56baffd5616ebc174674"
+  },
+  {
+    "path": "src/attention_pipeline/video_accuracy.py",
+    "purpose": "Video accuracy reporting & heuristic verification",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 13389,
+    "sha256": "9514cdc28632ee01460e90da1f06f40043c10e948420c7aa34d1b21bd0119595"
+  },
+  {
+    "path": "configs/pipeline.yaml",
+    "purpose": "Primary pipeline hyperparameter configuration",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 2426,
+    "sha256": "02e47b7b2a2a5a19ae2be1226aae20d8e7439148d5699e0337c28bb5bfbe5f6f"
+  },
+  {
+    "path": "scripts/tune_classroom_model_scientific.py",
+    "purpose": "Grid search and model tuning script",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 18214,
+    "sha256": "ef6967d35ae85ff5e7ce41df97eb928f1c2b5f4560697a69bf5bb07a7fede799"
+  },
+  {
+    "path": "scripts/train_classroom_binary_unquarantined.py",
+    "purpose": "Training script for unquarantined binary classifier",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 16780,
+    "sha256": "6db77fabdd4c3b0b6bc347d1b007d160e6d705bfae267175bbfaeb5c11a95e72"
+  },
+  {
+    "path": "scripts/extract_classroom_sequences.py",
+    "purpose": "Feature sequence extractor from classroom clips",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 11226,
+    "sha256": "56b08ff91d74eb684270339df4186a82d1a2c427e1c41ae7bc1f1265640c0dd0"
+  },
+  {
+    "path": "runs/Annoted file for clip 1/annotations.xml",
+    "purpose": "User CVAT human annotation for Clip 001",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 1112795,
+    "sha256": "394e1f28dee848f1e17a82665f59ae4bc5366d54956d1d0e6de10722a9c601a7"
+  },
+  {
+    "path": "Anno/annotations.xml",
+    "purpose": "CVAT ground truth bounding boxes for Clip 004/007/008",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 1193099,
+    "sha256": "87a5b9a17a69929f63ce54a1e62a343b4eba5408dac64d3874541a21ad6e3410"
+  },
+  {
+    "path": "Anno/ground_truth.csv",
+    "purpose": "CVAT manual attention ground-truth labels",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 111508,
+    "sha256": "6a5f6643a1402ba22862748c245db32991db32b8d85d0faf9d7748911aa752d1"
+  },
+  {
+    "path": "data/processed/classroom_clip_001_v3_hardened.npz",
+    "purpose": "Clip 001 extracted feature sequences",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 2605605,
+    "sha256": "4497ece17e1bc96d82425776e20620c8918c55a1ef3a71f633def96ff90fc140"
+  },
+  {
+    "path": "data/processed/classroom_clip_004_v3_hardened.npz",
+    "purpose": "Clip 004 extracted feature sequences",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 2764338,
+    "sha256": "187cf9ee96586f88c69f0e99822eafcad2dfb3b2df1626080e9a5fc291cb82c0"
+  },
+  {
+    "path": "data/processed/classroom_clip_008_v3_hardened.npz",
+    "purpose": "Clip 008 extracted feature sequences",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 2515441,
+    "sha256": "28a5d7575668a433d9ad0a1551e693a80004fcecda3ce61c19b2ac94237a609e"
+  },
+  {
+    "path": "runs/reports/Student_Attention_Model_Supervisor_Report.pdf",
+    "purpose": "Prior supervisor report (audited artifact)",
+    "exists": true,
+    "required_for_reproduction": false,
+    "size_bytes": 424516,
+    "sha256": "2e13493a62bd0818c2b5f73324e02242cf179177ba1f274adc3b2b183d329b5c"
+  },
+  {
+    "path": "runs/reports/classroom_unquarantined_binary_metrics.json",
+    "purpose": "Evaluation log for unquarantined training run",
+    "exists": true,
+    "required_for_reproduction": false,
+    "size_bytes": 20027,
+    "sha256": "ed9f391793a339bfb72b89dcbb8820549b594681132e407d214860059bc5dbdf"
+  },
+  {
+    "path": "runs/reports/tuning_scientific_audit.json",
+    "purpose": "Hyperparameter grid search tuning log",
+    "exists": true,
+    "required_for_reproduction": false,
+    "size_bytes": 10791,
+    "sha256": "019beacead9a2c172fff3e654b0e546725917171c35dd43d0073d171f58dbf7f"
+  },
+  {
+    "path": "runs/reports/clip_001_metrics.json",
+    "purpose": "Clip 001 evaluation log",
+    "exists": true,
+    "required_for_reproduction": false,
+    "size_bytes": 7415,
+    "sha256": "473e6f259c2d2b2a917f34b8e81e38c163c2bf75c9d31c708d963ad005d030c9"
+  },
+  {
+    "path": "runs/reports/clip_007_metrics.json",
+    "purpose": "Clip 007 evaluation log",
+    "exists": true,
+    "required_for_reproduction": false,
+    "size_bytes": 7388,
+    "sha256": "b600a7e0a9dece6912dd2b6dc1a14f8d6a2a328b6025d799bcaf4b3d6f29676e"
+  },
+  {
+    "path": "runs/reports/video_project_3_metrics.json",
+    "purpose": "Video Project 3 evaluation log",
+    "exists": true,
+    "required_for_reproduction": false,
+    "size_bytes": 20066,
+    "sha256": "30cb620e1864730745a2c09636213ee0da9034726671cc980b9be26329877979"
+  },
+  {
+    "path": "runs/reports/test_4_metrics.json",
+    "purpose": "Test 4 evaluation log",
+    "exists": true,
+    "required_for_reproduction": false,
+    "size_bytes": 24709,
+    "sha256": "1f456fe189ced417ac7ff1f0efe737b40bd14296edd2348370912cfebb08bee4"
+  },
+  {
+    "path": "runs/clip_001.mp4",
+    "purpose": "Classroom clip 001 (10s benchmark)",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 1961400,
+    "sha256": "ff9141f7accb3a8a490f06f5b3cbfdfc0774b79e2577fdf021b861af03bf0166"
+  },
+  {
+    "path": "runs/clip_007.mp4",
+    "purpose": "Classroom clip 007 (10s benchmark)",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 2134421,
+    "sha256": "007e35fdc77dcb71f91f057ce7f62d486669429f6f7ac1b1fa5159a389840edc"
+  },
+  {
+    "path": "runs/Video Project 3.mp4",
+    "purpose": "Large lecture hall test video (23s)",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 51705066,
+    "sha256": "83891ca05b96d5d0303161a64806f01fd7932a931a56affee034dd870eae7152"
+  },
+  {
+    "path": "runs/test 4.mp4",
+    "purpose": "Multi-row classroom test video (60s)",
+    "exists": true,
+    "required_for_reproduction": true,
+    "size_bytes": 20383680,
+    "sha256": "a55db7d5b51bc70d74030521e56fbf6edd5e2a45ae25c95e5f5dddc7aad26f84"
+  }
+]

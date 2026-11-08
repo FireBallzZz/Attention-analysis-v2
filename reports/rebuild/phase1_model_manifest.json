@@ -1,0 +1,46 @@
+{
+  "models": [
+    {
+      "name": "YOLO11n-Pose",
+      "role": "Person Detection & 17 COCO Keypoints",
+      "weights": "yolo11n-pose.pt",
+      "source": "Ultralytics",
+      "classification": "A"
+    },
+    {
+      "name": "L2CS-Net (ResNet-50)",
+      "role": "Eye Gaze Pitch & Yaw Estimation",
+      "weights": "checkpoints/l2cs_finetuned.pt",
+      "sha256": "6524D7D53E26688CF4D7DCA310C65E0FB8847BAB60A6FC8614E9B643AEF55528",
+      "classification": "B"
+    },
+    {
+      "name": "SCB-YOLO (YOLO11n)",
+      "role": "Classroom Behavior Detection (Hand-raising, Reading, Writing)",
+      "weights": "checkpoints/scb_yolo.pt",
+      "sha256": "1F93F151286B21C89338FB8E229B218C5B1D061CC7361C042ACA6D416A415857",
+      "classification": "B"
+    },
+    {
+      "name": "PostureMLP",
+      "role": "COCO Keypoint to Behavior Classifier",
+      "weights": "checkpoints/posture_scb.pt (MISSING)",
+      "classification": "D",
+      "fallback": "geometric_posture() rule-based heuristics"
+    },
+    {
+      "name": "FER Emotion Classifier",
+      "role": "7-Class Facial Emotion Recognition",
+      "weights": "None (Intentionally omitted)",
+      "classification": "D",
+      "fallback": "Constant neutral prior [0,0,0,0,0,0,1]"
+    },
+    {
+      "name": "OpenSeeFace Landmarks",
+      "role": "68-point facial landmarks for EAR/MAR",
+      "weights": "None (Module missing)",
+      "classification": "E",
+      "fallback": "Fixed fallback (0.3000, 0.3000)"
+    }
+  ]
+}

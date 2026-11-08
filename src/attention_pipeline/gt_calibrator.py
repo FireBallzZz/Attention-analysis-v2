@@ -41,14 +41,12 @@ def pack_features(
     track_id: int,
     frame_w: float = 832.0,
     frame_h: float = 464.0,
+    feat_dim: int = 34,
 ) -> np.ndarray:
     cx = (float(bbox[0]) + float(bbox[2])) * 0.5 / frame_w
     cy = (float(bbox[1]) + float(bbox[3])) * 0.5 / frame_h
     bw = (float(bbox[2]) - float(bbox[0])) / frame_w
     bh = (float(bbox[3]) - float(bbox[1])) / frame_h
-    one = np.zeros(21, np.float32)
-    if 0 <= int(track_id) < 21:
-        one[int(track_id)] = 1.0
     base = np.array(
         [
             gaze_yaw / 90.0,
@@ -67,6 +65,11 @@ def pack_features(
         ],
         np.float32,
     )
+    if feat_dim == 13:
+        return base
+    one = np.zeros(21, np.float32)
+    if 0 <= int(track_id) < 21:
+        one[int(track_id)] = 1.0
     return np.concatenate([base, one])
 
 
@@ -79,6 +82,7 @@ class GtAttentionCalibrator:
         self.model: SoftmaxClf | None = None
         self.prior = np.ones((21, 3), np.float32) / 3.0
         self.alpha = 0.0
+        self.feat_dim = 34
         self.hist: dict[int, deque] = defaultdict(lambda: deque(maxlen=16))
         self.enabled = False
         self.val_acc = 0.0
@@ -88,6 +92,7 @@ class GtAttentionCalibrator:
     def load(self, path: Path) -> None:
         ckpt = torch.load(path, map_location=self.device, weights_only=False)
         feat_dim = int(ckpt.get("feat_dim", 34))
+        self.feat_dim = feat_dim
         self.model = None
         if ckpt.get("model") is not None:
             self.model = SoftmaxClf(n_in=feat_dim).to(self.device)
@@ -132,6 +137,7 @@ class GtAttentionCalibrator:
                 track_id,
                 frame_w,
                 frame_h,
+                feat_dim=self.feat_dim,
             )
             logits = self.model(torch.from_numpy(feat).to(self.device).unsqueeze(0))
             net = torch.softmax(logits, dim=1).squeeze(0).cpu().numpy()
@@ -151,19 +157,30 @@ class GtAttentionCalibrator:
 def find_ground_truth(video: Path) -> tuple[Path, Path] | None:
     """Return (csv, xml) if Anno-style ground truth exists for this video."""
     video = Path(video)
-    candidates = [
-        (video.parent / "ground_truth.csv", video.parent / "annotations.xml"),
-        (
-            PROJECT_ROOT / "Anno" / "ground_truth.csv",
-            PROJECT_ROOT / "Anno" / "annotations.xml",
-        ),
-    ]
     stem = video.stem.lower()
-    if "clip_004" in stem or video.parent.name.lower() == "anno":
-        for csv_path, xml_path in candidates:
-            if csv_path.exists() and xml_path.exists():
-                return csv_path, xml_path
+
+    # 1. Local video folder ground truth (e.g. beside the video)
+    local_stem = (video.parent / f"{stem}_ground_truth.csv", video.parent / f"{stem}_annotations.xml")
+    if local_stem[0].exists() and local_stem[1].exists():
+        return local_stem
     local = (video.parent / "ground_truth.csv", video.parent / "annotations.xml")
     if local[0].exists() and local[1].exists():
         return local
+
+    # 2. Anno / DEFENCE folder ground truth (for clip_004 or Anno videos)
+    if "clip_004" in stem or video.parent.name.lower() == "anno":
+        candidates = [
+            (
+                PROJECT_ROOT / "Anno" / "ground_truth.csv",
+                PROJECT_ROOT / "Anno" / "annotations.xml",
+            ),
+            (
+                PROJECT_ROOT.parent / "DEFENCE" / "ground_truth.csv",
+                PROJECT_ROOT.parent / "Model" / "annotate" / "annotations.xml",
+            ),
+        ]
+        for csv_path, xml_path in candidates:
+            if csv_path.exists() and xml_path.exists():
+                return csv_path, xml_path
+
     return None

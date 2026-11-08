@@ -78,6 +78,13 @@ def resolve_daisee_root() -> Path:
     marker = dest / "KAGGLE_SOURCE.txt"
     if dest.exists() and any(dest.rglob("*")):
         return dest
+    candidates = [
+        PROJECT_ROOT.parent.parent / "PRE DEFENCE" / "DAiSEE",
+        PROJECT_ROOT.parent / "PRE DEFENCE" / "DAiSEE",
+    ]
+    for cand in candidates:
+        if cand.exists() and (cand / "Labels").exists():
+            return cand
     if marker.exists():
         cached = Path(marker.read_text(encoding="utf-8").strip())
         if cached.exists():

@@ -25,7 +25,7 @@ from attention_pipeline.types import POSTURE_LABELS  # noqa: E402
 
 
 def _count_students(pipe: AttentionPipeline, video: Path, sample_frames: int = 15) -> int:
-    """Median student count over the first frames. This is the class size."""
+    """Consensus student count over the first frames. This is the class size."""
     cap = cv2.VideoCapture(str(video))
     if not cap.isOpened():
         raise SystemExit(f"Cannot open {video}")
@@ -46,10 +46,11 @@ def _count_students(pipe: AttentionPipeline, video: Path, sample_frames: int = 1
     if not counts:
         raise SystemExit("Could not count students in the clip.")
     counts.sort()
-    median = counts[len(counts) // 2]
+    cap_idx = min(len(counts) - 1, int(0.85 * len(counts)))
+    cap_val = int(counts[cap_idx])
     print(f"Student counts sampled: {counts}")
-    print(f"Locked student count: {median}")
-    return int(median)
+    print(f"Locked student count: {cap_val}")
+    return cap_val
 
 
 def main() -> None:
@@ -72,7 +73,8 @@ def main() -> None:
         default=0,
         help="Lock this many students. 0 = count from the clip first.",
     )
-    parser.add_argument("--min-det-conf", type=float, default=0.25)
+    parser.add_argument("--min-det-conf", type=float, default=0.10)
+    parser.add_argument("--require-face", action="store_true", default=False)
     args = parser.parse_args()
 
     video = Path(args.video)
@@ -88,7 +90,7 @@ def main() -> None:
 
     pipe = AttentionPipeline.from_yaml(ROOT / args.config)
     pipe.detector.min_det_conf = float(args.min_det_conf)
-    pipe.detector.require_face = True
+    pipe.detector.require_face = bool(args.require_face)
     pipe.detector.max_people = None
     high = float(pipe.cfg.get("viz", {}).get("high", 70.0))
     low = float(pipe.cfg.get("viz", {}).get("moderate_low", 40.0))
@@ -129,6 +131,8 @@ def main() -> None:
         "height",
         "attention",
         "score",
+        "fusion_score",
+        "heuristic_score",
         "cue",
         "eye_gaze_yaw",
         "eye_gaze_pitch",
@@ -175,6 +179,8 @@ def main() -> None:
             else:
                 posture_name = str(student.get("behavior") or "")
                 posture_conf = 0.0
+            fs = student.get("fusion_score")
+            hs = student.get("heuristic_score")
             rows.append(
                 {
                     "frame": frame_idx,
@@ -188,6 +194,8 @@ def main() -> None:
                     "height": round(max(0.0, y2 - y1), 2),
                     "attention": band,
                     "score": round(float(student.get("score") or 0.0), 2),
+                    "fusion_score": round(float(fs), 2) if fs is not None else "",
+                    "heuristic_score": round(float(hs), 2) if hs is not None else "",
                     "cue": str(student.get("cue") or ""),
                     "eye_gaze_yaw": round(float(gaze[0]), 2),
                     "eye_gaze_pitch": round(float(gaze[1]), 2),

@@ -1,0 +1,57 @@
+{
+  "experiment_name": "gru_finetuned_v1",
+  "description": "Fine-tuning temporal GRU on classroom ground truth with frozen frame encoder",
+  "methodological_scope": "Student-disjoint within-session validation (same classroom recording, disjoint students)",
+  "args": {
+    "npz": "data/processed/classroom_clip_004_sequences.npz",
+    "init_ckpt": "checkpoints/classroom_attention_head_focal_v2.pt",
+    "fusion_ckpt": "checkpoints/fusion_daisee.pt",
+    "out_ckpt": "checkpoints/classroom_attention_gru_finetuned_v1.pt",
+    "exp_dir": "experiments/gru_finetuned_v1",
+    "epochs": 10,
+    "batch": 32,
+    "lr_gru": 0.0001,
+    "lr_head": 0.001,
+    "weight_decay": 0.0001,
+    "focal_gamma": 2.0,
+    "seed": 42
+  },
+  "input_hashes": {
+    "data\\processed\\classroom_clip_004_sequences.npz": "ae9c7cb9abee2bafe2994232a0fca9eb64aa0945786b66135366860cbb39a2f5",
+    "checkpoints\\classroom_attention_head_focal_v2.pt": "ebcad0ef61513bff019e9830d0a625ad128444e97ccdd9a2847727a56fb3a875",
+    "checkpoints\\fusion_daisee.pt": "b1d978ef12beda220b53c1ce14c1054ee50e9be636d5f336c7caaaa70b0116e7"
+  },
+  "train_students": [
+    0,
+    1,
+    3,
+    4,
+    6,
+    7,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    17,
+    19,
+    20
+  ],
+  "val_students": [
+    2,
+    5,
+    8,
+    10,
+    16,
+    18
+  ],
+  "train_samples": 4275,
+  "val_samples": 1710,
+  "class_weights": [
+    0.46356538711776185,
+    2.8557114228456912,
+    2.02991452991453
+  ],
+  "best_epoch": 9
+}

@@ -127,19 +127,14 @@ def best_kpts(dets, bbox):
     return best if best_iou >= 0.2 else None
 
 
-def features(row, hist: deque | None = None) -> np.ndarray:
-    """Frame features only. No label history — that leaked GT at train time."""
+def features(row, hist: deque | None = None, include_track_id: bool = False) -> np.ndarray:
+    """Frame features only. When include_track_id=False, model is invariant and generalizable."""
     gy, gp = row["gaze"]
     hy, hp, hr = row["head"]
     cx = (row["bbox"][0] + row["bbox"][2]) * 0.5 / 832.0
     cy = (row["bbox"][1] + row["bbox"][3]) * 0.5 / 464.0
     bw = (row["bbox"][2] - row["bbox"][0]) / 832.0
     bh = (row["bbox"][3] - row["bbox"][1]) / 464.0
-    # Track one-hot (21 students in clip_004).
-    one = np.zeros(21, np.float32)
-    tid = int(row["id"])
-    if 0 <= tid < 21:
-        one[tid] = 1.0
     base = np.array(
         [
             gy / 90.0,
@@ -158,6 +153,13 @@ def features(row, hist: deque | None = None) -> np.ndarray:
         ],
         np.float32,
     )
+    if not include_track_id:
+        return base
+    # Track one-hot (optional legacy support)
+    one = np.zeros(21, np.float32)
+    tid = int(row["id"])
+    if 0 <= tid < 21:
+        one[tid] = 1.0
     return np.concatenate([base, one])
 
 
@@ -177,7 +179,42 @@ class SoftmaxClf(torch.nn.Module):
 
 
 def main() -> None:
-    video = ROOT / "Anno" / "clip_004.mp4"
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Train GT attention calibrator")
+    parser.add_argument(
+        "--include-track-id",
+        action="store_true",
+        help="Include 21-D track one-hot (legacy single-clip mode)",
+    )
+    parser.add_argument(
+        "--split-by",
+        choices=["student", "time"],
+        default="student",
+        help="Split method: 'student' (stratified by student ID) or 'time' (temporal split)",
+    )
+    parser.add_argument(
+        "--video",
+        default="",
+        help="Path to clip_004.mp4 (auto-discovered if omitted)",
+    )
+    args = parser.parse_args()
+
+    candidates = [
+        Path(args.video) if args.video else None,
+        ROOT / "Anno" / "clip_004.mp4",
+        ROOT.parent.parent / "classroom_01_10s_clips" / "clip_004.mp4",
+        ROOT.parent / "classroom_01_10s_clips" / "clip_004.mp4",
+        ROOT / "video" / "clip_004.mp4",
+    ]
+    video = None
+    for cand in candidates:
+        if cand is not None and cand.exists():
+            video = cand
+            break
+    if video is None:
+        raise SystemExit("clip_004.mp4 not found. Please specify --video path.")
+
     xml_path = ROOT / "Anno" / "annotations.xml"
     csv_path = ROOT / "Anno" / "ground_truth.csv"
     by_frame = load_tracks(xml_path, csv_path)
@@ -189,12 +226,19 @@ def main() -> None:
     std = torch.tensor([0.229, 0.224, 0.225], device=device)[:, None, None]
 
     cache = ROOT / "data" / "processed" / "anno_gt_features.npz"
+    rows = []
     if cache.exists():
-        print(f"Loading cached features {cache}")
         z = np.load(cache, allow_pickle=True)
-        rows = list(z["rows"])
-    else:
+        cached_rows = list(z["rows"])
+        if len(cached_rows) > 0:
+            print(f"Loading cached features {cache} ({len(cached_rows)} samples)")
+            rows = cached_rows
+        else:
+            cache.unlink(missing_ok=True)
+    if not rows:
         cap = cv2.VideoCapture(str(video))
+        if not cap.isOpened():
+            raise SystemExit(f"Cannot open video: {video}")
         rows = []
         frame_idx = 0
         print("Extracting features on GT boxes...")
@@ -237,21 +281,36 @@ def main() -> None:
     x_all = []
     y_all = []
     frames = []
+    sids = []
     for row in rows:
-        x_all.append(features(row))
+        x_all.append(features(row, include_track_id=args.include_track_id))
         y_all.append(row["y"])
         frames.append(row["frame"])
+        sids.append(row["id"])
     x_all = np.stack(x_all)
     y_all = np.asarray(y_all, np.int64)
     frames = np.asarray(frames, np.int64)
+    sids = np.asarray(sids, np.int64)
 
-    # Temporal split: train on first 70%, test on last 30%.
-    cut = int(0.7 * (frames.max() + 1))
-    train_m = frames < cut
-    test_m = ~train_m
+    if args.split_by == "student":
+        unique_sids = np.unique(sids)
+        np.random.seed(42)
+        perm = np.random.permutation(unique_sids)
+        n_train_sids = max(int(0.7 * len(perm)), 1)
+        train_sids = set(perm[:n_train_sids])
+        train_m = np.isin(sids, list(train_sids))
+        test_m = ~train_m
+        cut = -1
+        print(f"Student-stratified split: {len(train_sids)} train students, {len(unique_sids)-len(train_sids)} test students")
+    else:
+        # Temporal split: train on first 70%, test on last 30%.
+        cut = int(0.7 * (frames.max() + 1))
+        train_m = frames < cut
+        test_m = ~train_m
+        print(f"Temporal split: cut_frame={cut}")
     x_tr, y_tr = x_all[train_m], y_all[train_m]
     x_te, y_te = x_all[test_m], y_all[test_m]
-    print(f"Train {len(x_tr)}  Test {len(x_te)}  cut_frame={cut}")
+    print(f"Train {len(x_tr)}  Test {len(x_te)} (feature_dim={x_all.shape[1]})")
 
     model = SoftmaxClf(n_in=x_all.shape[1]).to(device)
     opt = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-4)
@@ -278,7 +337,7 @@ def main() -> None:
             best = acc
             best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
         if epoch % 10 == 0 or epoch == 1:
-            print(f"epoch {epoch:03d}  loss {float(loss):.4f}  test_acc {acc*100:.2f}%")
+            print(f"epoch {epoch:03d}  loss {float(loss.detach()):.4f}  test_acc {acc*100:.2f}%")
 
     model.load_state_dict(best_state)
     model.eval()

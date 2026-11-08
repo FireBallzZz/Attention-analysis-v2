@@ -36,11 +36,15 @@ def check_band(student: dict, lesson_yaw: float) -> str:
         if index < len(POSTURE_LABELS):
             name = POSTURE_LABELS[index]
 
+    cue = str(student.get("cue") or "").lower()
+    if any(w in cue for w in ("phone", "talk", "disturb", "sleep", "head on table")):
+        return "LOW"
+
     if pitch > 48.0:
         return "LOW"
-    if conf >= 0.55 and name in _LOW_BEHAVIOR:
+    if conf >= 0.35 and name in _LOW_BEHAVIOR:
         return "LOW"
-    if conf >= 0.55 and name == "bowing-head" and pitch > 42.0:
+    if conf >= 0.40 and name == "bowing-head" and pitch > 36.0:
         return "LOW"
     if delta >= 34.0 and pitch <= 24.0:
         return "LOW"
@@ -155,43 +159,37 @@ def load_model_metrics(path: Path | None = None) -> dict | None:
 def model_lines(data: dict | None) -> list[str]:
     lines = [
         "=" * 72,
-        "MODEL ACCURACY",
+        "COMPONENT BENCHMARK SCORES",
         "=" * 72,
         "",
-        "Measured on the saved validation set. This stays the same for every video",
-        "until the model is evaluated again.",
+        "Independent validation scores for each component module.",
+        "These evaluate distinct tasks and are kept strictly separate.",
         "",
     ]
-    overall = (data or {}).get("overall") or {}
-    if "accuracy" not in overall:
-        lines.append("Model accuracy is not available (runs/smoke_metrics.json).")
+    if not data:
+        lines.append("Component benchmark scores are not available.")
         return lines
     labels = (
-        ("SCB official YOLO", "scb_official_yolo"),
-        ("DAiSEE fusion", "daisee_fusion"),
-        ("L2CS gaze", "l2cs_gaze"),
-        ("Anno GT attention", "anno_gt_attention"),
+        ("SCB Classroom Behavior (mAP)", "scb_official_yolo"),
+        ("DAiSEE Affective Fusion", "daisee_fusion"),
+        ("L2CS Gaze Estimation", "l2cs_gaze"),
+        ("Anno GT Attention Calibrator", "anno_gt_attention"),
     )
-    lines.append(f"{'Component':<28} {'Prec':>8} {'Rec':>8} {'F1':>8} {'Acc':>8}")
+    lines.append(f"{'Component Module':<32} {'Prec':>8} {'Rec':>8} {'F1':>8} {'Score':>8}")
     lines.append("-" * 72)
+    found_any = False
     for label, key in labels:
         item = (data or {}).get(key) or {}
         if "accuracy" not in item:
             continue
+        found_any = True
         lines.append(
-            f"{label:<28} {item['precision']*100:7.2f}% {item['recall']*100:7.2f}% "
+            f"{label:<32} {item['precision']*100:7.2f}% {item['recall']*100:7.2f}% "
             f"{item['f1']*100:7.2f}% {item['accuracy']*100:7.2f}%"
         )
-    lines.extend(
-        [
-            "-" * 72,
-            f"{'OVERALL MODEL':<28} {overall['precision']*100:7.2f}% "
-            f"{overall['recall']*100:7.2f}% {overall['f1']*100:7.2f}% "
-            f"{overall['accuracy']*100:7.2f}%",
-            "",
-            f"MODEL ACCURACY: {overall['accuracy']*100:.2f}%",
-        ]
-    )
+    if not found_any:
+        lines.append("No component benchmarks found.")
+    lines.append("-" * 72)
     return lines
 
 
@@ -292,10 +290,7 @@ def render_report(
             "-" * 72,
             f"{'MACRO':<12} {macro['precision']*100:7.2f}% {macro['recall']*100:7.2f}% "
             f"{macro['f1']*100:7.2f}%",
-            "",
-            f"VIDEO ACCURACY: {metrics['accuracy']*100:.2f}%",
-            "",
-            f"MODEL ACCURACY: {overall_model*100:.2f}%" if overall_model is not None else "MODEL ACCURACY: n/a",
+            f"VIDEO HEURISTIC AGREEMENT: {metrics['accuracy']*100:.2f}%",
             (
                 f"GROUND TRUTH ACCURACY: {gt_metrics['accuracy']*100:.2f}%"
                 if gt_metrics and "accuracy" in gt_metrics
@@ -318,3 +313,82 @@ def write_video_accuracy(
     path = unique_report_path(video, folder)
     path.write_text(render_report(video, overlay, scores, metrics, gt_metrics), encoding="utf-8")
     return path
+
+
+def score_ground_truth(
+    json_path: Path, csv_path: Path, xml_path: Path, min_iou: float = 0.3
+) -> dict:
+    """Compare attention predictions in a jsonl file to manual ground-truth annotations."""
+    from attention_pipeline.anno_overlay import _iou, load_boxes, load_csv_labels, to_band
+
+    labels = load_csv_labels(csv_path)
+    boxes = load_boxes(xml_path)
+    y_true: list[str] = []
+    y_pred: list[str] = []
+    frames = 0
+    for line in Path(json_path).read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        frames += 1
+        frame = int(row.get("frame", 0))
+        gt_boxes = boxes.get(frame, [])
+        used: set[int] = set()
+        for student in row.get("students") or []:
+            pred = str(student.get("band") or "")
+            if pred not in BANDS:
+                continue
+            best_i = -1
+            best = 0.0
+            for index, item in enumerate(gt_boxes):
+                if index in used:
+                    continue
+                score = _iou(student.get("bbox") or [0, 0, 0, 0], item[1:])
+                if score > best:
+                    best = score
+                    best_i = index
+            if best < min_iou or best_i < 0:
+                continue
+            used.add(best_i)
+            raw = labels.get((frame, gt_boxes[best_i][0]))
+            if raw is None:
+                continue
+            y_true.append(to_band(raw))
+            y_pred.append(pred)
+
+    per_band = {}
+    for band in BANDS:
+        tp = sum(t == band and p == band for t, p in zip(y_true, y_pred))
+        fp = sum(t != band and p == band for t, p in zip(y_true, y_pred))
+        fn = sum(t == band and p != band for t, p in zip(y_true, y_pred))
+        precision = tp / (tp + fp) if (tp + fp) else 0.0
+        recall = tp / (tp + fn) if (tp + fn) else 0.0
+        f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0.0
+        per_band[band] = {
+            "precision": precision,
+            "recall": recall,
+            "f1": f1,
+            "support": sum(t == band for t in y_true),
+            "tp": tp,
+            "fp": fp,
+            "fn": fn,
+        }
+
+    support = len(y_true)
+    accuracy = (sum(t == p for t, p in zip(y_true, y_pred)) / support) if support else 0.0
+    counted = [per_band[band] for band in BANDS if per_band[band]["support"]] or [
+        per_band[band] for band in BANDS
+    ]
+    macro = {
+        "precision": sum(item["precision"] for item in counted) / len(counted),
+        "recall": sum(item["recall"] for item in counted) / len(counted),
+        "f1": sum(item["f1"] for item in counted) / len(counted),
+    }
+    return {
+        "frames": frames,
+        "support": support,
+        "accuracy": accuracy,
+        "macro": macro,
+        "per_band": per_band,
+    }
+

@@ -1,0 +1,32 @@
+{
+  "checkpoints/classroom_manual_binary_model_v2_clean.pt": {
+    "sha256": "2BFA5AF8E190B5D4C16D463510543DBDCA2D8FCEF43CFDC1AE10E8C46C42124E",
+    "size_bytes": 466837,
+    "status": "VERIFIED"
+  },
+  "checkpoints/candidates/phase6g4c_engaged_disengaged_candidate.pt": {
+    "sha256": "E01F33BF7859A7A06035D17DF60BA7B406DCD8307A8F5EE8F98EE86A63F26F8E",
+    "size_bytes": 467993,
+    "status": "VERIFIED"
+  },
+  "checkpoints/candidates/phase7_public_trained_binary_candidate.pt": {
+    "sha256": "1847B2B9683EC40632FBAEC3B7191592305EBECEFAE855352C8E81C2230EDAE5",
+    "size_bytes": 468313,
+    "status": "VERIFIED"
+  },
+  "data/processed/fusion_daisee.npz": {
+    "sha256": "15B3FB28EF15AAC1564423251F36825A5BC9FBB5E2F0353D27D8978AACB5196B",
+    "size_bytes": 48335334,
+    "status": "VERIFIED"
+  },
+  "data/processed/fusion_daisee_v2.npz": {
+    "sha256": "69E5C9984A27980AAC36BA14F190534D84AE5260145A114502D278627EE76733",
+    "size_bytes": 1479987,
+    "status": "VERIFIED"
+  },
+  "data/processed/fusion_daisee_v3_hardened.npz": {
+    "sha256": "4505FB4428944366459B1E3AEE37678A8AD7381AA19384A64514C87F75FD2DA6",
+    "size_bytes": 1421537,
+    "status": "VERIFIED"
+  }
+}

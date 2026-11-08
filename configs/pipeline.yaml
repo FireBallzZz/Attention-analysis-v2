@@ -4,18 +4,23 @@ device: auto  # auto | cpu | cuda
 
 detect:
   weights: yolo11n-pose.pt
-  person_weights: yolo11n.pt
-  conf: 0.08
+  person_weights: ""  # Disabled person-box fallback to eliminate phantom detections on walls/legs
+  conf: 0.20
   iou: 0.45
-  imgsz: 960
-  tiles: true
-  min_det_conf: 0.12
-  require_face: true
+  imgsz: 1920
+  tiles: false
+  min_det_conf: 0.20
+  require_face: false
+  max_students: null  # Set to fixed integer e.g. 6, or null for auto-calibration
 
 track:
-  max_age: 45
-  n_init: 1
+  max_age: 30
+  n_init: 3
   max_iou_distance: 0.7
+  smooth_box: true           # Anti-jitter temporal box smoothing
+  box_ema_alpha: 0.7         # Current box weight (0.7 current + 0.3 previous)
+  max_area_ratio: 1.5        # Max area expansion ratio before damping sudden spikes
+  auto_max_students: false   # Disabled artificial capacity capping so full multi-row classrooms (30-40+ students) are not truncated
 
 face:
   backend: openseeface  # openseeface | mediapipe | stub
@@ -31,10 +36,12 @@ data:
   scb_repo: third_party/SCB-dataset
 
 models:
-  gaze_weights: checkpoints/l2cs_gaze360_resnet50.safetensors
+  gaze_weights: checkpoints/l2cs_finetuned.pt
   posture_weights: checkpoints/posture_scb.pt
   scb_weights: checkpoints/scb_yolo.pt
-  fusion_weights: checkpoints/fusion_daisee.pt
+  manual_binary_weights: checkpoints/classroom_manual_binary_unquarantined.pt
+  fusion_weights: checkpoints/classroom_manual_binary_unquarantined.pt
+  fusion_daisee_base: checkpoints/baseline/fusion_daisee.pt
 
 scb:
   conf: 0.45
@@ -49,6 +56,8 @@ fusion:
   window: 16
   score_min: 0.0
   score_max: 100.0
+  binary_threshold: 0.50  # Tuned Champion Model: Focal Loss (gamma=2.0, alpha=0.45) achieving 87.74% Val Acc
+
 
 drop:
   low_threshold: 40.0

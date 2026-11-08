@@ -1,0 +1,53 @@
+{
+  "audit_timestamp": "2026-10-23T15:18:40+06:00",
+  "framework": "Hybrid ML and LLM Framework for Student Attention Analysis",
+  "entry_points": {
+    "production_inference": "src/attention_pipeline/__main__.py -> src/attention_pipeline/cli.py:infer_main",
+    "pipeline_class": "src/attention_pipeline/pipeline.py:AttentionPipeline",
+    "feature_extraction_v3": "scripts/build_fusion_v3.py",
+    "phase7_training": "scripts/train_phase7_public_candidate.py",
+    "phase7_public_test_eval": "scripts/evaluate_phase7_held_out_test.py",
+    "phase7_uap_final_eval": "scripts/evaluate_phase7_uap_final.py"
+  },
+  "configs": [
+    "configs/pipeline.yaml",
+    "configs/pipeline_merged.yaml",
+    "configs/phase7_public_daisee_split.json",
+    "configs/daisee_v3_subject_split.json"
+  ],
+  "checkpoints": {
+    "active_production": {
+      "path": "checkpoints/classroom_manual_binary_model_v2_clean.pt",
+      "sha256": "2BFA5AF8E190B5D4C16D463510543DBDCA2D8FCEF43CFDC1AE10E8C46C42124E",
+      "status": "IMMUTABLE_PROTECTED"
+    },
+    "phase6g4c_candidate": {
+      "path": "checkpoints/candidates/phase6g4c_engaged_disengaged_candidate.pt",
+      "sha256": "E01F33BF7859A7A06035D17DF60BA7B406DCD8307A8F5EE8F98EE86A63F26F8E",
+      "status": "IMMUTABLE_PROTECTED"
+    },
+    "phase7_candidate": {
+      "path": "checkpoints/candidates/phase7_public_trained_binary_candidate.pt",
+      "sha256": "1847B2B9683EC40632FBAEC3B7191592305EBECEFAE855352C8E81C2230EDAE5",
+      "status": "IMMUTABLE_PROTECTED"
+    }
+  },
+  "datasets": {
+    "daisee_raw_path": "C:/Users/User/Downloads/Thesis/PRE DEFENCE/DAiSEE",
+    "daisee_physical_videos": 9068,
+    "daisee_labeled_clips": 8986,
+    "daisee_unlabeled_clips": 82,
+    "daisee_subjects": 113,
+    "daisee_processed_v3_path": "data/processed/fusion_daisee_v3_hardened.npz",
+    "daisee_processed_v3_clips": 750,
+    "daisee_processed_v3_sequences": 23661
+  },
+  "tests": {
+    "test_framework": "pytest-8.3.4",
+    "total_tests_collected": 67,
+    "passed": 66,
+    "skipped": 1,
+    "failed": 0,
+    "execution_duration_sec": 4.84
+  }
+}

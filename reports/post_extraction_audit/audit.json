@@ -1,0 +1,119 @@
+{
+  "audit_timestamp": "2026-10-23 21:31:48",
+  "artifact_information": {
+    "path": "c:\\Users\\User\\Downloads\\Thesis\\Model\\Attention-analysis-model\\data\\processed\\fusion_daisee_full_v4.npz",
+    "size_bytes": 19199076,
+    "size_mb": 18.31,
+    "modified_time": "2026-10-23 21:26:37",
+    "creation_time": "2026-10-23 21:26:36",
+    "sha256": "AE99773715810CD5234702308662586F722801413BF800BF6AB7B53040BD72F2",
+    "load_test": "PASSED (Clean NumPy deserialization)"
+  },
+  "clip_coverage": {
+    "official_manifest_clips": 8986,
+    "successfully_extracted_clips": 8986,
+    "missing_clips": 0,
+    "failed_clips": 0,
+    "skipped_clips": 0,
+    "extraction_completion_rate_pct": 100.0,
+    "total_sequences_generated": 306801
+  },
+  "tensor_validation": {
+    "tensor_shape": [
+      306801,
+      16,
+      32
+    ],
+    "dtype": "float32",
+    "nan_count": 0,
+    "inf_count": 0,
+    "clip_sequence_counts": {
+      "min": 1,
+      "max": 38,
+      "mean": 34.14,
+      "median": 35.0,
+      "std": 5.44
+    },
+    "alignment_validation": {
+      "target_mapping_errors": 0,
+      "split_mismatch_errors": 0,
+      "subject_mismatch_errors": 0,
+      "alignment_status": "PASSED (100% Alignment)"
+    }
+  },
+  "split_integrity": {
+    "train": {
+      "clips": 5482,
+      "subjects": 70,
+      "sequences": 185356,
+      "class_0_seqs": 8180,
+      "class_1_seqs": 177176
+    },
+    "validation": {
+      "clips": 1720,
+      "subjects": 22,
+      "sequences": 59686,
+      "class_0_seqs": 6396,
+      "class_1_seqs": 53290
+    },
+    "test": {
+      "clips": 1784,
+      "subjects": 21,
+      "sequences": 61759,
+      "class_0_seqs": 2980,
+      "class_1_seqs": 58779
+    },
+    "leakage_checks": {
+      "clip_overlaps": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "subject_overlaps": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      },
+      "subject_disjoint_status": "VERIFIED (0 Overlap across all splits)"
+    },
+    "historical_test_overlap_note": "The official test set contains 21 subjects (61,759 sequences). Historical Phase 7/8 benchmarks evaluated on a 750-clip development subset containing subjects 110001 and 110004 (148 clips). Those 2 subjects remain inside the official Test split; no leakage into Train or Val exists."
+  },
+  "feature_channel_diagnostics": {
+    "total_channels": 32,
+    "dynamic_channels_count": 18,
+    "degenerate_or_fallback_channels_count": 14,
+    "constant_zero_emotion_channels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "neutral_prior_channel": 11,
+    "fallback_aspect_ratio_channels": [
+      19,
+      20
+    ],
+    "zero_padding_channels": [
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "gaze_active": true,
+    "head_pose_active": true,
+    "scb_active": true,
+    "motion_active": true,
+    "torso_lean_active": true,
+    "keypoint_confidence_active": true
+  },
+  "dataset_readiness_verdict": {
+    "status": "READY FOR TRAINING",
+    "justification": "Full extraction of all 8,986 eligible clips is 100% complete with 0 NaNs, 0 Infs, 0 missing clips, and strict subject-disjoint split boundaries. Train contains 185,356 sequences (8,180 Class 0), Validation contains 59,686 sequences (6,396 Class 0), and Test contains 61,759 sequences (2,980 Class 0 across 21 subjects). Dynamic channels for Gaze, Head Pose, SCB Posture, Motion, Torso Lean, and Keypoint Confidence are fully functional."
+  }
+}

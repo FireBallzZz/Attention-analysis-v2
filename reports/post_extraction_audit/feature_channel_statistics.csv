@@ -1,0 +1,33 @@
+channel_index,channel_name,modality,min_val,max_val,mean_val,std_val,zero_pct,is_constant,is_fallback,classification_status,investigation_notes
+0,head_pose_yaw,Head Pose,-0.5,0.5,0.0015,0.0277,0.17,False,False,Genuinely Computed (Head Pose),Active geometric keypoint arctan head pose
+1,head_pose_pitch,Head Pose,0.0,0.4998,0.1601,0.0229,0.07,False,False,Genuinely Computed (Head Pose),Active geometric keypoint arctan head pose
+2,head_pose_roll,Head Pose,-0.9999,1.0,0.0002,0.1241,0.07,False,False,Genuinely Computed (Head Pose),Active geometric keypoint arctan head pose
+3,eye_gaze_yaw,Eye Gaze,0.0,0.4828,0.1436,0.0183,0.07,False,False,Genuinely Computed (L2CS),Active L2CS-Net ResNet-50 gaze estimation
+4,eye_gaze_pitch,Eye Gaze,-0.2249,0.4923,-0.0026,0.0176,0.1,False,False,Genuinely Computed (L2CS),Active L2CS-Net ResNet-50 gaze estimation
+5,emotion_angry,Facial Emotion,0.0,0.0,0.0,0.0,100.0,True,True,Constant Zero (Missing FER),FER weights omitted; identically 0.0 across all frames
+6,emotion_disgust,Facial Emotion,0.0,0.0,0.0,0.0,100.0,True,True,Constant Zero (Missing FER),FER weights omitted; identically 0.0 across all frames
+7,emotion_fear,Facial Emotion,0.0,0.0,0.0,0.0,100.0,True,True,Constant Zero (Missing FER),FER weights omitted; identically 0.0 across all frames
+8,emotion_happy,Facial Emotion,0.0,0.0,0.0,0.0,100.0,True,True,Constant Zero (Missing FER),FER weights omitted; identically 0.0 across all frames
+9,emotion_sad,Facial Emotion,0.0,0.0,0.0,0.0,100.0,True,True,Constant Zero (Missing FER),FER weights omitted; identically 0.0 across all frames
+10,emotion_surprise,Facial Emotion,0.0,0.0,0.0,0.0,100.0,True,True,Constant Zero (Missing FER),FER weights omitted; identically 0.0 across all frames
+11,emotion_neutral,Facial Emotion,0.0,1.0,0.9993,0.0261,0.07,False,True,Constant Neutral Prior,Fixed 1.0 neutral prior (0.0 only on blank/lost frames)
+12,posture_hand_raising,Student Behavior,0.0,1.0,0.1164,0.2172,54.97,False,False,Genuinely Computed / Blended,YOLOv7 SCB detector blended with geometric keypoint rules
+13,posture_reading,Student Behavior,0.0,1.0,0.0674,0.085,59.87,False,False,Genuinely Computed / Blended,YOLOv7 SCB detector blended with geometric keypoint rules
+14,posture_writing,Student Behavior,0.0,0.5833,0.0668,0.0817,59.93,False,False,Genuinely Computed / Blended,YOLOv7 SCB detector blended with geometric keypoint rules
+15,posture_using_phone,Student Behavior,0.0,0.1667,0.0668,0.0817,59.93,False,False,Genuinely Computed / Blended,YOLOv7 SCB detector blended with geometric keypoint rules
+16,posture_bowing_head,Student Behavior,0.0,0.1667,0.0668,0.0817,59.93,False,False,Genuinely Computed / Blended,YOLOv7 SCB detector blended with geometric keypoint rules
+17,posture_leaning_over_table,Student Behavior,0.0,1.0,0.6152,0.4255,5.09,False,False,Genuinely Computed / Blended,YOLOv7 SCB detector blended with geometric keypoint rules
+18,optical_motion,Motion,0.0,0.319,0.0018,0.0063,85.99,False,False,Genuinely Computed / Derived,"Optical motion, facing front, torso lean, keypoint confidence"
+19,eye_aspect_ratio,Facial Morphology,0.0,0.3,0.2998,0.0078,0.07,False,True,Constant Fallback 0.30,OpenSeeFace dependency missing; fixed fallback 0.30
+20,mouth_aspect_ratio,Facial Morphology,0.0,0.3,0.2998,0.0078,0.07,False,True,Constant Fallback 0.30,OpenSeeFace dependency missing; fixed fallback 0.30
+21,facing_front_score,Head Pose Geometry,0.0,1.0,0.9428,0.0873,0.27,False,False,Genuinely Computed / Derived,"Optical motion, facing front, torso lean, keypoint confidence"
+22,torso_lean_angle,Posture Geometry,0.0,0.9242,0.0286,0.034,6.05,False,False,Genuinely Computed / Derived,"Optical motion, facing front, torso lean, keypoint confidence"
+23,upper_body_confidence,Keypoint Observability,0.0,0.9971,0.9213,0.0913,0.07,False,False,Genuinely Computed / Derived,"Optical motion, facing front, torso lean, keypoint confidence"
+24,reserved_padding_24,Padding,0.0,0.0,0.0,0.0,100.0,True,True,Architectural Zero Padding,Reserved dimensions for 32-D matrix compatibility
+25,reserved_padding_25,Padding,0.0,0.0,0.0,0.0,100.0,True,True,Architectural Zero Padding,Reserved dimensions for 32-D matrix compatibility
+26,reserved_padding_26,Padding,0.0,0.0,0.0,0.0,100.0,True,True,Architectural Zero Padding,Reserved dimensions for 32-D matrix compatibility
+27,reserved_padding_27,Padding,0.0,0.0,0.0,0.0,100.0,True,True,Architectural Zero Padding,Reserved dimensions for 32-D matrix compatibility
+28,reserved_padding_28,Padding,0.0,0.0,0.0,0.0,100.0,True,True,Architectural Zero Padding,Reserved dimensions for 32-D matrix compatibility
+29,reserved_padding_29,Padding,0.0,0.0,0.0,0.0,100.0,True,True,Architectural Zero Padding,Reserved dimensions for 32-D matrix compatibility
+30,reserved_padding_30,Padding,0.0,0.0,0.0,0.0,100.0,True,True,Architectural Zero Padding,Reserved dimensions for 32-D matrix compatibility
+31,reserved_padding_31,Padding,0.0,0.0,0.0,0.0,100.0,True,True,Architectural Zero Padding,Reserved dimensions for 32-D matrix compatibility

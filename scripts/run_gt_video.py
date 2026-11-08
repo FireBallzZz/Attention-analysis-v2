@@ -215,6 +215,17 @@ def main() -> None:
     args = parser.parse_args()
 
     video = Path(args.video)
+    if not video.exists():
+        candidates = [
+            ROOT / "Anno" / "clip_004.mp4",
+            ROOT.parent.parent / "classroom_01_10s_clips" / "clip_004.mp4",
+            ROOT.parent / "classroom_01_10s_clips" / "clip_004.mp4",
+            ROOT / "video" / "clip_004.mp4",
+        ]
+        for cand in candidates:
+            if cand.exists():
+                video = cand
+                break
     csv_path = Path(args.csv)
     xml_path = Path(args.xml)
     out_csv = Path(args.out_csv)
@@ -232,6 +243,14 @@ def main() -> None:
     if not cal.enabled:
         raise SystemExit("Missing checkpoints/gt_attention_calibrator.pt. Run scripts/train_gt_calibrator.py")
     cal.reset()
+
+    if "clip_004" in video.name:
+        print("\n" + "!" * 72)
+        print("WARNING: 'gt_attention_calibrator.pt' was trained on clip_004.mp4.")
+        print("Evaluating all students on this video causes train-test data contamination.")
+        print("For defensible benchmarks, evaluate on held-out students or independent clips")
+        print("(e.g., clip_001.mp4 or clip_008.mp4).")
+        print("!" * 72 + "\n")
 
     device = resolve_device("auto")
     mean = torch.tensor([0.485, 0.456, 0.406], device=device)[:, None, None]

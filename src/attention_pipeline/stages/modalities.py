@@ -114,7 +114,7 @@ class FaceModalityExtractor:
         mid_eye = (leye[:2] + reye[:2]) / 2.0
         yaw = np.degrees(np.arctan2(nose[0] - mid_eye[0], abs(reye[0] - leye[0]) + 1e-6))
         pitch = np.degrees(np.arctan2(nose[1] - mid_eye[1], abs(reye[0] - leye[0]) + 1e-6))
-        roll = np.degrees(np.arctan2(reye[1] - leye[1], reye[0] - leye[0] + 1e-6))
+        roll = np.degrees(np.arctan2(leye[1] - reye[1], leye[0] - reye[0] + 1e-6))
         # Small profile bias only. Side-classroom views normally hide one ear.
         if lear[2] > 0.3 and rear[2] < 0.15:
             yaw = np.clip(yaw - 12, -90, 90)
@@ -123,8 +123,14 @@ class FaceModalityExtractor:
         return np.array([yaw, pitch, roll], dtype=np.float32)
 
     def _aspects(self, landmarks: np.ndarray) -> tuple[float, float]:
-        if landmarks is None or len(landmarks) < 3:
+        if landmarks is None:
             return 0.3, 0.3
+        if len(landmarks) >= 48:
+            try:
+                from attention_pipeline.stages.openseeface_backend import eye_mouth_aspects
+                return eye_mouth_aspects(landmarks)
+            except Exception:
+                pass
         return 0.3, 0.3
 
     def _motion(self, student_id: int, landmarks: np.ndarray) -> float:

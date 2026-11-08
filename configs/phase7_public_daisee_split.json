@@ -1,0 +1,44 @@
+{
+  "protocol": "Stratified Group-Aware Subject-Disjoint Partition",
+  "dataset": "data/processed/fusion_daisee_v3_hardened.npz",
+  "total_sequences": 23661,
+  "train": {
+    "subjects": [
+      "110002",
+      "110006",
+      "110007",
+      "110008",
+      "110010",
+      "110011",
+      "110012",
+      "110014"
+    ],
+    "clips_count": 501,
+    "sequences": 16597,
+    "low_count": 317,
+    "high_count": 16280,
+    "fraction": 0.7014
+  },
+  "validation": {
+    "subjects": [
+      "110005",
+      "110013"
+    ],
+    "clips_count": 101,
+    "sequences": 3501,
+    "low_count": 245,
+    "high_count": 3256,
+    "fraction": 0.148
+  },
+  "held_out_test": {
+    "subjects": [
+      "110001",
+      "110004"
+    ],
+    "clips_count": 148,
+    "sequences": 3563,
+    "low_count": 70,
+    "high_count": 3493,
+    "fraction": 0.1506
+  }
+}

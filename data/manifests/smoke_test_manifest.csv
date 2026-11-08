@@ -1,0 +1,4 @@
+clip_id,subject_id,split,video_path,engagement,boredom,confusion,frustration,binary_target,binary_label,label_source
+1100011002,110001,Train,DataSet/Train/110001/1100011002/1100011002.avi,2,0,0,0,1,ATTENTIVE,AllLabels.csv
+4000221001,400022,Validation,DataSet/Validation/400022/4000221001/4000221001.avi,2,0,0,0,1,ATTENTIVE,AllLabels.csv
+5000441001,500044,Test,DataSet/Test/500044/5000441001/5000441001.avi,2,1,0,0,1,ATTENTIVE,AllLabels.csv

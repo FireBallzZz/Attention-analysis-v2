@@ -1,0 +1,42 @@
+{
+  "total_physical_videos_on_disk": 9068,
+  "total_master_labeled_clips": 8986,
+  "total_quarantined_unlabeled_clips": 82,
+  "quarantined_subject": "998826",
+  "splits": {
+    "Train": {
+      "clips": 5482,
+      "subjects": 70,
+      "non_attentive_count": 248,
+      "attentive_count": 5234,
+      "minority_percentage": 4.5235
+    },
+    "Validation": {
+      "clips": 1720,
+      "subjects": 22,
+      "non_attentive_count": 183,
+      "attentive_count": 1537,
+      "minority_percentage": 10.6395
+    },
+    "Test": {
+      "clips": 1784,
+      "subjects": 21,
+      "non_attentive_count": 88,
+      "attentive_count": 1696,
+      "minority_percentage": 4.9327
+    },
+    "All": {
+      "clips": 8986,
+      "subjects": 113,
+      "non_attentive_count": 519,
+      "attentive_count": 8467,
+      "minority_percentage": 5.7756
+    }
+  },
+  "label_source_provenance": {
+    "AllLabels.csv_count": 8925,
+    "TestLabels.csv_exclusive_count": 61,
+    "label_value_conflicts": 0
+  },
+  "subject_disjointness_verified": true
+}

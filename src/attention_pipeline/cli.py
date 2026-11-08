@@ -34,7 +34,7 @@ def _dump_result(result: dict, high: float, low: float) -> dict:
         "students": [
             {
                 **s,
-                "band": s.get("band") or attention_band(float(s["score"]), high, low),
+                "band": s.get("band") or (attention_band(float(s["score"]), high, low) if s.get("score") is not None else "WARMUP"),
             }
             for s in result["students"]
         ],
@@ -52,6 +52,12 @@ def _dump_result(result: dict, high: float, low: float) -> dict:
             for e in result["events"]
         ],
     }
+
+
+def _format_student(s: dict) -> str:
+    score_str = f"{s['score']:.0f}" if s.get("score") is not None else "warmup"
+    band = s.get("band", "?")[:3]
+    return f"id{s['student_id']}:{band}:{score_str}"
 
 
 def infer_main() -> None:
@@ -128,10 +134,7 @@ def infer_main() -> None:
                 jf.write(json.dumps(_dump_result(last_result, high, low)) + "\n")
                 next_infer += infer_dt
                 if ts - last_print >= 1.0 or last_result["events"]:
-                    parts = [
-                        f"id{s['student_id']}:{s.get('band', '?')[:3]}:{s['score']:.0f}"
-                        for s in last_result["students"]
-                    ]
+                    parts = [_format_student(s) for s in last_result["students"]]
                     print(
                         f"t={ts:5.1f}s  n={len(last_result['students'])}  "
                         + (", ".join(parts) or "no students")

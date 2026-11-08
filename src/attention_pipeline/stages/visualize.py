@@ -29,6 +29,8 @@ def band_color(band: str) -> tuple[int, int, int]:
         return COLOR_HIGH
     if band == "MODERATE":
         return COLOR_MOD
+    if band == "WARMUP":
+        return (180, 180, 180)
     return COLOR_LOW
 
 
@@ -68,11 +70,12 @@ def draw_attention(
         if e.get("event") is not None
     }
 
-    counts = {"HIGH": 0, "MODERATE": 0, "LOW": 0}
+    counts = {"HIGH": 0, "MODERATE": 0, "LOW": 0, "WARMUP": 0}
     for s in students:
-        score = float(s.get("score", 0.0))
+        raw_score = s.get("score")
+        score = float(raw_score) if raw_score is not None else 0.0
         band = str(s.get("band") or attention_band(score, high, low))
-        counts[band] += 1
+        counts[band] = counts.get(band, 0) + 1
         color = COLOR_DROP if s["student_id"] in drop_ids else band_color(band)
         x1, y1, x2, y2 = [int(v) for v in s["bbox"]]
         x1, y1 = max(x1, 0), max(y1, 0)
@@ -81,7 +84,7 @@ def draw_attention(
 
         tag = "DROP" if s["student_id"] in drop_ids else band
         cue = str(s.get("cue") or s.get("behavior") or "")
-        label = f"ID {s['student_id']}  {tag}  {score:.0f}"
+        label = f"ID {s['student_id']}  {tag}  {score:.0f}" if raw_score is not None else f"ID {s['student_id']}  {tag}"
         ly = y1 - 8 if y1 > 36 else y2 + 22
         _label_bg(out, x1, ly, label, color, 0.5 * scale, thick)
         if cue and s["student_id"] not in drop_ids:

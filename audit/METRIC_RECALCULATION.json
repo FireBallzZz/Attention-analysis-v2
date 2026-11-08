@@ -1,0 +1,491 @@
+{
+  "timestamp": "2026-11-08 14:10:09",
+  "clip_001": {
+    "ground_truth_eval_iou_0_30": {
+      "n_samples": 1067,
+      "confusion_matrix": {
+        "TN": 0,
+        "FP": 51,
+        "FN": 1,
+        "TP": 1015
+      },
+      "accuracy": 0.9513,
+      "balanced_accuracy": 0.4995,
+      "macro_f1": 0.4875,
+      "weighted_f1": 0.9284,
+      "sensitivity": 0.999,
+      "specificity": 0.0,
+      "class_0_low": {
+        "support": 51,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "class_1_high": {
+        "support": 1016,
+        "precision": 0.9522,
+        "recall": 0.999,
+        "f1": 0.975
+      },
+      "roc_auc": 0.3827,
+      "pr_auc": 0.9292
+    },
+    "iou_sensitivity": {
+      "iou_0.15": {
+        "n_samples": 1349,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 83,
+          "FN": 2,
+          "TP": 1264
+        },
+        "accuracy": 0.937,
+        "balanced_accuracy": 0.4992,
+        "macro_f1": 0.4837,
+        "weighted_f1": 0.9079,
+        "sensitivity": 0.9984,
+        "specificity": 0.0,
+        "class_0_low": {
+          "support": 83,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "class_1_high": {
+          "support": 1266,
+          "precision": 0.9384,
+          "recall": 0.9984,
+          "f1": 0.9675
+        },
+        "roc_auc": 0.2912,
+        "pr_auc": 0.8935
+      },
+      "iou_0.20": {
+        "n_samples": 1331,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 83,
+          "FN": 1,
+          "TP": 1247
+        },
+        "accuracy": 0.9369,
+        "balanced_accuracy": 0.4996,
+        "macro_f1": 0.4837,
+        "weighted_f1": 0.9071,
+        "sensitivity": 0.9992,
+        "specificity": 0.0,
+        "class_0_low": {
+          "support": 83,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "class_1_high": {
+          "support": 1248,
+          "precision": 0.9376,
+          "recall": 0.9992,
+          "f1": 0.9674
+        },
+        "roc_auc": 0.2914,
+        "pr_auc": 0.8924
+      },
+      "iou_0.25": {
+        "n_samples": 1219,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 73,
+          "FN": 1,
+          "TP": 1145
+        },
+        "accuracy": 0.9393,
+        "balanced_accuracy": 0.4996,
+        "macro_f1": 0.4843,
+        "weighted_f1": 0.9107,
+        "sensitivity": 0.9991,
+        "specificity": 0.0,
+        "class_0_low": {
+          "support": 73,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "class_1_high": {
+          "support": 1146,
+          "precision": 0.9401,
+          "recall": 0.9991,
+          "f1": 0.9687
+        },
+        "roc_auc": 0.3025,
+        "pr_auc": 0.8955
+      },
+      "iou_0.30": {
+        "n_samples": 1067,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 51,
+          "FN": 1,
+          "TP": 1015
+        },
+        "accuracy": 0.9513,
+        "balanced_accuracy": 0.4995,
+        "macro_f1": 0.4875,
+        "weighted_f1": 0.9284,
+        "sensitivity": 0.999,
+        "specificity": 0.0,
+        "class_0_low": {
+          "support": 51,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "class_1_high": {
+          "support": 1016,
+          "precision": 0.9522,
+          "recall": 0.999,
+          "f1": 0.975
+        },
+        "roc_auc": 0.3827,
+        "pr_auc": 0.9292
+      },
+      "iou_0.35": {
+        "n_samples": 945,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 41,
+          "FN": 1,
+          "TP": 903
+        },
+        "accuracy": 0.9556,
+        "balanced_accuracy": 0.4994,
+        "macro_f1": 0.4886,
+        "weighted_f1": 0.9349,
+        "sensitivity": 0.9989,
+        "specificity": 0.0,
+        "class_0_low": {
+          "support": 41,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "class_1_high": {
+          "support": 904,
+          "precision": 0.9566,
+          "recall": 0.9989,
+          "f1": 0.9773
+        },
+        "roc_auc": 0.4104,
+        "pr_auc": 0.9373
+      },
+      "iou_0.40": {
+        "n_samples": 868,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 36,
+          "FN": 1,
+          "TP": 831
+        },
+        "accuracy": 0.9574,
+        "balanced_accuracy": 0.4994,
+        "macro_f1": 0.4891,
+        "weighted_f1": 0.9377,
+        "sensitivity": 0.9988,
+        "specificity": 0.0,
+        "class_0_low": {
+          "support": 36,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "class_1_high": {
+          "support": 832,
+          "precision": 0.9585,
+          "recall": 0.9988,
+          "f1": 0.9782
+        },
+        "roc_auc": 0.4419,
+        "pr_auc": 0.9424
+      },
+      "iou_0.45": {
+        "n_samples": 781,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 28,
+          "FN": 1,
+          "TP": 752
+        },
+        "accuracy": 0.9629,
+        "balanced_accuracy": 0.4993,
+        "macro_f1": 0.4905,
+        "weighted_f1": 0.9459,
+        "sensitivity": 0.9987,
+        "specificity": 0.0,
+        "class_0_low": {
+          "support": 28,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "class_1_high": {
+          "support": 753,
+          "precision": 0.9641,
+          "recall": 0.9987,
+          "f1": 0.9811
+        },
+        "roc_auc": 0.3983,
+        "pr_auc": 0.9434
+      },
+      "iou_0.50": {
+        "n_samples": 620,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 24,
+          "FN": 1,
+          "TP": 595
+        },
+        "accuracy": 0.9597,
+        "balanced_accuracy": 0.4992,
+        "macro_f1": 0.4897,
+        "weighted_f1": 0.9415,
+        "sensitivity": 0.9983,
+        "specificity": 0.0,
+        "class_0_low": {
+          "support": 24,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "class_1_high": {
+          "support": 596,
+          "precision": 0.9612,
+          "recall": 0.9983,
+          "f1": 0.9794
+        },
+        "roc_auc": 0.4052,
+        "pr_auc": 0.9369
+      }
+    }
+  },
+  "clip_007": {
+    "ground_truth_eval_iou_0_30": {
+      "n_samples": 863,
+      "confusion_matrix": {
+        "TN": 3,
+        "FP": 165,
+        "FN": 2,
+        "TP": 693
+      },
+      "accuracy": 0.8065,
+      "balanced_accuracy": 0.5075,
+      "macro_f1": 0.4636,
+      "weighted_f1": 0.7255,
+      "sensitivity": 0.9971,
+      "specificity": 0.0179,
+      "class_0_low": {
+        "support": 168,
+        "precision": 0.6,
+        "recall": 0.0179,
+        "f1": 0.0347
+      },
+      "class_1_high": {
+        "support": 695,
+        "precision": 0.8077,
+        "recall": 0.9971,
+        "f1": 0.8925
+      },
+      "roc_auc": 0.6032,
+      "pr_auc": 0.8672
+    }
+  },
+  "video_project_3": {
+    "heuristic_agreement": {
+      "n_samples": 7075,
+      "confusion_matrix": {
+        "TN": 997,
+        "FP": 255,
+        "FN": 183,
+        "TP": 5640
+      },
+      "accuracy": 0.9381,
+      "balanced_accuracy": 0.8824,
+      "macro_f1": 0.8913,
+      "weighted_f1": 0.9374,
+      "sensitivity": 0.9686,
+      "specificity": 0.7963,
+      "class_0_low": {
+        "support": 1252,
+        "precision": 0.8449,
+        "recall": 0.7963,
+        "f1": 0.8199
+      },
+      "class_1_high": {
+        "support": 5823,
+        "precision": 0.9567,
+        "recall": 0.9686,
+        "f1": 0.9626
+      },
+      "roc_auc": 0.9068,
+      "pr_auc": 0.9697
+    },
+    "ground_truth": null,
+    "ground_truth_note": "No human CVAT ground-truth exists for Video Project 3. Evaluated against rule-based heuristic rubric only."
+  },
+  "test_4": {
+    "heuristic_agreement": {
+      "n_samples": 1928,
+      "confusion_matrix": {
+        "TN": 911,
+        "FP": 77,
+        "FN": 49,
+        "TP": 891
+      },
+      "accuracy": 0.9346,
+      "balanced_accuracy": 0.935,
+      "macro_f1": 0.9346,
+      "weighted_f1": 0.9347,
+      "sensitivity": 0.9479,
+      "specificity": 0.9221,
+      "class_0_low": {
+        "support": 988,
+        "precision": 0.949,
+        "recall": 0.9221,
+        "f1": 0.9353
+      },
+      "class_1_high": {
+        "support": 940,
+        "precision": 0.9205,
+        "recall": 0.9479,
+        "f1": 0.934
+      },
+      "roc_auc": 0.9719,
+      "pr_auc": 0.9477
+    },
+    "ground_truth": null,
+    "ground_truth_note": "No human CVAT ground-truth exists for test 4. Evaluated against rule-based heuristic rubric only."
+  },
+  "held_out_validation": {
+    "val_students": [
+      2,
+      5,
+      8,
+      14,
+      16,
+      18
+    ],
+    "n_val_sequences": 4602,
+    "n_train_sequences": 11728,
+    "total_sequences": 16330,
+    "eval_tau_0_50": {
+      "n_samples": 4602,
+      "confusion_matrix": {
+        "TN": 295,
+        "FP": 327,
+        "FN": 237,
+        "TP": 3743
+      },
+      "accuracy": 0.8774,
+      "balanced_accuracy": 0.7074,
+      "macro_f1": 0.7206,
+      "weighted_f1": 0.8734,
+      "sensitivity": 0.9405,
+      "specificity": 0.4743,
+      "class_0_low": {
+        "support": 622,
+        "precision": 0.5545,
+        "recall": 0.4743,
+        "f1": 0.5113
+      },
+      "class_1_high": {
+        "support": 3980,
+        "precision": 0.9197,
+        "recall": 0.9405,
+        "f1": 0.9299
+      },
+      "roc_auc": 0.7367,
+      "pr_auc": 0.9242
+    },
+    "calibrated_threshold": 0.5,
+    "eval_calibrated": {
+      "n_samples": 4602,
+      "confusion_matrix": {
+        "TN": 295,
+        "FP": 327,
+        "FN": 237,
+        "TP": 3743
+      },
+      "accuracy": 0.8774,
+      "balanced_accuracy": 0.7074,
+      "macro_f1": 0.7206,
+      "weighted_f1": 0.8734,
+      "sensitivity": 0.9405,
+      "specificity": 0.4743,
+      "class_0_low": {
+        "support": 622,
+        "precision": 0.5545,
+        "recall": 0.4743,
+        "f1": 0.5113
+      },
+      "class_1_high": {
+        "support": 3980,
+        "precision": 0.9197,
+        "recall": 0.9405,
+        "f1": 0.9299
+      },
+      "roc_auc": 0.7367,
+      "pr_auc": 0.9242
+    },
+    "ckpt_saved_calibrated": {
+      "threshold": 0.5,
+      "accuracy": 0.8774,
+      "balanced_accuracy": 0.7074,
+      "macro_f1": 0.7206,
+      "weighted_f1": 0.8734,
+      "roc_auc": 0.7367,
+      "pr_auc": 0.9242,
+      "class_0_disengaged": {
+        "precision": 0.5545,
+        "recall": 0.4743,
+        "f1": 0.5113,
+        "support": 622
+      },
+      "class_1_engaged": {
+        "precision": 0.9197,
+        "recall": 0.9405,
+        "f1": 0.9299,
+        "support": 3980
+      },
+      "confusion_matrix": {
+        "TN": 295,
+        "FP": 327,
+        "FN": 237,
+        "TP": 3743
+      }
+    },
+    "ckpt_saved_default": {
+      "threshold": 0.5,
+      "accuracy": 0.8774,
+      "balanced_accuracy": 0.7074,
+      "macro_f1": 0.7206,
+      "weighted_f1": 0.8734,
+      "roc_auc": 0.7367,
+      "pr_auc": 0.9242,
+      "class_0_disengaged": {
+        "precision": 0.5545,
+        "recall": 0.4743,
+        "f1": 0.5113,
+        "support": 622
+      },
+      "class_1_engaged": {
+        "precision": 0.9197,
+        "recall": 0.9405,
+        "f1": 0.9299,
+        "support": 3980
+      },
+      "confusion_matrix": {
+        "TN": 295,
+        "FP": 327,
+        "FN": 237,
+        "TP": 3743
+      }
+    }
+  }
+}

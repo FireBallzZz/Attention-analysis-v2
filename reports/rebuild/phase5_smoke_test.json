@@ -1,0 +1,32 @@
+{
+  "archive_path": "data/processed/smoke_test_fusion.npz",
+  "unique_clips": 3,
+  "unique_clips_list": [
+    "1100011002",
+    "4000221001",
+    "5000441001"
+  ],
+  "total_sequences": 71,
+  "sequence_length": 16,
+  "feature_dim": 32,
+  "splits_represented": [
+    "Test",
+    "Train",
+    "Validation"
+  ],
+  "binary_targets_distribution": {
+    "1": 71
+  },
+  "has_nan": false,
+  "has_inf": false,
+  "downstream_model_compatible": true,
+  "protected_hashes_intact": true,
+  "current_protected_hashes": {
+    "checkpoints/classroom_manual_binary_model_v2_clean.pt": "2BFA5AF8E190B5D4C16D463510543DBDCA2D8FCEF43CFDC1AE10E8C46C42124E",
+    "checkpoints/candidates/phase6g4c_engaged_disengaged_candidate.pt": "E01F33BF7859A7A06035D17DF60BA7B406DCD8307A8F5EE8F98EE86A63F26F8E",
+    "checkpoints/candidates/phase7_public_trained_binary_candidate.pt": "1847B2B9683EC40632FBAEC3B7191592305EBECEFAE855352C8E81C2230EDAE5",
+    "data/processed/fusion_daisee.npz": "15B3FB28EF15AAC1564423251F36825A5BC9FBB5E2F0353D27D8978AACB5196B",
+    "data/processed/fusion_daisee_v2.npz": "69E5C9984A27980AAC36BA14F190534D84AE5260145A114502D278627EE76733",
+    "data/processed/fusion_daisee_v3_hardened.npz": "4505FB4428944366459B1E3AEE37678A8AD7381AA19384A64514C87F75FD2DA6"
+  }
+}

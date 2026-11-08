@@ -1,0 +1,5 @@
+partition,level_0_engagement_seqs,level_1_engagement_seqs,level_2_engagement_seqs,level_3_engagement_seqs,class_0_non_attentive_seqs,class_1_attentive_seqs,total_seqs,class_0_pct,class_1_pct,clip_level_class_0,clip_level_class_1,total_clips,clip_level_class_0_pct
+Train,1099,7081,89895,87281,8180,177176,185356,4.41,95.59,248,5234,5482,4.52
+Validation,805,5591,31490,21800,6396,53290,59686,10.72,89.28,183,1537,1720,10.64
+Test,106,2874,30664,28115,2980,58779,61759,4.83,95.17,88,1696,1784,4.93
+ALL (Corpus),2010,15546,152049,137196,17556,289245,306801,5.72,94.28,519,8467,8986,5.78

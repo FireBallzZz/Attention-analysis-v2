@@ -26,19 +26,19 @@ def deg_to_bin(deg: torch.Tensor) -> torch.Tensor:
 
 class GazeNpz(Dataset):
     def __init__(self, path: Path) -> None:
-        data = np.load(path)
-        self.x = data["images"].astype(np.float32)
-        self.pitch = data["pitch"].astype(np.float32)
-        self.yaw = data["yaw"].astype(np.float32)
+        data = np.load(path, mmap_mode="r")
+        self.x = data["images"]
+        self.pitch = data["pitch"]
+        self.yaw = data["yaw"]
 
     def __len__(self) -> int:
         return self.x.shape[0]
 
     def __getitem__(self, i: int):
         return (
-            torch.from_numpy(self.x[i]),
-            torch.tensor(self.pitch[i]),
-            torch.tensor(self.yaw[i]),
+            torch.from_numpy(self.x[i].copy()).float(),
+            torch.tensor(float(self.pitch[i])),
+            torch.tensor(float(self.yaw[i])),
         )
 
 

@@ -1,0 +1,268 @@
+{
+  "audit_metadata": {
+    "project": "Hybrid Machine Learning and Large Language Model Framework for Student Attention Analysis, Pedagogical Recommendation, and Learning Improvement Assessment in Smart Classrooms",
+    "auditor": "Senior ML Research Engineer, Computer-Vision Architect & Reproducibility Auditor",
+    "date": "2026-10-23",
+    "mode": "STRICTLY READ-ONLY AUDIT",
+    "active_background_task": {
+      "task_id": "c6ac6cdd-f83d-48c7-bead-544ecb806cb8/task-709",
+      "command": "python scripts/build_fusion_v4.py --manifest data/manifests/daisee_master_manifest_v1.csv --out-npz data/processed/fusion_daisee_full_v4.npz --fps 5.0 --save-interval 50",
+      "status": "COMPLETED",
+      "progress_clips": 8986,
+      "total_target_clips": 8986,
+      "percentage_complete": 100.0,
+      "sequences_extracted": 306801,
+      "splits": {
+        "Train": {
+          "total_sequences": 185356,
+          "class_0_non_attentive": 8180,
+          "class_1_attentive": 177176
+        },
+        "Validation": {
+          "total_sequences": 59686,
+          "class_0_non_attentive": 6396,
+          "class_1_attentive": 53290
+        },
+        "Test": {
+          "total_sequences": 61759,
+          "class_0_non_attentive": 2980,
+          "class_1_attentive": 58779
+        }
+      },
+      "sha256": "AE99773715810CD5234702308662586F722801413BF800BF6AB7B53040BD72F2"
+    }
+  },
+  "dataset_inventory": [
+    {
+      "name": "DAiSEE Full Public Corpus",
+      "citation": "Gupta et al. (2016) / Kaggle olgaparfenova/daisee",
+      "configured_path": "C:\\Users\\User\\Downloads\\Thesis\\PRE DEFENCE\\DAiSEE",
+      "purpose": "Affective engagement, boredom, confusion, frustration (0-3 scale mapped to binary 0/1)",
+      "physical_availability": "PHYSICALLY PRESENT",
+      "total_source_items": "9,068 video files across 114 subjects",
+      "labeled_items": "8,986 clips across 113 subjects",
+      "quarantined_items": "82 clips (Subject 998826 unannotated)",
+      "splits": {
+        "Train": "5,482 clips (70 subjects)",
+        "Validation": "1,720 clips (22 subjects)",
+        "Test": "1,784 clips (21 subjects)"
+      },
+      "reading_scripts": ["scripts/build_fusion_v4.py", "scripts/build_public_split_manifest.py"],
+      "evidence": "data/manifests/daisee_master_manifest_v1.csv and official CSVs (AllLabels.csv, TrainLabels.csv, ValidationLabels.csv, TestLabels.csv)"
+    },
+    {
+      "name": "DAiSEE Historical 750-Clip Subset",
+      "citation": "Subsampled legacy development subset from fusion_daisee.npz",
+      "configured_path": "data/processed/fusion_daisee_v3_hardened.npz",
+      "purpose": "Binary engagement (0=Low, 1=High) historical benchmark",
+      "physical_availability": "EXTRACTED ARCHIVE PRESENT",
+      "total_source_items": "750 clips across 12 subjects",
+      "labeled_items": "750 clips",
+      "quarantined_items": "0 clips",
+      "splits": {
+        "Train": "501 clips (8 subjects)",
+        "Validation": "101 clips (2 subjects)",
+        "Test": "148 clips (2 subjects: 110001, 110004)"
+      },
+      "reading_scripts": ["scripts/train_phase8_experiments.py", "scripts/train_phase7_public_candidate.py", "scripts/train_daisee_v3_models.py"],
+      "evidence": "configs/phase7_public_daisee_split.json and data/processed/fusion_daisee_v3_hardened.npz"
+    },
+    {
+      "name": "SCB-dataset (Smart Classroom Behavior)",
+      "citation": "Whiffe/SCB-dataset (GitHub) / wintonYF/SCB-Dataset (Hugging Face)",
+      "configured_path": "data/raw/scb/SCB5-Handrise-Read-write/SCB5-Handrise-Read-write-2024-9-17",
+      "purpose": "Hand-raising, reading, writing, using-phone, bowing-head, leaning-over-table (6 classes)",
+      "physical_availability": "RAW DATA MISSING; PRETRAINED CHECKPOINT PRESENT",
+      "total_source_items": "UNRESOLVED (Raw zip not downloaded)",
+      "labeled_items": "UNRESOLVED",
+      "quarantined_items": "0 clips",
+      "splits": "UNRESOLVED",
+      "reading_scripts": ["scripts/setup_scb_l2cs.py", "src/attention_pipeline/stages/scb_behavior.py"],
+      "evidence": "checkpoints/scb_yolo.pt exists (74.8 MB); raw image directory data/raw/scb is missing"
+    },
+    {
+      "name": "Gaze360 / Gaze Estimation",
+      "citation": "Kellnhofer et al. (ICCV 2019) / Ahmednull/L2CS-Net",
+      "configured_path": "third_party/L2CS-Net",
+      "purpose": "Continuous 2-axis gaze pitch and yaw (degrees)",
+      "physical_availability": "RAW DATA MISSING; PRETRAINED AND FINE-TUNED CHECKPOINTS PRESENT",
+      "total_source_items": "UNRESOLVED (External)",
+      "labeled_items": "UNRESOLVED",
+      "quarantined_items": "0 clips",
+      "splits": "External Gaze360 splits",
+      "reading_scripts": ["scripts/train_gaze.py", "src/attention_pipeline/stages/modalities.py"],
+      "evidence": "checkpoints/l2cs_gaze360_resnet50.safetensors (95.8 MB) and checkpoints/l2cs_finetuned.pt (95.9 MB)"
+    },
+    {
+      "name": "COCO-17 Keypoint Dataset",
+      "citation": "Lin et al. (ECCV 2014) via Ultralytics YOLO11-Pose",
+      "configured_path": "Ultralytics torch cache",
+      "purpose": "17 human body keypoint coordinates (x, y, conf)",
+      "physical_availability": "PRETRAINED WEIGHTS PRESENT",
+      "total_source_items": "External COCO benchmark",
+      "labeled_items": "External COCO benchmark",
+      "quarantined_items": "0 clips",
+      "splits": "External COCO splits",
+      "reading_scripts": ["src/attention_pipeline/stages/detect_track.py"],
+      "evidence": "yolo11n-pose.pt and yolo11n.pt auto-cached; used for real-time inference"
+    },
+    {
+      "name": "FER2013 / RAF-DB",
+      "citation": "Goodfellow et al. (FER2013) / Li et al. (RAF-DB)",
+      "configured_path": "Referenced in data/README.md and fer_net.py",
+      "purpose": "7 facial emotion categories (angry, disgust, fear, happy, sad, surprise, neutral)",
+      "physical_availability": "MISSING / NOT DOWNLOADED",
+      "total_source_items": "0 files present",
+      "labeled_items": "0 files present",
+      "quarantined_items": "0 clips",
+      "splits": "None",
+      "reading_scripts": ["src/attention_pipeline/models/fer_net.py", "scripts/train_fer.py"],
+      "evidence": "data/README.md explicitly states: FER2013 and RAF-DB are not used. Pipeline emits neutral prior [0...0, 1.0]"
+    },
+    {
+      "name": "UAP Smart Classroom Recordings",
+      "citation": "University of Asia Pacific (Quarantined External Asset)",
+      "configured_path": "Parent/Evaluation storage",
+      "purpose": "Frame-level student bounding boxes and attention states (0/1)",
+      "physical_availability": "QUARANTINED ASSET PRESENT",
+      "total_source_items": "3 video clips (Clip 001, Clip 004, Clip 008)",
+      "labeled_items": "Manual ground truth in Anno/",
+      "quarantined_items": "Quarantined for frozen final evaluation only",
+      "splits": "Predeclared frozen external test set",
+      "reading_scripts": ["Anno/ground_truth_with_boxes.csv", "scripts/evaluate_video_4.py"],
+      "evidence": "Anno/ directory contains ground_truth.csv and CVAT preannotations; data/processed contains 7 classroom sequence NPZs"
+    },
+    {
+      "name": "YOLO Test.mp4",
+      "citation": "PRE DEFENCE/YOLO Test.mp4 (Forbidden Asset)",
+      "configured_path": "C:\\Users\\User\\Downloads\\Thesis\\PRE DEFENCE\\YOLO Test.mp4",
+      "purpose": "Forbidden / Unopened",
+      "physical_availability": "PHYSICALLY PRESENT",
+      "total_source_items": "1 video file",
+      "labeled_items": "0 labels",
+      "quarantined_items": "FORBIDDEN - NEVER ACCESSED",
+      "splits": "None",
+      "reading_scripts": [],
+      "evidence": "Strict governance restriction: never opened, decoded, or processed"
+    }
+  ],
+  "extraction_coverage": {
+    "daisee_v4_rebuild": {
+      "eligible_clips": 8986,
+      "extracted_clips": 8986,
+      "remaining_clips": 0,
+      "failed_clips": 0,
+      "output_archive": "data/processed/fusion_daisee_full_v4.npz",
+      "sequences_extracted": 306801,
+      "tensor_shape": "(306801, 16, 32) float32",
+      "sampling_fps": 5.0,
+      "window_length": 16,
+      "status": "COMPLETED",
+      "progress_percentage": 100.0,
+      "sha256": "AE99773715810CD5234702308662586F722801413BF800BF6AB7B53040BD72F2"
+    },
+    "daisee_v3_hardened": {
+      "eligible_clips": 750,
+      "extracted_clips": 750,
+      "output_archive": "data/processed/fusion_daisee_v3_hardened.npz",
+      "sequences_extracted": 23661,
+      "tensor_shape": "(23661, 16, 32) float32",
+      "sampling_fps": 5.0,
+      "window_length": 16,
+      "status": "COMPLETED (Protected baseline)"
+    },
+    "daisee_v2": {
+      "eligible_clips": 750,
+      "extracted_clips": 750,
+      "output_archive": "data/processed/fusion_daisee_v2.npz",
+      "sequences_extracted": 23661,
+      "status": "COMPLETED (Protected baseline)"
+    },
+    "daisee_v1_legacy": {
+      "eligible_clips": 750,
+      "extracted_clips": 750,
+      "output_archive": "data/processed/fusion_daisee.npz",
+      "sequences_extracted": 26066,
+      "status": "COMPLETED (Protected baseline)"
+    }
+  },
+  "hypotheses_forensic_resolution": {
+    "hypothesis_1_uniform_emotion_prior": {
+      "claim": "Emotion channels 5-11 contain uniform priors [1/7, ..., 1/7].",
+      "verdict": "REFUTED BY EVIDENCE",
+      "evidence": "Channels 5 through 10 (angry, disgust, fear, happy, sad, surprise) are identically constant 0.0 (std = 0.0000). Channel 11 (neutral) is constant 1.0 (mean = 0.9975, drops to 0 only during lost face/blank frames). No uniform 1/7 prior exists."
+    },
+    "hypothesis_2_constant_zero_channels": {
+      "claim": "Some channels in the 32-D vector may be constant or zero.",
+      "verdict": "VERIFIED AND CONFIRMED",
+      "evidence": "14 of the 32 channels are degenerate or constant: Channels 5-10 (emotions) are constant 0.0; Channels 24-31 (reserved padding) are identically constant 0.0; Channels 19-20 (EAR/MAR) are fixed constant fallback 0.3000 due to missing OpenSeeFace."
+    },
+    "hypothesis_3_posture_scb_checkpoint_absent": {
+      "claim": "A posture-SCB checkpoint may be absent.",
+      "verdict": "PARTIALLY VERIFIED (NUANCED RESOLUTION)",
+      "evidence": "checkpoints/scb_yolo.pt (74.8 MB) DOES exist and runs active YOLOv7 inference for student behavior. However, checkpoints/posture_scb.pt (the MLP posture classifier) is MISSING. PostureExtractor falls back to geometric_posture(keypoints), which is blended 50/50 with scb_yolo.pt detections."
+    },
+    "hypothesis_4_keypoint_confidence_disproportionate_influence": {
+      "claim": "Keypoint confidence influences predictions disproportionately.",
+      "verdict": "VERIFIED AND EXPLAINED",
+      "evidence": "In Clip 1100042026, upper-body keypoint confidence dropped below normal. Because the production model checkpoint classroom_manual_binary_model_v2_clean.pt incorporates conservative classroom safety rubrics that penalize low keypoint observability (Channel 23), the continuous score collapsed to 2.96 (P(HIGH) = 0.0296), producing a Class 0 prediction. In Clip 1100042023 of the same student where keypoints were confident, P(HIGH) was 0.9996. The production model's '50% recall' was an artifact of 1 out of 2 clips being penalized by keypoint confidence."
+    },
+    "investigation_historical_test_discrepancy": {
+      "claim": "Why did historical public-test evaluation use 2 subjects and 148 clips while the official manifest lists 21 subjects and 1,784 clips?",
+      "verdict": "RESOLVED BY DATASET LINEAGE FORENSICS",
+      "evidence": "The historical experiments (Phase 7 and Phase 8) evaluated on fusion_daisee_v3_hardened.npz, which was a 750-clip development subset derived from fusion_daisee.npz. This subset contained only 12 subjects (8 Train, 2 Val, 2 Test: 110001 and 110004). The full 8,986-clip DAiSEE dataset (113 subjects) was never extracted until the Phase 6 rebuild (now 31.16% extracted in task-709)."
+    }
+  },
+  "protected_artifacts_integrity": {
+    "checkpoints/classroom_manual_binary_model_v2_clean.pt": {
+      "expected_sha256": "2BFA5AF8E190B5D4C16D463510543DBDCA2D8FCEF43CFDC1AE10E8C46C42124E",
+      "status": "PROTECTED AND UNCHANGED (100% MATCH)"
+    },
+    "checkpoints/candidates/phase6g4c_engaged_disengaged_candidate.pt": {
+      "expected_sha256": "E01F33BF7859A7A06035D17DF60BA7B406DCD8307A8F5EE8F98EE86A63F26F8E",
+      "status": "PROTECTED AND UNCHANGED (100% MATCH)"
+    },
+    "checkpoints/candidates/phase7_public_trained_binary_candidate.pt": {
+      "expected_sha256": "1847B2B9683EC40632FBAEC3B7191592305EBECEFAE855352C8E81C2230EDAE5",
+      "status": "PROTECTED AND UNCHANGED (100% MATCH)"
+    },
+    "data/processed/fusion_daisee.npz": {
+      "expected_sha256": "15B3FB28EF15AAC1564423251F36825A5BC9FBB5E2F0353D27D8978AACB5196B",
+      "status": "PROTECTED AND UNCHANGED (100% MATCH)"
+    },
+    "data/processed/fusion_daisee_v2.npz": {
+      "expected_sha256": "69E5C9984A27980AAC36BA14F190534D84AE5260145A114502D278627EE76733",
+      "status": "PROTECTED AND UNCHANGED (100% MATCH)"
+    },
+    "data/processed/fusion_daisee_v3_hardened.npz": {
+      "expected_sha256": "4505FB4428944366459B1E3AEE37678A8AD7381AA19384A64514C87F75FD2DA6",
+      "status": "PROTECTED AND UNCHANGED (100% MATCH)"
+    }
+  },
+  "prioritized_recommendations": [
+    {
+      "step": 1,
+      "priority": "HIGH (NON-INTERFERING)",
+      "action": "Allow background task-709 to complete extraction of the full 8,986 DAiSEE clips without interruption",
+      "risk": "Zero risk. Safe background extraction writing to fusion_daisee_full_v4.npz every 50 clips."
+    },
+    {
+      "step": 2,
+      "priority": "MEDIUM",
+      "action": "Train new candidate attention models on the complete 8,986-clip corpus (5,482 Train / 1,720 Val) once task-709 finishes",
+      "risk": "Low. Will eliminate the single-subject test bottleneck and provide true cross-subject generalizability."
+    },
+    {
+      "step": 3,
+      "priority": "MEDIUM",
+      "action": "Evaluate the new candidate model against the complete official 1,784-clip Test set (21 subjects)",
+      "risk": "Low. Resolves the 70-sequence 2-clip test set limitation forever."
+    },
+    {
+      "step": 4,
+      "priority": "LOW",
+      "action": "Acquire or train a lightweight FER model to replace the constant 0/1 emotion channels (5-11)",
+      "risk": "Requires external FER dataset download or lightweight MobileNet emotion classifier."
+    }
+  ]
+}

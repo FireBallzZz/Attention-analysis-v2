@@ -31,6 +31,11 @@ class DetectorTracker:
         min_det_conf: float = 0.25,
         require_face: bool = True,
         max_people: int | None = None,
+        smooth_box: bool = True,
+        box_ema_alpha: float = 0.7,
+        max_area_ratio: float = 1.5,
+        auto_max_students: bool = True,
+        calibrate_frames: int = 30,
     ) -> None:
         self.conf = conf
         self.iou = iou
@@ -43,11 +48,18 @@ class DetectorTracker:
         self.n_init = n_init
         self.imgsz = imgsz
         self.tiles = tiles
-        # Drop empty wall/monitor boxes: need a face and a clearer detection.
         self.min_det_conf = float(min_det_conf)
         self.require_face = bool(require_face)
         self.max_people = max_people
+        self.smooth_box = bool(smooth_box)
+        self.box_ema_alpha = float(box_ema_alpha)
+        self.max_area_ratio = float(max_area_ratio)
+        self.auto_max_students = bool(auto_max_students)
+        self.calibrate_frames = int(calibrate_frames)
+        self._frame_count = 0
+        self._detected_counts: list[int] = []
         self._next_id = 1
+        self._active_tracks: dict[int, dict] = {}
         self._prev: list[tuple[int, np.ndarray]] = []
         self._instructor: tuple[float, float] | None = None
         self._instructor_misses = 0
@@ -67,52 +79,195 @@ class DetectorTracker:
                 self._person = None
 
     def infer(self, frame: np.ndarray) -> list[Detection]:
-        """One box per visible person. The count is whoever is in this frame."""
+        """One box per visible person. Stabilized bounding boxes capped at class capacity."""
         self._lazy_load()
+        self._frame_count += 1
         packed = self._detect_people(frame)
         frame_h = int(frame.shape[0])
         packed, self._instructor, self._instructor_misses = _drop_instructors(
             packed, frame_h, self._instructor, self._instructor_misses
         )
+
+        # Auto-calibrate classroom capacity if not explicitly provided
+        if self._frame_count <= self.calibrate_frames:
+            self._detected_counts.append(len(packed))
+            if self._frame_count == self.calibrate_frames and self.max_people is None and self.auto_max_students:
+                valid_counts = [c for c in self._detected_counts if c > 0]
+                if valid_counts:
+                    self.max_people = max(1, int(np.median(valid_counts)))
+
         if not packed:
-            self._prev = []
+            for t in self._active_tracks.values():
+                t["age"] += 1
+            self._active_tracks = {
+                tid: t for tid, t in self._active_tracks.items() if t["age"] <= self.max_age
+            }
+            self._prev = [(tid, t["box"].copy()) for tid, t in self._active_tracks.items() if t["age"] == 0]
             return []
 
+        # 1. Intra-frame duplicate suppression: eliminate overlapping boxes on the same student
+        packed.sort(key=lambda item: item[1], reverse=True)
+        deduped: list[tuple[np.ndarray, float, np.ndarray]] = []
+        for box, conf, kpts in packed:
+            dup = False
+            for prev_b, _c, _k in deduped:
+                if _iou(box, prev_b) > 0.40 or _iomin(box, prev_b) > 0.50:
+                    dup = True
+                    break
+            if not dup:
+                deduped.append((box, conf, kpts))
+        packed = deduped
+
+        # 2. Match detections with existing active tracks
+        eligible_tracks = [
+            (tid, t["box"]) for tid, t in self._active_tracks.items() if t["age"] <= self.max_age
+        ]
         pairs: list[tuple[float, int, int]] = []
         for di, (box, _conf, _k) in enumerate(packed):
-            for pi, (_tid, prev_box) in enumerate(self._prev):
+            for pi, (_tid, prev_box) in enumerate(eligible_tracks):
                 score = _track_score(box, prev_box)
-                if score >= 0.35:
+                if score >= 0.30:
                     pairs.append((score, di, pi))
         pairs.sort(reverse=True)
         taken_det: set[int] = set()
         used_prev: set[int] = set()
+        matched_tids: set[int] = set()
         assigned: list[tuple[int, np.ndarray, float, np.ndarray]] = []
+
         for _score, di, pi in pairs:
             if di in taken_det or pi in used_prev:
                 continue
             taken_det.add(di)
             used_prev.add(pi)
+            tid, prev_box = eligible_tracks[pi]
+            matched_tids.add(tid)
             box, conf, kpts = packed[di]
-            assigned.append((self._prev[pi][0], box, conf, kpts))
 
+            # 3. Sudden expansion damping & temporal box smoothing
+            if self.smooth_box:
+                curr_area = _box_area(box)
+                prev_area = _box_area(prev_box)
+                ratio = curr_area / max(prev_area, 1.0)
+                if ratio > self.max_area_ratio:
+                    # Bounding box increased suddenly: clamp dimensions and anchor to center
+                    scale = float(np.sqrt(self.max_area_ratio))
+                    pw = max(float(prev_box[2] - prev_box[0]), 1.0)
+                    ph = max(float(prev_box[3] - prev_box[1]), 1.0)
+                    cw = max(float(box[2] - box[0]), 1.0)
+                    ch = max(float(box[3] - box[1]), 1.0)
+                    tw = min(cw, pw * scale)
+                    th = min(ch, ph * scale)
+                    cx = (float(box[0]) + float(box[2])) / 2.0
+                    cy = (float(box[1]) + float(box[3])) / 2.0
+                    clamped = np.array(
+                        [cx - tw / 2.0, cy - th / 2.0, cx + tw / 2.0, cy + th / 2.0],
+                        dtype=np.float32,
+                    )
+                    smoothed = (1.0 - 0.3) * prev_box + 0.3 * clamped
+                elif ratio < 1.0 / self.max_area_ratio:
+                    # Sudden shrink damping
+                    smoothed = (1.0 - 0.3) * prev_box + 0.3 * box
+                else:
+                    # Normal smooth moving average to eliminate jitter
+                    alpha = self.box_ema_alpha
+                    smoothed = (1.0 - alpha) * prev_box + alpha * box
+            else:
+                smoothed = box
+
+            self._active_tracks[tid]["box"] = smoothed.astype(np.float32)
+            self._active_tracks[tid]["age"] = 0
+            self._active_tracks[tid]["hits"] = self._active_tracks[tid].get("hits", 0) + 1
+            self._active_tracks[tid]["conf"] = float(conf)
+            self._active_tracks[tid]["kpts"] = kpts
+            assigned.append((tid, smoothed, conf, kpts))
+
+        # 4. Handle unmatched detections under total classroom capacity
+        active_count = len([t for t in self._active_tracks.values() if t["age"] <= 5])
         for di, (box, conf, kpts) in enumerate(packed):
             if di in taken_det:
                 continue
-            assigned.append((self._next_id, box, conf, kpts))
-            self._next_id += 1
+            # Capacity check: cannot exceed total students in the class
+            if self.max_people is not None and (len(assigned) >= self.max_people or active_count >= self.max_people):
+                continue
 
-        self._prev = [(tid, box.copy()) for tid, box, _c, _k in assigned]
+            # Check overlap against currently assigned tracks to prevent duplicate box for same student
+            overlap = False
+            hx, hy, _ = _head_point(box, kpts, frame_w=1920)
+            for _atid, abox, _aconf, akpts in assigned:
+                ahx, ahy, _ = _head_point(abox, akpts, frame_w=1920)
+                hdist = ((hx - ahx) ** 2 + (hy - ahy) ** 2) ** 0.5
+                # If head landmarks are distinct across consecutive classroom rows, allow the track
+                if hdist >= 35.0 and abs(hy - ahy) >= 18.0:
+                    continue
+                if _iou(box, abox) > 0.35 or _iomin(box, abox) > 0.45:
+                    overlap = True
+                    break
+            if overlap:
+                continue
+
+            tid = self._next_id
+            self._next_id += 1
+            self._active_tracks[tid] = {
+                "box": box.copy().astype(np.float32),
+                "age": 0,
+                "hits": 1,
+                "conf": float(conf),
+                "kpts": kpts,
+            }
+            matched_tids.add(tid)
+            active_count += 1
+            assigned.append((tid, box, conf, kpts))
+
+        # 5. Increment age for unmatched tracks, coast active tracks, and prune dead tracks
+        for tid, t in list(self._active_tracks.items()):
+            if tid not in matched_tids:
+                t["age"] += 1
+                if t["age"] <= self.max_age:
+                    # Coast confirmed active student tracks only when no fresh box already covers this student
+                    if t.get("hits", 0) >= 2:
+                        already_covered = False
+                        for _atid, abox, _aconf, _akpts in assigned:
+                            if _iou(t["box"], abox) > 0.25 or _iomin(t["box"], abox) > 0.35:
+                                already_covered = True
+                                break
+                        if not already_covered:
+                            assigned.append((tid, t["box"], max(0.10, t["conf"] * 0.98), t["kpts"]))
+                else:
+                    del self._active_tracks[tid]
+
+        # 6. Final strict non-maximum suppression / deduplication to permanently stop duplicate boxes
+        assigned.sort(key=lambda item: (item[2], item[0]), reverse=True)
+        final_assigned: list[tuple[int, np.ndarray, float, np.ndarray]] = []
+        for item in assigned:
+            dup = False
+            for _ftid, fbox, _fconf, _fkpts in final_assigned:
+                if _iou(item[1], fbox) > 0.30 or _iomin(item[1], fbox) > 0.35:
+                    dup = True
+                    break
+            if not dup:
+                final_assigned.append(item)
+        assigned = final_assigned
+
+        if self.max_people is not None and len(assigned) > self.max_people:
+            assigned = assigned[: int(self.max_people)]
+
+        self._prev = [(tid, t["box"].copy()) for tid, t in self._active_tracks.items() if t["age"] <= 5]
         dets: list[Detection] = []
         for tid, box, conf, kpts in assigned:
+            # Temporal Confirmation Gate (n_init):
+            # Require at least self.n_init detections to confirm a real student track.
+            # Provisional single-frame glitches are tracked internally but suppressed from emission.
+            hits = self._active_tracks.get(tid, {}).get("hits", 1)
+            if hits < self.n_init and self._frame_count > self.n_init:
+                continue
             k = kpts
-            if k.ndim == 2 and k.shape[1] == 2:
+            if k is not None and k.ndim == 2 and k.shape[1] == 2:
                 conf_col = np.ones((k.shape[0], 1), np.float32)
                 k = np.concatenate([k, conf_col], axis=1)
             dets.append(
                 Detection(
                     bbox_xyxy=box.astype(np.float32),
-                    keypoints=k.astype(np.float32),
+                    keypoints=k.astype(np.float32) if k is not None else np.zeros((17, 3), np.float32),
                     conf=float(conf),
                     track_id=int(tid),
                 )
@@ -123,27 +278,71 @@ class DetectorTracker:
         h, w = frame.shape[:2]
         pose_hits = self._collect_pose(frame)
         people = _cluster_by_head(pose_hits, w)
-        # Once the pose model has the class, person-only boxes are a second
-        # mark on students who already have a face.
+        # Person-only boxes are guarded to prevent inanimate clutter/leg hallucinations in multi-student classrooms
         if self._person is not None and len(people) < 12:
             people = _add_unmatched_people(
                 people, self._collect_person_boxes(frame), w, h
             )
         people = _add_unmatched_faces(people, self._collect_faces(frame), w, h)
         people = _suppress_duplicate_boxes(people, w)
-        people = self._keep_real_students(people)
+        people = self._keep_real_students(people, w)
         people = _drop_ceiling_specks(people, h, w)
         return _drop_tiny_near_face(people, w)
 
     def _keep_real_students(
-        self, people: list[tuple[np.ndarray, float, np.ndarray]]
+        self, people: list[tuple[np.ndarray, float, np.ndarray]], frame_w: int = 1920
     ) -> list[tuple[np.ndarray, float, np.ndarray]]:
-        """Count only people with a visible face. Cap at the known class size."""
+        """Count only real students with valid human anatomy. Reject inanimate border slivers and phantom clutter."""
         kept: list[tuple[np.ndarray, float, np.ndarray]] = []
         for box, conf, kpts in people:
             if conf < self.min_det_conf:
                 continue
-            if self.require_face and not _face_confident(kpts):
+            bw = float(box[2] - box[0])
+            bh = float(box[3] - box[1])
+            # Reject thin border slivers (e.g. computer monitor bezels right against image edge)
+            if (box[0] <= 3.0 or box[2] >= (frame_w - 3.0)) and bw < 25.0:
+                continue
+            if bw < 15.0 or bh < 20.0:
+                continue
+
+            # Human Aspect Ratio Gate:
+            # Reject flat horizontal surfaces (bh/bw < 0.48, e.g. desk tops/keyboards/shadows)
+            aspect = bh / max(bw, 1.0)
+            if aspect < 0.48 or aspect > 4.2:
+                continue
+
+            # Anatomical Head-Shoulder Triangle & Plausibility Verification:
+            has_face = _face_confident(kpts)
+            l_sh_ok = kpts is not None and kpts.shape[0] > 5 and float(kpts[5, 2]) > 0.25
+            r_sh_ok = kpts is not None and kpts.shape[0] > 6 and float(kpts[6, 2]) > 0.25
+            has_both_shoulders = bool(l_sh_ok and r_sh_ok)
+            has_any_shoulder = bool(l_sh_ok or r_sh_ok)
+
+            valid_anatomy = False
+            if kpts is not None and kpts.shape[0] >= 7:
+                nose_ok = float(kpts[0, 2]) > 0.25
+                if nose_ok and has_any_shoulder:
+                    sh_y = float(kpts[5, 1]) if l_sh_ok else float(kpts[6, 1])
+                    if has_both_shoulders:
+                        sh_y = (float(kpts[5, 1]) + float(kpts[6, 1])) / 2.0
+                    nose_y = float(kpts[0, 1])
+                    # Head must be anatomically above or level with shoulders (not below)
+                    if nose_y < sh_y + 0.15 * bh:
+                        valid_anatomy = True
+                elif has_face:
+                    valid_anatomy = True
+                elif has_both_shoulders and conf >= 0.30:
+                    sh_span = abs(float(kpts[5, 0]) - float(kpts[6, 0]))
+                    if 0.15 * bw < sh_span < 0.95 * bw:
+                        valid_anatomy = True
+                elif has_any_shoulder and conf >= 0.40:
+                    valid_anatomy = True
+            else:
+                valid_anatomy = has_face or (has_any_shoulder and conf >= 0.35)
+
+            if self.require_face and not has_face:
+                continue
+            if not valid_anatomy:
                 continue
             kept.append((box, conf, kpts))
         kept.sort(key=lambda item: item[1], reverse=True)
@@ -153,6 +352,7 @@ class DetectorTracker:
 
     def count_students(self, frame: np.ndarray) -> int:
         """How many real students are in this frame (before the class-size cap)."""
+        self._lazy_load()
         previous = self.max_people
         self.max_people = None
         n = len(self._detect_people(frame))
@@ -748,19 +948,28 @@ def _duplicate_of(
     hx, hy, hs = head
     ox, oy, os_ = other_head
     dist = ((hx - ox) ** 2 + (hy - oy) ** 2) ** 0.5
+    iou = _iou(box, other)
+    iomin = _iomin(box, other)
+
+    # Definite geometric duplicate: high box overlap
+    if iou >= 0.40 or iomin >= 0.55:
+        return True
+
     if _heads_match(hx, hy, hs, ox, oy, os_) or _same_student(
         hx, hy, hs, ox, oy, os_, frame_w
     ):
         return True
-    # A student in the next row can overlap the box behind them.
-    if _face_confident(kpts) and _face_confident(other_kpts):
+
+    # A student in the next row can overlap the box behind them,
+    # as long as their head points are genuinely separated in 2D space (distinct classroom depth tiers).
+    dy = abs(hy - oy)
+    if (dy >= max(18.0, 0.38 * min(hs, os_)) or dist >= max(35.0, 0.75 * min(hs, os_))) and iou < 0.35:
         return False
-    iou = _iou(box, other)
-    iomin = _iomin(box, other)
-    # A small box mostly inside a larger one is the same student counted twice.
-    if iomin >= 0.5:
+
+    # A small box mostly inside a larger one is the same student counted twice (only if heads match)
+    if iomin >= 0.55 and dist < max(28.0, 0.6 * min(hs, os_)):
         return True
-    if iomin >= 0.35 and (
+    if iomin >= 0.35 and dist < max(28.0, 0.6 * min(hs, os_)) and (
         _point_in_box(hx, hy, other, pad=8.0) or _point_in_box(ox, oy, box, pad=8.0)
     ):
         return True

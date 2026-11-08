@@ -126,7 +126,7 @@ def _load_pred_jsonl(path: Path) -> dict[int, list[dict]]:
     return by_frame
 
 
-def match_frame(gt_list: list[dict], pred_list: list[dict], iou_thr: float) -> list[tuple[str, str]]:
+def match_frame(gt_list: list[dict], pred_list: list[dict], iou_thr: float) -> tuple[list[tuple[str, str]], int, int]:
     pairs: list[tuple[float, int, int]] = []
     for gi, g in enumerate(gt_list):
         for pi, p in enumerate(pred_list):
@@ -143,7 +143,9 @@ def match_frame(gt_list: list[dict], pred_list: list[dict], iou_thr: float) -> l
         used_g.add(gi)
         used_p.add(pi)
         matched.append((gt_list[gi]["band"], pred_list[pi]["band"]))
-    return matched
+    unmatched_gt = len(gt_list) - len(used_g)
+    unmatched_pred = len(pred_list) - len(used_p)
+    return matched, unmatched_gt, unmatched_pred
 
 
 def prf1(y_true: list[str], y_pred: list[str]) -> dict:
@@ -151,10 +153,16 @@ def prf1(y_true: list[str], y_pred: list[str]) -> dict:
     acc = sum(t == p for t, p in zip(y_true, y_pred)) / support if support else 0.0
     per = {}
     macros = []
+    cm = {gt: {pred: 0 for pred in BANDS} for gt in BANDS}
+    for t, p in zip(y_true, y_pred):
+        if t in cm and p in cm[t]:
+            cm[t][p] += 1
+
+    recalls = []
     for band in BANDS:
-        tp = sum(t == band and p == band for t, p in zip(y_true, y_pred))
-        fp = sum(t != band and p == band for t, p in zip(y_true, y_pred))
-        fn = sum(t == band and p != band for t, p in zip(y_true, y_pred))
+        tp = cm[band][band]
+        fp = sum(cm[other][band] for other in BANDS if other != band)
+        fn = sum(cm[band][other] for other in BANDS if other != band)
         prec = tp / (tp + fp) if tp + fp else 0.0
         rec = tp / (tp + fn) if tp + fn else 0.0
         f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
@@ -162,15 +170,24 @@ def prf1(y_true: list[str], y_pred: list[str]) -> dict:
             "precision": prec,
             "recall": rec,
             "f1": f1,
-            "support": sum(t == band for t in y_true),
+            "support": sum(cm[band].values()),
         }
         macros.append((prec, rec, f1))
+        recalls.append(rec)
     macro = {
         "precision": sum(m[0] for m in macros) / 3,
         "recall": sum(m[1] for m in macros) / 3,
         "f1": sum(m[2] for m in macros) / 3,
     }
-    return {"accuracy": acc, "support": support, "per_band": per, "macro": macro}
+    balanced_acc = sum(recalls) / 3.0 if recalls else 0.0
+    return {
+        "accuracy": acc,
+        "balanced_accuracy": balanced_acc,
+        "support": support,
+        "per_band": per,
+        "macro": macro,
+        "confusion_matrix": cm,
+    }
 
 
 def write_report(
@@ -181,31 +198,33 @@ def write_report(
     pred_path: Path,
     matched: int,
     unmatched_gt: int,
+    unmatched_pred: int,
+    total_gt: int,
+    total_pred: int,
 ) -> None:
-    import sys
-
-    sys.path.insert(0, str(ROOT / "src"))
-    from attention_pipeline.video_accuracy import load_model_metrics, model_lines
-
-    model = load_model_metrics()
-    overall_model = ((model or {}).get("overall") or {}).get("accuracy")
+    cm = metrics["confusion_matrix"]
+    macro = metrics["macro"]
     lines = [
         "=" * 72,
-        "VIDEO ACCURACY REPORT",
+        "CLASSROOM ATTENTION GROUND-TRUTH ACCURACY REPORT",
         "=" * 72,
         "",
-        f"Video      : {video.resolve()}",
-        f"Ground truth: {csv_path.resolve()}",
-        f"Predictions : {pred_path.resolve()}",
-        f"Matched boxes : {matched}",
-        f"Unmatched GT  : {unmatched_gt}",
+        f"Input Video       : {video.resolve()}",
+        f"Ground Truth File : {csv_path.resolve()}",
+        f"Model Predictions : {pred_path.resolve()}",
         "",
-        *model_lines(model),
+        "-" * 72,
+        "STUDENT DETECTION & SPATIAL MATCHING COVERAGE",
+        "-" * 72,
+        f"Total GT Student Instances   : {total_gt}",
+        f"Total Model Detections       : {total_pred}",
+        f"Matched Observations (IoU>=0.3): {matched} ({matched/total_gt*100:.2f}% of GT)" if total_gt else f"Matched Observations: {matched}",
+        f"Unmatched GT Instances (Missed): {unmatched_gt}",
+        f"Unmatched Model Predictions  : {unmatched_pred}",
         "",
-        "=" * 72,
-        "GROUND TRUTH ACCURACY",
-        "=" * 72,
-        "",
+        "-" * 72,
+        "ATTENTION CLASSIFICATION METRICS (CONDITIONAL ON MATCH)",
+        "-" * 72,
         f"{'Band':<12} {'Prec':>8} {'Rec':>8} {'F1':>8} {'Support':>8}",
         "-" * 72,
     ]
@@ -215,16 +234,37 @@ def write_report(
             f"{band:<12} {item['precision']*100:7.2f}% {item['recall']*100:7.2f}% "
             f"{item['f1']*100:7.2f}% {item['support']:8d}"
         )
-    macro = metrics["macro"]
     lines.extend(
         [
             "-" * 72,
             f"{'MACRO':<12} {macro['precision']*100:7.2f}% {macro['recall']*100:7.2f}% "
-            f"{macro['f1']*100:7.2f}%",
+            f"{macro['f1']*100:7.2f}% {metrics['support']:8d}",
             "",
-            f"MODEL ACCURACY: {overall_model*100:.2f}%" if overall_model is not None else "MODEL ACCURACY: n/a",
-            f"GROUND TRUTH ACCURACY: {metrics['accuracy']*100:.2f}%",
-            f"Students compared: {metrics['support']}",
+            f"EXACT 3-CLASS ACCURACY : {metrics['accuracy']*100:.2f}%",
+            f"BALANCED ACCURACY      : {metrics['balanced_accuracy']*100:.2f}%",
+            f"MACRO-F1 SCORE         : {macro['f1']*100:.2f}%",
+            "",
+            "-" * 72,
+            "CONFUSION MATRIX (Rows: Ground Truth, Columns: Predicted)",
+            "-" * 72,
+            f"{'GT \\ Pred':<14} {'Pred HIGH':>12} {'Pred MODERATE':>14} {'Pred LOW':>12} {'Total GT':>10}",
+            "-" * 72,
+        ]
+    )
+    for band in BANDS:
+        row = cm[band]
+        total_row = sum(row.values())
+        lines.append(
+            f"{band:<14} {row['HIGH']:12d} {row['MODERATE']:14d} {row['LOW']:12d} {total_row:10d}"
+        )
+    lines.extend(
+        [
+            "-" * 72,
+            "",
+            "=" * 72,
+            "NOTE: This evaluation measures student-attention agreement directly",
+            "against human classroom annotations. It does not blend or average",
+            "unrelated benchmark numbers (Gaze360 / DAiSEE / SCB).",
             "=" * 72,
         ]
     )
@@ -254,6 +294,15 @@ def main() -> None:
     csv_path = Path(args.csv)
     xml_path = Path(args.xml)
     pred_path = Path(args.pred)
+
+    if not csv_path.exists() or not xml_path.exists():
+        sys.path.insert(0, str(ROOT / "src"))
+        from attention_pipeline.gt_calibrator import find_ground_truth
+
+        found = find_ground_truth(video)
+        if found is not None:
+            csv_path, xml_path = found
+
     for path in (csv_path, xml_path, pred_path):
         if not path.exists():
             raise SystemExit(f"Missing {path.resolve()}")
@@ -263,20 +312,42 @@ def main() -> None:
 
     y_true: list[str] = []
     y_pred: list[str] = []
-    unmatched = 0
-    for frame in sorted(gt):
-        matched = match_frame(gt[frame], pred.get(frame, []), args.iou)
+    unmatched_gt = 0
+    unmatched_pred = 0
+    total_gt = 0
+    total_pred = 0
+
+    all_frames = sorted(set(gt.keys()) | set(pred.keys()))
+    for frame in all_frames:
+        gt_frame = gt.get(frame, [])
+        pred_frame = pred.get(frame, [])
+        total_gt += len(gt_frame)
+        total_pred += len(pred_frame)
+        matched, u_gt, u_pred = match_frame(gt_frame, pred_frame, args.iou)
         y_true.extend(t for t, _p in matched)
         y_pred.extend(p for _t, p in matched)
-        unmatched += len(gt[frame]) - len(matched)
+        unmatched_gt += u_gt
+        unmatched_pred += u_pred
 
     metrics = prf1(y_true, y_pred)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out = Path(args.out) if args.out else ROOT / "runs" / "reports" / f"clip_004_gt_{stamp}_accuracy.txt"
-    write_report(out, metrics, video, csv_path, pred_path, len(y_true), unmatched)
+    out = Path(args.out) if args.out else ROOT / "runs" / "reports" / f"accuracy_{video.stem}_{stamp}.txt"
+    write_report(
+        out,
+        metrics,
+        video,
+        csv_path,
+        pred_path,
+        len(y_true),
+        unmatched_gt,
+        unmatched_pred,
+        total_gt,
+        total_pred,
+    )
     print(
-        f"GROUND-TRUTH ACCURACY: {metrics['accuracy']*100:.2f}%  "
-        f"matched={len(y_true)}  unmatched_gt={unmatched}"
+        f"GROUND-TRUTH EXACT ACCURACY: {metrics['accuracy']*100:.2f}%  "
+        f"BALANCED ACCURACY: {metrics['balanced_accuracy']*100:.2f}%  "
+        f"matched={len(y_true)}/{total_gt}  unmatched_gt={unmatched_gt}  unmatched_pred={unmatched_pred}"
     )
     print(f"Wrote {out.resolve()}")
 

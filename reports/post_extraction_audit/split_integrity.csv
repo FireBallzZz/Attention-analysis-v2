@@ -1,0 +1,4 @@
+partition,clip_count,subject_count,sequence_count,class_0_seqs,class_1_seqs,class_0_ratio_pct,clip_overlap_with_other_splits,subject_overlap_with_other_splits,manifest_split_agreement_pct
+Train,5482,70,185356,8180,177176,4.41,0,0,100.0
+Validation,1720,22,59686,6396,53290,10.72,0,0,100.0
+Test,1784,21,61759,2980,58779,4.83,0,0,100.0

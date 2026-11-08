@@ -1,0 +1,399 @@
+{
+  "schema_version": "1.0.0",
+  "tensor_shape": [
+    16,
+    32
+  ],
+  "dtype": "float32",
+  "temporal_window_steps": 16,
+  "target_fps": 5.0,
+  "duration_seconds": 3.2,
+  "channels": [
+    {
+      "index": 0,
+      "name": "head_pose_yaw",
+      "modality": "head_pose",
+      "classification": "C",
+      "range": [
+        -1.0,
+        1.0
+      ],
+      "extractor": "FaceModalityExtractor._head_pose()",
+      "notes": "Geometric arctan on 5 facial keypoints normalized by 180 deg"
+    },
+    {
+      "index": 1,
+      "name": "head_pose_pitch",
+      "modality": "head_pose",
+      "classification": "C",
+      "range": [
+        -1.0,
+        1.0
+      ],
+      "extractor": "FaceModalityExtractor._head_pose()",
+      "notes": "Geometric arctan on 5 facial keypoints normalized by 180 deg"
+    },
+    {
+      "index": 2,
+      "name": "head_pose_roll",
+      "modality": "head_pose",
+      "classification": "C",
+      "range": [
+        -1.0,
+        1.0
+      ],
+      "extractor": "FaceModalityExtractor._head_pose()",
+      "notes": "Geometric arctan on 5 facial keypoints normalized by 180 deg"
+    },
+    {
+      "index": 3,
+      "name": "eye_gaze_yaw",
+      "modality": "gaze",
+      "classification": "A",
+      "range": [
+        -1.0,
+        1.0
+      ],
+      "extractor": "L2CSNet.predict_degrees()",
+      "weights": "checkpoints/l2cs_finetuned.pt",
+      "notes": "Normalized by 180 deg; fallback to head pose if face crop < 32px"
+    },
+    {
+      "index": 4,
+      "name": "eye_gaze_pitch",
+      "modality": "gaze",
+      "classification": "A",
+      "range": [
+        -1.0,
+        1.0
+      ],
+      "extractor": "L2CSNet.predict_degrees()",
+      "weights": "checkpoints/l2cs_finetuned.pt",
+      "notes": "Normalized by 180 deg; fallback to head pose if face crop < 32px"
+    },
+    {
+      "index": 5,
+      "name": "emotion_angry",
+      "modality": "emotion",
+      "classification": "D",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "FER weights omitted by pipeline design"
+    },
+    {
+      "index": 6,
+      "name": "emotion_disgust",
+      "modality": "emotion",
+      "classification": "D",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "FER weights omitted by pipeline design"
+    },
+    {
+      "index": 7,
+      "name": "emotion_fear",
+      "modality": "emotion",
+      "classification": "D",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "FER weights omitted by pipeline design"
+    },
+    {
+      "index": 8,
+      "name": "emotion_happy",
+      "modality": "emotion",
+      "classification": "D",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "FER weights omitted by pipeline design"
+    },
+    {
+      "index": 9,
+      "name": "emotion_sad",
+      "modality": "emotion",
+      "classification": "D",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "FER weights omitted by pipeline design"
+    },
+    {
+      "index": 10,
+      "name": "emotion_surprise",
+      "modality": "emotion",
+      "classification": "D",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "FER weights omitted by pipeline design"
+    },
+    {
+      "index": 11,
+      "name": "emotion_neutral",
+      "modality": "emotion",
+      "classification": "D",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Constant 1.0",
+      "notes": "Constant neutral prior"
+    },
+    {
+      "index": 12,
+      "name": "posture_hand_raising",
+      "modality": "posture_behavior",
+      "classification": "B",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "SCBBehaviorDetector blended with geometric_posture()",
+      "weights": "checkpoints/scb_yolo.pt"
+    },
+    {
+      "index": 13,
+      "name": "posture_reading",
+      "modality": "posture_behavior",
+      "classification": "B",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "SCBBehaviorDetector blended with geometric_posture()",
+      "weights": "checkpoints/scb_yolo.pt"
+    },
+    {
+      "index": 14,
+      "name": "posture_writing",
+      "modality": "posture_behavior",
+      "classification": "B",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "SCBBehaviorDetector blended with geometric_posture()",
+      "weights": "checkpoints/scb_yolo.pt"
+    },
+    {
+      "index": 15,
+      "name": "posture_using_phone",
+      "modality": "posture_behavior",
+      "classification": "B",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "SCBBehaviorDetector blended with geometric_posture()",
+      "weights": "checkpoints/scb_yolo.pt"
+    },
+    {
+      "index": 16,
+      "name": "posture_bowing_head",
+      "modality": "posture_behavior",
+      "classification": "B",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "SCBBehaviorDetector blended with geometric_posture()",
+      "weights": "checkpoints/scb_yolo.pt"
+    },
+    {
+      "index": 17,
+      "name": "posture_leaning_over_table",
+      "modality": "posture_behavior",
+      "classification": "B",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "SCBBehaviorDetector blended with geometric_posture()",
+      "weights": "checkpoints/scb_yolo.pt"
+    },
+    {
+      "index": 18,
+      "name": "optical_motion",
+      "modality": "motion",
+      "classification": "C",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "absdiff(crop, prev_crop) / 255.0",
+      "notes": "Inter-frame pixel shift"
+    },
+    {
+      "index": 19,
+      "name": "eye_aspect_ratio",
+      "modality": "facial_morphology",
+      "classification": "E",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Fixed Fallback 0.3000",
+      "notes": "OpenSeeFace dependency missing"
+    },
+    {
+      "index": 20,
+      "name": "mouth_aspect_ratio",
+      "modality": "facial_morphology",
+      "classification": "E",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "Fixed Fallback 0.3000",
+      "notes": "OpenSeeFace dependency missing"
+    },
+    {
+      "index": 21,
+      "name": "facing_front_score",
+      "modality": "head_pose",
+      "classification": "C",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "facing_front_score(yaw)",
+      "notes": "1.0 - |yaw| / 45.0 clipped to [0, 1]"
+    },
+    {
+      "index": 22,
+      "name": "torso_lean_angle",
+      "modality": "posture",
+      "classification": "C",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "torso_lean(keypoints)",
+      "notes": "Hardened confidence-gated (c>=0.25) inter-shoulder tilt fallback"
+    },
+    {
+      "index": 23,
+      "name": "upper_body_confidence",
+      "modality": "keypoint_observability",
+      "classification": "C",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "extractor": "upper_body_keypoint_confidence(keypoints)",
+      "notes": "Arithmetic mean confidence of nose, eyes, shoulders"
+    },
+    {
+      "index": 24,
+      "name": "reserved_padding_24",
+      "modality": "padding",
+      "classification": "C",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "Preserved for weight matrix backward compatibility"
+    },
+    {
+      "index": 25,
+      "name": "reserved_padding_25",
+      "modality": "padding",
+      "classification": "C",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "Preserved for weight matrix backward compatibility"
+    },
+    {
+      "index": 26,
+      "name": "reserved_padding_26",
+      "modality": "padding",
+      "classification": "C",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "Preserved for weight matrix backward compatibility"
+    },
+    {
+      "index": 27,
+      "name": "reserved_padding_27",
+      "modality": "padding",
+      "classification": "C",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "Preserved for weight matrix backward compatibility"
+    },
+    {
+      "index": 28,
+      "name": "reserved_padding_28",
+      "modality": "padding",
+      "classification": "C",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "Preserved for weight matrix backward compatibility"
+    },
+    {
+      "index": 29,
+      "name": "reserved_padding_29",
+      "modality": "padding",
+      "classification": "C",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "Preserved for weight matrix backward compatibility"
+    },
+    {
+      "index": 30,
+      "name": "reserved_padding_30",
+      "modality": "padding",
+      "classification": "C",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "Preserved for weight matrix backward compatibility"
+    },
+    {
+      "index": 31,
+      "name": "reserved_padding_31",
+      "modality": "padding",
+      "classification": "C",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "extractor": "Constant 0.0",
+      "notes": "Preserved for weight matrix backward compatibility"
+    }
+  ]
+}

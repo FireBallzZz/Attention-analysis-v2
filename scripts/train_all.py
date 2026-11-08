@@ -29,6 +29,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from attention_pipeline.utils import (  # noqa: E402
     PROJECT_ROOT,
     resolve_daisee_root,
+    resolve_device,
     resolve_l2cs_weights,
     resolve_scb_root,
 )
@@ -106,7 +107,8 @@ def _read_label_csv(csv_path: Path) -> dict[str, dict[str, float]]:
 def daisee_split(name: str) -> list[tuple[Path, dict[str, float]]]:
     """Official DAiSEE split. `name` is Train, Validation, or Test."""
     root = resolve_daisee_root()
-    csv_path = root / "DAiSEE" / "Labels" / f"{name}Labels.csv"
+    labels_dir = (root / "DAiSEE" / "Labels") if (root / "DAiSEE" / "Labels").exists() else (root / "Labels")
+    csv_path = labels_dir / f"{name}Labels.csv"
     if not csv_path.exists():
         raise SystemExit(f"Missing {csv_path}. Run scripts/download_datasets.py")
     videos = _daisee_videos()
@@ -124,7 +126,7 @@ def daisee_split(name: str) -> list[tuple[Path, dict[str, float]]]:
 def daisee_all_clips() -> list[tuple[Path, dict[str, float]]]:
     """Every labeled DAiSEE clip that is on disk. Train, val, and test are all included."""
     root = resolve_daisee_root()
-    labels_dir = root / "DAiSEE" / "Labels"
+    labels_dir = (root / "DAiSEE" / "Labels") if (root / "DAiSEE" / "Labels").exists() else (root / "Labels")
     names = ["AllLabels.csv", "TrainLabels.csv", "ValidationLabels.csv", "TestLabels.csv"]
     labels: dict[str, dict[str, float]] = {}
     found = False
@@ -181,13 +183,19 @@ def build_gaze_npz(clips: list[tuple[Path, dict[str, float]]], out: Path) -> Non
     yaw: list[float] = []
     if out.exists():
         prev = np.load(out)
+        done = set(str(x) for x in prev["clip"])
+        print(f"L2CS npz already has {len(done)} clips")
+        clips_left = [(path, lab) for path, lab in clips if path.stem not in done]
+        if not clips_left:
+            print(f"L2CS training faces: {len(prev['pitch'])} -> {out}")
+            return
         images = list(prev["images"])
         pitch = list(prev["pitch"].astype(np.float32))
         yaw = list(prev["yaw"].astype(np.float32))
-        done = set(str(x) for x in prev["clip"])
-        print(f"L2CS npz already has {len(done)} clips")
+    else:
+        clips_left = list(clips)
     detector = DetectorTracker(
-        weights="yolo11n-pose.pt", conf=0.25, imgsz=640, tiles=False, device="cpu"
+        weights="yolo11n-pose.pt", conf=0.25, imgsz=640, tiles=False, device=str(resolve_device("auto"))
     )
 
     def _angles(kpts: np.ndarray) -> tuple[float, float] | None:
@@ -202,7 +210,6 @@ def build_gaze_npz(clips: list[tuple[Path, dict[str, float]]], out: Path) -> Non
         p = float(np.degrees(np.arctan2(nose[1] - mid[1], eye_w)))
         return y, p
 
-    clips_left = [(path, lab) for path, lab in clips if path.stem not in done]
     for index, (path, _lab) in enumerate(clips_left, start=1):
         cap = cv2.VideoCapture(str(path))
         fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
@@ -256,17 +263,30 @@ def build_fusion_npz(clips: list[tuple[Path, dict[str, float]]], out: Path) -> N
     features: list[np.ndarray] = []
     scores: list[float] = []
     auxs: list[np.ndarray] = []
+    clip_ids: list[str] = []
+    subject_ids: list[str] = []
     done: set[str] = set()
     if out.exists():
         prev = np.load(out)
+        done = set(str(x) for x in prev["clip"])
+        print(f"DAiSEE fusion npz already has {len(done)} clips")
+        clips_left = [(path, lab) for path, lab in clips if path.stem not in done]
+        if not clips_left:
+            print(f"DAiSEE fusion windows: {len(prev['score'])} -> {out}")
+            return
         features = list(prev["features"])
         scores = list(prev["score"].astype(np.float32))
         auxs = list(prev["aux"])
-        done = set(str(x) for x in prev["clip"])
-        print(f"DAiSEE fusion npz already has {len(done)} clips")
+        if "clip_ids" in prev:
+            clip_ids = [str(x) for x in prev["clip_ids"]]
+        if "subject_ids" in prev:
+            subject_ids = [str(x) for x in prev["subject_ids"]]
+        elif clip_ids:
+            subject_ids = [c[:6] if len(c) >= 6 else c for c in clip_ids]
+    else:
+        clips_left = list(clips)
     pipe = AttentionPipeline.from_yaml(PIPELINE_YAML, load_weights=True)
     window = int(pipe.cfg.get("fusion", {}).get("window", 16))
-    clips_left = [(path, lab) for path, lab in clips if path.stem not in done]
     for index, (path, lab) in enumerate(clips_left, start=1):
         pipe.tracks.clear()
         pipe._lesson_yaw = None
@@ -275,6 +295,7 @@ def build_fusion_npz(clips: list[tuple[Path, dict[str, float]]], out: Path) -> N
             [lab["engagement"], lab["boredom"], lab["confusion"], lab["frustration"]],
             np.float32,
         )
+        subj = path.stem[:6] if len(path.stem) >= 6 else path.stem
         produced = 0
         for _ts, frame in iter_frames(str(path), target_fps=5.0):
             pipe.process_frame(_ts, frame)
@@ -284,6 +305,8 @@ def build_fusion_npz(clips: list[tuple[Path, dict[str, float]]], out: Path) -> N
                     features.append(seq)
                     scores.append(score)
                     auxs.append(aux)
+                    clip_ids.append(path.stem)
+                    subject_ids.append(subj)
                     produced += 1
                 break
         if produced == 0:
@@ -291,6 +314,8 @@ def build_fusion_npz(clips: list[tuple[Path, dict[str, float]]], out: Path) -> N
             features.append(blank)
             scores.append(score)
             auxs.append(aux)
+            clip_ids.append(path.stem)
+            subject_ids.append(subj)
         done.add(path.stem)
         if index % 10 == 0 or index == len(clips_left):
             np.savez(
@@ -298,6 +323,8 @@ def build_fusion_npz(clips: list[tuple[Path, dict[str, float]]], out: Path) -> N
                 features=np.stack(features).astype(np.float32),
                 score=np.asarray(scores, np.float32),
                 aux=np.stack(auxs).astype(np.float32),
+                clip_ids=np.asarray(clip_ids, dtype=str),
+                subject_ids=np.asarray(subject_ids, dtype=str),
                 clip=np.asarray(sorted(done)),
             )
             print(f"DAiSEE fusion clips {len(done)}/{len(clips)}")
@@ -316,11 +343,13 @@ def main() -> None:
     parser.add_argument("--checkpoint-minutes", type=float, default=30)
     args = parser.parse_args()
 
-    images = scb_all_images()
-    clips = daisee_all_clips()
+    images = [] if args.skip_scb else scb_all_images()
+    clips = [] if (args.skip_l2cs and args.skip_daisee) else daisee_all_clips()
     resolve_l2cs_weights()
-    print(f"SCB images : {len(images)} (train and val)")
-    print(f"DAiSEE clips: {len(clips)} (train, validation, and test)")
+    if not args.skip_scb:
+        print(f"SCB images : {len(images)} (train and val)")
+    if clips:
+        print(f"DAiSEE clips: {len(clips)} (train, validation, and test)")
     print("L2CS-Net weights : checkpoints/l2cs_gaze360_resnet50.safetensors")
     minutes = str(args.checkpoint_minutes)
 

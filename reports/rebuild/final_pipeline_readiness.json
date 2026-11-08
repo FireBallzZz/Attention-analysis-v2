@@ -1,0 +1,87 @@
+{
+  "project": "Smart Classroom Attention Pipeline Rebuild",
+  "audit_standard": "Phase 8 Scientific Rigor, Dataset Governance & Reproducibility",
+  "timestamp": "2026-10-23T15:40:00Z",
+  "phase_completion_matrix": {
+    "Phase 0 — Repository Inventory & Baseline": "PASS",
+    "Phase 1 — Model & Modality Forensic Audit": "PASS",
+    "Phase 2 — Clean Modality Strategy": "PASS",
+    "Phase 3 — Safe DAiSEE Dataset Reconciliation": "PASS",
+    "Phase 4 — Rebuild Extraction Pipeline Safely": "PASS",
+    "Phase 5 — Non-Destructive Extraction Safety Gate": "PASS",
+    "Phase 6 — Full Public-Data Extraction (8,986 clips)": "NOT RUN",
+    "Phase 7 — Public-Data Training & Validation": "PASS",
+    "Phase 8 — Frozen Public Test Evaluation": "PASS",
+    "Phase 9 — Production Inference & Video Overlay": "PASS",
+    "Phase 10 — Frozen UAP External Evaluation": "NOT RUN",
+    "Phase 11 — Clean Architecture & Legacy Management": "PASS"
+  },
+  "protected_checkpoint_hashes": {
+    "checkpoints/classroom_manual_binary_model_v2_clean.pt": {
+      "sha256": "2BFA5AF8E190B5D4C16D463510543DBDCA2D8FCEF43CFDC1AE10E8C46C42124E",
+      "status": "VERIFIED_INTACT"
+    },
+    "checkpoints/candidates/phase6g4c_engaged_disengaged_candidate.pt": {
+      "sha256": "E01F33BF7859A7A06035D17DF60BA7B406DCD8307A8F5EE8F98EE86A63F26F8E",
+      "status": "VERIFIED_INTACT"
+    },
+    "checkpoints/candidates/phase7_public_trained_binary_candidate.pt": {
+      "sha256": "1847B2B9683EC40632FBAEC3B7191592305EBECEFAE855352C8E81C2230EDAE5",
+      "status": "VERIFIED_INTACT"
+    },
+    "data/processed/fusion_daisee.npz": {
+      "sha256": "15B3FB28EF15AAC1564423251F36825A5BC9FBB5E2F0353D27D8978AACB5196B",
+      "status": "VERIFIED_INTACT"
+    },
+    "data/processed/fusion_daisee_v2.npz": {
+      "sha256": "69E5C9984A27980AAC36BA14F190534D84AE5260145A114502D278627EE76733",
+      "status": "VERIFIED_INTACT"
+    },
+    "data/processed/fusion_daisee_v3_hardened.npz": {
+      "sha256": "4505FB4428944366459B1E3AEE37678A8AD7381AA19384A64514C87F75FD2DA6",
+      "status": "VERIFIED_INTACT"
+    }
+  },
+  "dataset_reconciliation": {
+    "master_manifest_path": "data/manifests/daisee_master_manifest_v1.csv",
+    "total_eligible_clips": 8986,
+    "train_clips": 5482,
+    "train_subjects": 70,
+    "validation_clips": 1720,
+    "validation_subjects": 22,
+    "test_clips": 1784,
+    "test_subjects": 21,
+    "quarantine_manifest_path": "data/manifests/daisee_quarantine_manifest_v1.csv",
+    "quarantined_clips": 82,
+    "quarantine_reason": "UNANNOTATED_NO_OFFICIAL_LABEL"
+  },
+  "modality_readiness_summary": {
+    "gaze_estimation": "A (Pretrained L2CS-Net Verified)",
+    "head_pose": "A (Pretrained 3-axis continuous verified)",
+    "body_posture": "C (COCO-17 Keypoint Geometric Baseline)",
+    "facial_emotion": "D (Uniform Prior, Weights Missing)",
+    "motion_and_eye_mouth_aspect": "C (Geometric Measurements Verified)"
+  },
+  "test_suite_summary": {
+    "total_tests": 73,
+    "passed": 72,
+    "skipped": 1,
+    "failed": 0,
+    "execution_time_seconds": 4.34
+  },
+  "frozen_test_evaluation_summary": {
+    "dataset": "fusion_daisee_v3_hardened.npz",
+    "held_out_sequences": 3563,
+    "non_attentive_support": 70,
+    "attentive_support": 3493,
+    "active_production_model": {
+      "checkpoint": "checkpoints/classroom_manual_binary_model_v2_clean.pt",
+      "balanced_accuracy_tau_0_50": 0.4908,
+      "balanced_accuracy_tau_star_0_10": 0.5967,
+      "macro_f1_tau_0_50": 0.3411,
+      "macro_f1_tau_star_0_10": 0.4474,
+      "non_attentive_recall_tau_0_50": 0.5000,
+      "non_attentive_recall_tau_star_0_10": 0.4714
+    }
+  }
+}

@@ -16,10 +16,12 @@ class AttentionScorer:
         model: AttentionFusionNet | None,
         device: torch.device | None,
         window: int = 16,
+        max_gap: float = 0.5,
     ) -> None:
         self.model = model
         self.device = device
         self.window = window
+        self.max_gap = max_gap
         self.use_heuristic = False
 
     def push(
@@ -29,29 +31,45 @@ class AttentionScorer:
         timestamp: float,
         obs: StudentFrame | None = None,
         lesson_yaw: float | None = None,
-    ) -> tuple[float, RubricResult | None]:
+    ) -> tuple[float | None, RubricResult, float | None]:
+        ts = float(timestamp)
+        # Check temporal continuity: if gap > max_gap or timestamps reset, break window
+        if track.timestamps:
+            prev_ts = track.timestamps[-1]
+            if (ts - prev_ts > self.max_gap) or (ts < prev_ts):
+                track.feature_window.clear()
+                track.timestamps.clear()
+                track.scores.clear()
+                if hasattr(track, "fusion_scores"):
+                    track.fusion_scores.clear()
+
         track.feature_window.append(feat.astype(np.float32))
-        track.timestamps.append(float(timestamp))
+        track.timestamps.append(ts)
         if len(track.feature_window) > self.window:
             track.feature_window = track.feature_window[-self.window :]
             track.timestamps = track.timestamps[-self.window :]
             track.scores = track.scores[-(self.window - 1) :]
+            if hasattr(track, "fusion_scores") and len(track.fusion_scores) >= self.window:
+                track.fusion_scores = track.fusion_scores[-(self.window - 1) :]
 
-        stacked = np.stack(track.feature_window, axis=0)
-        if stacked.shape[0] < self.window:
-            pad = np.repeat(stacked[:1], self.window - stacked.shape[0], axis=0)
-            stacked = np.concatenate([pad, stacked], axis=0)
-
-        rubric = None
-        if self.use_heuristic:
-            rubric = (
-                classify_attention(obs, lesson_yaw=lesson_yaw)
-                if obs is not None
-                else classify_from_features(feat, lesson_yaw=lesson_yaw)
-            )
-            score = rubric.score
+        rubric = (
+            classify_attention(obs, lesson_yaw=lesson_yaw)
+            if obs is not None
+            else classify_from_features(feat, lesson_yaw=lesson_yaw)
+        )
+        fusion_score: float | None = None
+        if not self.use_heuristic and self.model is not None and self.device is not None:
+            if len(track.feature_window) >= self.window:
+                stacked = np.stack(track.feature_window[-self.window :], axis=0)
+                x = torch.from_numpy(stacked).unsqueeze(0).to(self.device)
+                fusion_score = float(self.model.score(x).item())
+                score = fusion_score
+            else:
+                score = None
         else:
-            x = torch.from_numpy(stacked).unsqueeze(0).to(self.device)
-            score = float(self.model.score(x).item())
+            score = rubric.score
+
         track.scores.append(score)
-        return score, rubric
+        if hasattr(track, "fusion_scores"):
+            track.fusion_scores.append(fusion_score)
+        return score, rubric, fusion_score

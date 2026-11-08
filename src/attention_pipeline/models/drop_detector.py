@@ -34,6 +34,8 @@ class AttentionDropDetector:
             return None
         sid = track.student_id
         score = track.scores[-1]
+        if score is None:
+            return None
         ts = track.timestamps[-1]
         prev = self._ema.get(sid, score)
         ema = self.cfg.ema_alpha * score + (1.0 - self.cfg.ema_alpha) * prev
@@ -47,6 +49,7 @@ class AttentionDropDetector:
             return None
 
         track.last_event_ts = ts
+        valid_scores = [s for s in track.scores[-16:] if s is not None]
         return AttentionEvent(
             student_id=sid,
             timestamp=ts,
@@ -56,15 +59,15 @@ class AttentionDropDetector:
             explanation_features={
                 "ema_score": float(ema),
                 "raw_score": float(score),
-                "window_min": float(min(track.scores[-16:])),
-                "window_max": float(max(track.scores[-16:])),
+                "window_min": float(min(valid_scores)) if valid_scores else float(score),
+                "window_max": float(max(valid_scores)) if valid_scores else float(score),
             },
         )
 
     def _sustained(self, track: TrackState) -> Optional[str]:
         t_end = track.timestamps[-1]
         t_start = t_end - self.cfg.sustain_seconds
-        vals = [s for s, t in zip(track.scores, track.timestamps) if t >= t_start]
+        vals = [s for s, t in zip(track.scores, track.timestamps) if t >= t_start and s is not None]
         times = [t for t in track.timestamps if t >= t_start]
         if len(vals) < 3:
             return None
@@ -77,8 +80,8 @@ class AttentionDropDetector:
     def _sudden(self, track: TrackState) -> Optional[str]:
         t_end = track.timestamps[-1]
         t_start = t_end - self.cfg.sudden_seconds
-        earlier = [s for s, t in zip(track.scores, track.timestamps) if t_start <= t < t_end]
-        if not earlier:
+        earlier = [s for s, t in zip(track.scores, track.timestamps) if t_start <= t < t_end and s is not None]
+        if not earlier or track.scores[-1] is None:
             return None
         peak = max(earlier)
         if peak - track.scores[-1] >= self.cfg.sudden_delta:

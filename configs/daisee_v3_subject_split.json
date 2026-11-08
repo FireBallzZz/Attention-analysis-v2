@@ -1,0 +1,33 @@
+{
+  "protocol": "Stratified Subject-Disjoint Partition",
+  "dataset": "data/processed/fusion_daisee_v3_hardened.npz",
+  "total_sequences": 23661,
+  "train": {
+    "subjects": [
+      "110001",
+      "110004",
+      "110005",
+      "110006",
+      "110007",
+      "110008",
+      "110010",
+      "110012",
+      "110013",
+      "110014"
+    ],
+    "sequences": 19601,
+    "high_count": 19144,
+    "low_count": 457,
+    "clips_count": 634
+  },
+  "validation": {
+    "subjects": [
+      "110002",
+      "110011"
+    ],
+    "sequences": 4060,
+    "high_count": 3885,
+    "low_count": 175,
+    "clips_count": 116
+  }
+}

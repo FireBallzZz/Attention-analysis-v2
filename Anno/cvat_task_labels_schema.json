@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Students",
+    "color": "#66ff66",
+    "type": "rectangle",
+    "attributes": [
+      {
+        "name": "Attention",
+        "input_type": "radio",
+        "mutable": true,
+        "default_value": "High",
+        "values": [
+          "High",
+          "Moderate",
+          "Low"
+        ]
+      }
+    ]
+  }
+]

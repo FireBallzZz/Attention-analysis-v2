@@ -1,0 +1,5 @@
+partition,eligible_manifest_clips,extracted_clips,missing_clips,failed_clips,skipped_clips,extraction_rate_pct,total_sequences,min_seqs_per_clip,max_seqs_per_clip,mean_seqs_per_clip,median_seqs_per_clip
+Train,5482,5482,0,0,0,100.0,185356,1,38,33.81,35.0
+Validation,1720,1720,0,0,0,100.0,59686,1,38,34.7,35.0
+Test,1784,1784,0,0,0,100.0,61759,1,38,34.62,35.0
+ALL,8986,8986,0,0,0,100.0,306801,1,38,34.14,35.0

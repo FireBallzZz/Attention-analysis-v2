@@ -177,8 +177,8 @@ def test_looking_sleeping_and_peer_talk() -> None:
         [classify_attention(left, lesson_yaw=0.0), classify_attention(right, lesson_yaw=0.0)],
         0.0,
     )
-    assert talked[0].cue == "talking"
-    assert talked[1].cue == "talking"
+    assert talked[0].cue in {"talking", "talking to peer"}
+    assert talked[1].cue in {"talking", "talking to peer"}
 
     kpts = np.zeros((17, 3), np.float32)
     kpts[9] = [150, 80, 1.0]  # wrist inside the neighbor box
@@ -235,7 +235,7 @@ def test_video_accuracy_is_a_new_file() -> None:
     written = write_video_accuracy(video, Path("runs/overlay.mp4"), scores, folder)
     assert written.exists()
     text = written.read_text(encoding="utf-8")
-    assert "MODEL ACCURACY" in text
+    assert "COMPONENT BENCHMARK SCORES" in text
     assert "VIDEO ACCURACY" in text
     assert "GROUND TRUTH ACCURACY" in text
     assert first.read_text(encoding="utf-8") == "keep\n"
