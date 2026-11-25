@@ -37,11 +37,20 @@ data:
 
 models:
   gaze_weights: checkpoints/l2cs_finetuned.pt
-  posture_weights: checkpoints/posture_scb.pt
+  # No trained posture MLP ships with the repo, so the posture channels use
+  # the geometric keypoint heuristic. Set this once a checkpoint exists.
+  posture_weights: ""
   scb_weights: checkpoints/scb_yolo.pt
-  manual_binary_weights: checkpoints/classroom_manual_binary_unquarantined.pt
-  fusion_weights: checkpoints/classroom_manual_binary_unquarantined.pt
+  # Final model: human labels only, camera-relative head/gaze masked, epoch and
+  # threshold chosen on held-out persons (scripts/train_final_model.py).
+  # The old checkpoint is kept in configs/pipeline_legacy_unquarantined.yaml.
+  manual_binary_weights: checkpoints/final_human_v1.pt
+  fusion_weights: checkpoints/final_human_v1.pt
   fusion_daisee_base: checkpoints/baseline/fusion_daisee.pt
+  # Attention score used on NEW classrooms: student motion relative to the class
+  # (scripts/motion_rule.py). Leave-one-classroom-out it beats the BiGRU
+  # (per-room balanced accuracy 59% vs 52%). Set to "" to use the BiGRU above.
+  motion_rule: checkpoints/motion_rule_v1.json
 
 scb:
   conf: 0.45
@@ -56,7 +65,23 @@ fusion:
   window: 16
   score_min: 0.0
   score_max: 100.0
-  binary_threshold: 0.50  # Tuned Champion Model: Focal Loss (gamma=2.0, alpha=0.45) achieving 87.74% Val Acc
+  binary_threshold: 0.50  # model scores are rescaled so its validated threshold sits at 50
+
+  # How the trained model's score is combined with the heuristic rubric.
+  #
+  # The rubric is inverted on this footage: its score correlates -0.35 with
+  # the human label while the model score correlates +0.61, so blending the
+  # heuristic into the final score destroys the model's signal (aggregate
+  # macro-F1 51.8% -> 60.0% when the heuristic is dropped).
+  #
+  #   model      : the model score alone
+  #   model_hard : the model score, floored by the rubric ONLY for cues that
+  #                are verified hard evidence (phone, sleep, head on desk,
+  #                peer talk)
+  #   blended    : the previous min / 0.4f+0.6h behaviour
+  combine_mode: model_floor  # hard evidence (phone, sleep, head on desk) may only lower the score; see reports/final_model/pipeline_vs_human_floor.json
+  study_protect: 0.3  # confident SCB reading/writing/hand-raising keeps the score >= 50 (reports/improvement/study_protection.json)
+  heuristic_weight: 0.6
 
 
 drop:

@@ -43,7 +43,13 @@ class SCBBehaviorDetector:
         self._model = None
         self._backend = "ultralytics"
         self._stride = 32
+        # Maps this checkpoint's own class index -> posture channel index.
+        # Resolved by class NAME, never by the checkpoint's class index.
+        self._channel_of: dict[int, int] = {}
         self.enabled = bool(self.weights and self.weights.exists())
+
+    def reset(self) -> None:
+        """No per-video state to clear (the model stays loaded)."""
 
     def _load(self) -> None:
         if self._model is not None or not self.enabled:
@@ -54,6 +60,8 @@ class SCBBehaviorDetector:
 
             self._model = YOLO(path)
             self._backend = "ultralytics"
+            self.names = _names_from_model(self._model)
+            self._rebuild_channel_map()
             return
         self._model = _load_yolov7(path, self.device)
         self._backend = "yolov7"
@@ -63,6 +71,22 @@ class SCBBehaviorDetector:
             self.names = [str(raw[i]) for i in range(len(raw))]
         elif raw:
             self.names = [str(n) for n in raw]
+        self._rebuild_channel_map()
+
+    def _rebuild_channel_map(self) -> None:
+        """Map this checkpoint's class names onto the 6-slot posture vector.
+
+        The deployed checkpoint carries three classes and the merged
+        checkpoint carries four, and a checkpoint may name its classes
+        differently from the pipeline taxonomy. The posture channel is
+        therefore resolved by NAME; a class the checkpoint does not know
+        simply has no channel and stays zero.
+        """
+        self._channel_of = {}
+        for cls_id, raw_name in enumerate(self.names):
+            canon = _canon_name(str(raw_name))
+            if canon in SCB_BEHAVIOR_LABELS:
+                self._channel_of[cls_id] = SCB_BEHAVIOR_LABELS.index(canon)
 
     def infer(self, frame: np.ndarray) -> list[SCBDet]:
         if not self.enabled:
@@ -149,7 +173,7 @@ class SCBBehaviorDetector:
             return None
         if used is not None:
             used.add(best_i)
-        return _probs_from_det(dets[best_i])
+        return _probs_from_det(dets[best_i], self._channel_of)
 
     def match_all(
         self,
@@ -163,10 +187,23 @@ class SCBBehaviorDetector:
             return [None] * len(student_boxes)
         pairs: list[tuple[float, int, int]] = []
         for si, box in enumerate(student_boxes):
+            s_area = max(0.0, float(box[2] - box[0])) * max(0.0, float(box[3] - box[1]))
+            scx = 0.5 * float(box[0] + box[2])
+            scy = 0.5 * float(box[1] + box[3])
             for di, d in enumerate(dets):
-                iou = _iou(box, d.bbox_xyxy)
+                db = d.bbox_xyxy
+                iou = _iou(box, db)
                 if iou >= min_iou:
                     pairs.append((iou, si, di))
+                elif s_area > 0 and db[0] <= scx <= db[2] and db[1] <= scy <= db[3]:
+                    # SCB labels full seated student+desk while pose boxes wrap upper torso.
+                    ix1 = max(float(box[0]), float(db[0]))
+                    iy1 = max(float(box[1]), float(db[1]))
+                    ix2 = min(float(box[2]), float(db[2]))
+                    iy2 = min(float(box[3]), float(db[3]))
+                    inter = max(0.0, ix2 - ix1) * max(0.0, iy2 - iy1)
+                    if (inter / s_area) >= 0.75 and iou >= 0.15:
+                        pairs.append((iou * 0.9, si, di))
         pairs.sort(reverse=True)
         assigned_s: set[int] = set()
         assigned_d: set[int] = set()
@@ -176,15 +213,43 @@ class SCBBehaviorDetector:
                 continue
             assigned_s.add(si)
             assigned_d.add(di)
-            out[si] = _probs_from_det(dets[di])
+            out[si] = _probs_from_det(dets[di], self._channel_of)
         return out
 
 
-def _probs_from_det(d: SCBDet) -> np.ndarray | None:
+def _names_from_model(model) -> list[str]:
+    """Read the class names out of a loaded detector, whichever way it stores them."""
+    raw = getattr(model, "names", None)
+    if raw is None:
+        raw = getattr(getattr(model, "model", None), "names", None)
+    if callable(raw):
+        try:
+            raw = raw()
+        except Exception:
+            raw = None
+    if isinstance(raw, dict):
+        return [str(raw[i]) for i in range(len(raw))]
+    if raw:
+        return [str(n) for n in raw]
+    return []
+
+
+def _probs_from_det(d: SCBDet, channel_of: dict[int, int] | None = None) -> np.ndarray | None:
+    """Turn one detection into a posture probability vector.
+
+    The channel is resolved by class NAME first, so a checkpoint that names
+    its classes differently from the pipeline taxonomy still lands in the
+    right slot. Only when the name is unknown does the checkpoint's own
+    class index act as a fallback.
+    """
     probs = np.zeros(len(SCB_BEHAVIOR_LABELS), np.float32)
     name = d.name
     if name in SCB_BEHAVIOR_LABELS:
         probs[SCB_BEHAVIOR_LABELS.index(name)] = float(d.conf)
+    elif channel_of:
+        channel = channel_of.get(int(d.cls))
+        if channel is not None:
+            probs[channel] = float(d.conf)
     else:
         c = d.cls
         if 0 <= c < len(SCB_BEHAVIOR_LABELS):
@@ -255,9 +320,13 @@ def _canon_name(name: str) -> str:
         "using-a-phone": "using-phone",
         "phone": "using-phone",
         "bow-head": "bowing-head",
+        "bowhead": "bowing-head",
+        "bowing-head": "bowing-head",
         "bowing-the-head": "bowing-head",
         "leaning-on-the-desk": "leaning-over-table",
         "leaning-over-the-table": "leaning-over-table",
+        "leaning-over-table": "leaning-over-table",
+        "leaning-on-table": "leaning-over-table",
     }
     return aliases.get(n, n)
 
@@ -291,12 +360,20 @@ def scb_attention_override(
             return None
 
     if name == "hand-raising":
+        if cues.get("chin_rest") or cues.get("off_lesson") or cues.get("glance_left") or cues.get("glance_right"):
+            return None
         if cues.get("hand_raised") or conf >= 0.7:
             return "HIGH", 93.0, "hand raised"
         return None
 
     if name in {"reading", "writing"}:
         if conf < 0.60:
+            return None
+        if cues.get("chin_rest") or cues.get("off_lesson"):
+            return None
+        if (cues.get("glance_left") or cues.get("glance_right")) and not cues.get("reading_tilt"):
+            return None
+        if cues.get("elevated_phone_grip") and name != "writing":
             return None
         desk_work = bool(cues.get("reading_tilt") and (cues.get("writing") or name == "writing"))
         # Side / front mix: reading needs a clear head-down cue.

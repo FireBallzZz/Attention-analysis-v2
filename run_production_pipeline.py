@@ -247,7 +247,13 @@ def main():
             print(f"Binary Attention Accuracy  : {bin_acc:.2f}%")
             print(f"Precision (Attentive)      : {prec:.2f}%")
             print(f"Recall (Attentive)         : {rec:.2f}%")
-            print(f"Macro F1-Score             : {f1:.2f}%")
+            from attention_pipeline.metrics import binary_report
+            rep = binary_report(tn, fp, fn, tp)
+            print(f"High-class F1              : {f1:.2f}%")
+            print(f"Macro F1 (both classes)    : {rep['macro_f1']:.2f}%")
+            print(f"Balanced Accuracy          : {rep['balanced_accuracy']:.2f}%")
+            print(f"LOW recall                 : {rep['low_recall']:.2f}%")
+            print(f"Always-HIGH baseline acc.  : {rep['always_high_accuracy']:.2f}%")
             print(f"Confusion Matrix           : TN={tn}, FP={fp}, FN={fn}, TP={tp}")
             print("-" * 80)
     except Exception as e:

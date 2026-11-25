@@ -37,7 +37,9 @@ data:
 
 models:
   gaze_weights: checkpoints/l2cs_merged.pt
-  posture_weights: checkpoints/posture_scb.pt
+  # No trained posture MLP ships with the repo, so the posture channels use
+  # the geometric keypoint heuristic. Set this once a checkpoint exists.
+  posture_weights: ""
   scb_weights: checkpoints/scb_yolo.pt
   fusion_weights: checkpoints/fusion_merged.pt
 

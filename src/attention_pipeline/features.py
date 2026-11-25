@@ -154,6 +154,9 @@ def pack_features(
     eye_aspect: float,
     mouth_aspect: float,
     keypoints: np.ndarray,
+    eye_openness: float | None = None,
+    mouth_openness: float | None = None,
+    mouth_motion: float = 0.0,
 ) -> np.ndarray:
     feat = np.zeros(FEAT_DIM, dtype=np.float32)
     feat[0:3] = np.clip(np.asarray(head_pose, dtype=np.float32) / 180.0, -1, 1)
@@ -161,12 +164,17 @@ def pack_features(
     feat[5:12] = np.asarray(emotion_probs, dtype=np.float32).reshape(-1)[:7]
     feat[12:18] = np.asarray(posture_probs, dtype=np.float32).reshape(-1)[:6]
     feat[18] = _clip01(motion)
-    feat[19] = _clip01(eye_aspect)
-    feat[20] = _clip01(mouth_aspect)
+    # Channels 19/20 carry the live eye and mouth measurements when they are
+    # available. The landmark-based aspects were a constant 0.3, which made
+    # these channels useless to the trained model.
+    feat[19] = _clip01(eye_openness if eye_openness is not None else eye_aspect)
+    feat[20] = _clip01(mouth_openness if mouth_openness is not None else mouth_aspect)
     feat[21] = facing_front_score(float(head_pose[0]))
     feat[22] = torso_lean(keypoints)
     feat[23] = upper_body_keypoint_confidence(keypoints)
-    # Channels 24..31 remain 0.0 reserved padding
+    # Channel 24 carries mouth activity (speech evidence). Channels 25..31
+    # remain 0.0 reserved padding.
+    feat[24] = _clip01(mouth_motion)
     return feat
 
 
@@ -207,6 +215,16 @@ def to_student_frame(
     eye_aspect: float,
     mouth_aspect: float,
     has_phone_obj: bool = False,
+    mouth_motion: float = 0.0,
+    eye_closed: bool = False,
+    mouth_active: bool = False,
+    aspects_valid: bool = False,
+    pose_reliable: bool = True,
+    pitch_delta: float | None = None,
+    eye_openness: float | None = None,
+    mouth_openness: float | None = None,
+    body_motion: float | None = None,
+    rel_gaze_yaw: float | None = None,
 ) -> StudentFrame:
     features = pack_features(
         head_pose,
@@ -217,7 +235,11 @@ def to_student_frame(
         eye_aspect,
         mouth_aspect,
         keypoints,
+        eye_openness=eye_openness,
+        mouth_openness=mouth_openness,
+        mouth_motion=mouth_motion,
     )
+
     return StudentFrame(
         student_id=student_id,
         timestamp=timestamp,
@@ -232,4 +254,12 @@ def to_student_frame(
         mouth_aspect=float(mouth_aspect),
         features=features,
         has_phone_obj=bool(has_phone_obj),
+        mouth_motion=float(mouth_motion),
+        eye_closed=bool(eye_closed),
+        mouth_active=bool(mouth_active),
+        pose_reliable=bool(pose_reliable),
+        aspects_valid=bool(aspects_valid),
+        pitch_delta=None if pitch_delta is None else float(pitch_delta),
+        body_motion=None if body_motion is None else float(body_motion),
+        rel_gaze_yaw=None if rel_gaze_yaw is None else float(rel_gaze_yaw),
     )

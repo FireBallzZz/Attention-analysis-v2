@@ -1,0 +1,57 @@
+{
+ "runs": [
+  {
+   "seed": 70,
+   "pooled_balacc": 0.6335305119317387,
+   "pooled_acc": 0.6275461141708192,
+   "mean_room_balacc": 0.5087814818235051,
+   "mean_room_auc": 0.5450180826885794
+  },
+  {
+   "seed": 71,
+   "pooled_balacc": 0.5801207384273496,
+   "pooled_acc": 0.6302124311565697,
+   "mean_room_balacc": 0.4871703888530757,
+   "mean_room_auc": 0.5144711725413568
+  },
+  {
+   "seed": 72,
+   "pooled_balacc": 0.6165757206749829,
+   "pooled_acc": 0.6276335343998601,
+   "mean_room_balacc": 0.5376698290715962,
+   "mean_room_auc": 0.5477970962698714
+  },
+  {
+   "seed": 73,
+   "pooled_balacc": 0.6089285135412308,
+   "pooled_acc": 0.6023253780924906,
+   "mean_room_balacc": 0.5293689695475252,
+   "mean_room_auc": 0.5318991087768604
+  },
+  {
+   "seed": 74,
+   "pooled_balacc": 0.6221057076619086,
+   "pooled_acc": 0.6889151149576012,
+   "mean_room_balacc": 0.552150783098951,
+   "mean_room_auc": 0.5162498712237538
+  }
+ ],
+ "mean_std": {
+  "pooled_balacc": [
+   0.612,
+   0.018
+  ],
+  "pooled_acc": [
+   0.635,
+   0.029
+  ],
+  "mean_room_balacc": [
+   0.523,
+   0.023
+  ],
+  "mean_room_auc": [
+   0.531,
+   0.014
+  ]
+ }
+}

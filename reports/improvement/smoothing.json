@@ -1,0 +1,109 @@
+{
+ "grid": {
+  "0.0": {
+   "classroom_01": {
+    "balacc": 0.5853,
+    "auc": 0.6617
+   },
+   "room_B": {
+    "balacc": 0.6618,
+    "auc": 0.6502
+   },
+   "room_C": {
+    "balacc": 0.6996,
+    "auc": 0.7478
+   }
+  },
+  "1.0": {
+   "classroom_01": {
+    "balacc": 0.596,
+    "auc": 0.6672
+   },
+   "room_B": {
+    "balacc": 0.6732,
+    "auc": 0.6601
+   },
+   "room_C": {
+    "balacc": 0.6704,
+    "auc": 0.7371
+   }
+  },
+  "2.0": {
+   "classroom_01": {
+    "balacc": 0.616,
+    "auc": 0.6755
+   },
+   "room_B": {
+    "balacc": 0.6844,
+    "auc": 0.6757
+   },
+   "room_C": {
+    "balacc": 0.6401,
+    "auc": 0.7236
+   }
+  },
+  "3.0": {
+   "classroom_01": {
+    "balacc": 0.6164,
+    "auc": 0.6642
+   },
+   "room_B": {
+    "balacc": 0.6932,
+    "auc": 0.6869
+   },
+   "room_C": {
+    "balacc": 0.6239,
+    "auc": 0.7183
+   }
+  },
+  "5.0": {
+   "classroom_01": {
+    "balacc": 0.6121,
+    "auc": 0.6346
+   },
+   "room_B": {
+    "balacc": 0.6965,
+    "auc": 0.6871
+   },
+   "room_C": {
+    "balacc": 0.6041,
+    "auc": 0.7124
+   }
+  },
+  "8.0": {
+   "classroom_01": {
+    "balacc": 0.6268,
+    "auc": 0.618
+   },
+   "room_B": {
+    "balacc": 0.6587,
+    "auc": 0.6784
+   },
+   "room_C": {
+    "balacc": 0.6035,
+    "auc": 0.7187
+   }
+  }
+ },
+ "nested": {
+  "classroom_01": {
+   "chosen_window_s": 0.0,
+   "balacc": 0.5853,
+   "auc": 0.6617
+  },
+  "room_B": {
+   "chosen_window_s": 0.0,
+   "balacc": 0.6618,
+   "auc": 0.6502
+  },
+  "room_C": {
+   "chosen_window_s": 3.0,
+   "balacc": 0.6239,
+   "auc": 0.7183
+  }
+ },
+ "nested_mean": {
+  "balacc": 0.6237,
+  "auc": 0.6767
+ }
+}

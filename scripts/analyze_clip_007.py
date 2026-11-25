@@ -12,6 +12,9 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from pathlib import Path
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+from attention_pipeline.metrics import binary_report  # correct macro-F1 / balanced accuracy
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -204,7 +207,10 @@ def main():
             "binary_accuracy": round(gt_acc, 2),
             "precision": round(gt_prec, 2),
             "recall": round(gt_rec, 2),
-            "macro_f1": round(gt_f1, 2),
+            "high_class_f1": round(gt_f1, 2),
+            "macro_f1": binary_report(tn, fp, fn, tp)["macro_f1"],
+            "balanced_accuracy": binary_report(tn, fp, fn, tp)["balanced_accuracy"],
+            "always_high_accuracy": binary_report(tn, fp, fn, tp)["always_high_accuracy"],
             "confusion_matrix": {"TN": tn, "FP": fp, "FN": fn, "TP": tp},
         },
         "multimodal_verification": {
@@ -212,7 +218,9 @@ def main():
             "binary_accuracy": round(m_acc, 2),
             "precision": round(m_prec, 2),
             "recall": round(m_rec, 2),
-            "macro_f1": round(m_f1, 2),
+            "high_class_f1": round(m_f1, 2),
+            "macro_f1": binary_report(mtn, mfp, mfn, mtp)["macro_f1"],
+            "balanced_accuracy": binary_report(mtn, mfp, mfn, mtp)["balanced_accuracy"],
             "confusion_matrix": {"TN": mtn, "FP": mfp, "FN": mfn, "TP": mtp},
         },
         "class_summary": {
@@ -240,7 +248,7 @@ def main():
         "",
         "## 1. Empirical Accuracy & Verification Summary",
         "",
-        "| Evaluation Benchmark | Matched Obs | Accuracy | Precision | Recall | Macro F1-Score | Confusion Matrix |",
+        "| Evaluation Benchmark | Matched Obs | Accuracy | Precision | Recall | High-class F1 | Confusion Matrix |",
         "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
         f"| **CVAT Manual Ground Truth (IoU $\\ge$ {min_iou})** | **{len(gt_y_true):,}** | **{gt_acc:.2f}%** | **{gt_prec:.2f}%** | **{gt_rec:.2f}%** | **{gt_f1:.2f}%** | TN={tn}, FP={fp}, FN={fn}, TP={tp} |",
         f"| **Independent Multimodal Check** | **{len(m_true):,}** | **{m_acc:.2f}%** | **{m_prec:.2f}%** | **{m_rec:.2f}%** | **{m_f1:.2f}%** | TN={mtn}, FP={mfp}, FN={mfn}, TP={mtp} |",

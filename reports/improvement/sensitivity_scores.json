@@ -1,0 +1,272 @@
+{
+ "cutoff": {
+  "30": {
+   "mean": {
+    "balacc": 0.5187,
+    "acc": 0.722,
+    "low_recall": 0.0447
+   },
+   "per_room": {
+    "classroom_01": 0.5,
+    "room_B": 0.5043,
+    "room_C": 0.5519
+   }
+  },
+  "35": {
+   "mean": {
+    "balacc": 0.5331,
+    "acc": 0.7176,
+    "low_recall": 0.0978
+   },
+   "per_room": {
+    "classroom_01": 0.5,
+    "room_B": 0.508,
+    "room_C": 0.5913
+   }
+  },
+  "40": {
+   "mean": {
+    "balacc": 0.5598,
+    "acc": 0.7175,
+    "low_recall": 0.2027
+   },
+   "per_room": {
+    "classroom_01": 0.5112,
+    "room_B": 0.508,
+    "room_C": 0.6602
+   }
+  },
+  "45": {
+   "mean": {
+    "balacc": 0.5855,
+    "acc": 0.7168,
+    "low_recall": 0.3223
+   },
+   "per_room": {
+    "classroom_01": 0.5276,
+    "room_B": 0.5477,
+    "room_C": 0.6812
+   }
+  },
+  "50": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "55": {
+   "mean": {
+    "balacc": 0.5721,
+    "acc": 0.4766,
+    "low_recall": 0.8105
+   },
+   "per_room": {
+    "classroom_01": 0.5849,
+    "room_B": 0.4977,
+    "room_C": 0.6337
+   }
+  },
+  "60": {
+   "mean": {
+    "balacc": 0.5119,
+    "acc": 0.3146,
+    "low_recall": 0.9576
+   },
+   "per_room": {
+    "classroom_01": 0.5648,
+    "room_B": 0.462,
+    "room_C": 0.509
+   }
+  },
+  "65": {
+   "mean": {
+    "balacc": 0.4989,
+    "acc": 0.2815,
+    "low_recall": 0.9978
+   },
+   "per_room": {
+    "classroom_01": 0.5,
+    "room_B": 0.4967,
+    "room_C": 0.5
+   }
+  },
+  "70": {
+   "mean": {
+    "balacc": 0.5,
+    "acc": 0.2826,
+    "low_recall": 1.0
+   },
+   "per_room": {
+    "classroom_01": 0.5,
+    "room_B": 0.5,
+    "room_C": 0.5
+   }
+  }
+ },
+ "study_threshold": {
+  "None": {
+   "mean": {
+    "balacc": 0.6069,
+    "acc": 0.6418,
+    "low_recall": 0.5593
+   },
+   "per_room": {
+    "classroom_01": 0.5898,
+    "room_B": 0.6011,
+    "room_C": 0.6299
+   }
+  },
+  "0.2": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "0.25": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "0.3": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "0.4": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "0.5": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "0.6": {
+   "mean": {
+    "balacc": 0.6054,
+    "acc": 0.6588,
+    "low_recall": 0.5214
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5935,
+    "room_C": 0.6464
+   }
+  },
+  "0.7": {
+   "mean": {
+    "balacc": 0.6054,
+    "acc": 0.6588,
+    "low_recall": 0.5214
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5935,
+    "room_C": 0.6464
+   }
+  }
+ },
+ "study_floor": {
+  "45": {
+   "mean": {
+    "balacc": 0.6069,
+    "acc": 0.6418,
+    "low_recall": 0.5593
+   },
+   "per_room": {
+    "classroom_01": 0.5898,
+    "room_B": 0.6011,
+    "room_C": 0.6299
+   }
+  },
+  "50": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "55": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "60": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  },
+  "70": {
+   "mean": {
+    "balacc": 0.6177,
+    "acc": 0.6903,
+    "low_recall": 0.4994
+   },
+   "per_room": {
+    "classroom_01": 0.5764,
+    "room_B": 0.5866,
+    "room_C": 0.69
+   }
+  }
+ }
+}

@@ -1,0 +1,22 @@
+{
+ "11": {
+  "unseen_students_auc": 0.296,
+  "same_students_later_auc": 0.684
+ },
+ "clip_001": {
+  "unseen_students_auc": 0.451,
+  "same_students_later_auc": 0.788
+ },
+ "clip_004": {
+  "unseen_students_auc": 0.512,
+  "same_students_later_auc": 0.923
+ },
+ "non_attentive_1": {
+  "unseen_students_auc": 0.566,
+  "same_students_later_auc": 0.832
+ },
+ "test_8": {
+  "unseen_students_auc": 0.511,
+  "same_students_later_auc": 0.951
+ }
+}

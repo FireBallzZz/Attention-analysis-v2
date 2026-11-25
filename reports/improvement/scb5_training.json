@@ -1,0 +1,24 @@
+{
+ "bowturn": {
+  "classes": [
+   "BowHead",
+   "TurnHead"
+  ],
+  "mAP50": 0.4264,
+  "mAP50_95": 0.2531,
+  "per_class_mAP50": {
+   "BowHead": 0.3987,
+   "TurnHead": 0.454
+  }
+ },
+ "discuss": {
+  "classes": [
+   "discuss"
+  ],
+  "mAP50": 0.6981,
+  "mAP50_95": 0.3809,
+  "per_class_mAP50": {
+   "discuss": 0.6981
+  }
+ }
+}

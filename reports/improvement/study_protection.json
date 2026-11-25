@@ -1,0 +1,91 @@
+{
+ "diagnosis": {
+  "attentive_scored_low_pct": 30.6,
+  "confident_study_share_pct": 14.9,
+  "confident_study_labelled_high_pct": 78.2,
+  "all_labelled_high_pct": 71.5,
+  "confident_study_scored_low_by_motion_pct": 41.2
+ },
+ "variants": {
+  "motion only": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5898,
+     "auc": 0.6507
+    },
+    "room_B": {
+     "balacc": 0.6011,
+     "auc": 0.5569
+    },
+    "room_C": {
+     "balacc": 0.6299,
+     "auc": 0.7308
+    }
+   },
+   "mean": {
+    "balacc": 0.6069,
+    "auc": 0.6461
+   }
+  },
+  "protect if SCB study >= 0.3": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5764,
+     "auc": 0.648
+    },
+    "room_B": {
+     "balacc": 0.5866,
+     "auc": 0.5531
+    },
+    "room_C": {
+     "balacc": 0.69,
+     "auc": 0.7421
+    }
+   },
+   "mean": {
+    "balacc": 0.6177,
+    "auc": 0.6477
+   }
+  },
+  "protect if SCB study >= 0.4": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5764,
+     "auc": 0.648
+    },
+    "room_B": {
+     "balacc": 0.5866,
+     "auc": 0.5531
+    },
+    "room_C": {
+     "balacc": 0.69,
+     "auc": 0.7421
+    }
+   },
+   "mean": {
+    "balacc": 0.6177,
+    "auc": 0.6477
+   }
+  },
+  "protect if SCB study >= 0.5": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5764,
+     "auc": 0.648
+    },
+    "room_B": {
+     "balacc": 0.5866,
+     "auc": 0.5531
+    },
+    "room_C": {
+     "balacc": 0.69,
+     "auc": 0.7421
+    }
+   },
+   "mean": {
+    "balacc": 0.6177,
+    "auc": 0.6477
+   }
+  }
+ }
+}

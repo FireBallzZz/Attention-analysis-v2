@@ -1,0 +1,371 @@
+{
+  "config": {
+    "seeds": 3,
+    "epochs": 15,
+    "inner_val_frac": 0.25,
+    "include_test6": false,
+    "out_dir": "reports/cross_classroom"
+  },
+  "rooms": {
+    "classroom_01": {
+      "windows": 10049,
+      "low": 1367
+    },
+    "room_B": {
+      "windows": 8699,
+      "low": 4392
+    },
+    "room_C": {
+      "windows": 4130,
+      "low": 807
+    }
+  },
+  "per_room": {
+    "classroom_01": {
+      "test_windows": 10049,
+      "test_low_windows": 1367,
+      "test_persons": 23,
+      "train_rooms": [
+        "room_B",
+        "room_C"
+      ],
+      "bigru": {
+        "n": 10049,
+        "accuracy": 0.19136232460941388,
+        "balanced_accuracy": 0.37762508242549436,
+        "macro_f1": 0.19107008980650234,
+        "low_recall": 0.6335040234089246,
+        "low_precision": 0.10199034271581675,
+        "low_f1": 0.17569486711300467,
+        "high_f1": 0.2064453125,
+        "roc_auc": 0.31662655138135265,
+        "always_attentive_accuracy": 0.8639665638371977,
+        "threshold": 0.71,
+        "ci95_person_bootstrap": {
+          "accuracy": [
+            0.11,
+            0.2919
+          ],
+          "balanced_accuracy": [
+            0.2853,
+            0.4996
+          ],
+          "macro_f1": [
+            0.1085,
+            0.2846
+          ],
+          "low_recall": [
+            0.4709,
+            0.8406
+          ],
+          "roc_auc": [
+            0.1625,
+            0.5188
+          ]
+        }
+      },
+      "logreg": {
+        "n": 10049,
+        "accuracy": 0.22987361926559857,
+        "balanced_accuracy": 0.4852767803022069,
+        "macro_f1": 0.22986922646723804,
+        "low_recall": 0.8361375274323336,
+        "low_precision": 0.13201663201663202,
+        "low_f1": 0.2280299251870324,
+        "high_f1": 0.23170852774744366,
+        "roc_auc": 0.43555784007372916,
+        "always_attentive_accuracy": 0.8639665638371977,
+        "threshold": 0.3,
+        "ci95_person_bootstrap": {
+          "accuracy": [
+            0.1451,
+            0.3238
+          ],
+          "balanced_accuracy": [
+            0.4119,
+            0.5578
+          ],
+          "macro_f1": [
+            0.1446,
+            0.3218
+          ],
+          "low_recall": [
+            0.7085,
+            0.9565
+          ],
+          "roc_auc": [
+            0.2865,
+            0.6331
+          ]
+        }
+      },
+      "deployed_checkpoint_thr_0.50": {
+        "n": 10049,
+        "accuracy": 0.8833714797492288,
+        "balanced_accuracy": 0.7593102260527083,
+        "macro_f1": 0.7555186386962088,
+        "low_recall": 0.5888807607900512,
+        "low_precision": 0.568904593639576,
+        "low_f1": 0.5787203450754853,
+        "high_f1": 0.9323169323169324,
+        "roc_auc": 0.8356014352189118,
+        "always_attentive_accuracy": 0.8639665638371977
+      },
+      "deployed_checkpoint_note": "deployed model TRAINED on classroom_01; not a held-out score"
+    },
+    "room_B": {
+      "test_windows": 8699,
+      "test_low_windows": 4392,
+      "test_persons": 30,
+      "train_rooms": [
+        "classroom_01",
+        "room_C"
+      ],
+      "bigru": {
+        "n": 8699,
+        "accuracy": 0.6247844579836763,
+        "balanced_accuracy": 0.6268740407765898,
+        "macro_f1": 0.6078639086262954,
+        "low_recall": 0.41302367941712204,
+        "low_precision": 0.7256,
+        "low_f1": 0.526407428903076,
+        "high_f1": 0.6893203883495146,
+        "roc_auc": 0.5847255949669767,
+        "always_attentive_accuracy": 0.4951143809633291,
+        "threshold": 0.64,
+        "ci95_person_bootstrap": {
+          "accuracy": [
+            0.5186,
+            0.7301
+          ],
+          "balanced_accuracy": [
+            0.5376,
+            0.7002
+          ],
+          "macro_f1": [
+            0.5111,
+            0.6897
+          ],
+          "low_recall": [
+            0.2928,
+            0.5336
+          ],
+          "roc_auc": [
+            0.4581,
+            0.7014
+          ]
+        }
+      },
+      "logreg": {
+        "n": 8699,
+        "accuracy": 0.6127141050695483,
+        "balanced_accuracy": 0.6127186891927954,
+        "macro_f1": 0.6127023130357213,
+        "low_recall": 0.6122495446265938,
+        "low_precision": 0.617451205510907,
+        "low_f1": 0.6148393734994856,
+        "high_f1": 0.610565252571957,
+        "roc_auc": 0.5782990095760576,
+        "always_attentive_accuracy": 0.4951143809633291,
+        "threshold": 0.72,
+        "ci95_person_bootstrap": {
+          "accuracy": [
+            0.4796,
+            0.7238
+          ],
+          "balanced_accuracy": [
+            0.4787,
+            0.7261
+          ],
+          "macro_f1": [
+            0.4726,
+            0.7224
+          ],
+          "low_recall": [
+            0.4517,
+            0.7569
+          ],
+          "roc_auc": [
+            0.4119,
+            0.7146
+          ]
+        }
+      },
+      "deployed_checkpoint_thr_0.50": {
+        "n": 8699,
+        "accuracy": 0.36900793194620074,
+        "balanced_accuracy": 0.36617633407385697,
+        "macro_f1": 0.30958817072847866,
+        "low_recall": 0.6559653916211293,
+        "low_precision": 0.4200320746464499,
+        "low_f1": 0.5121322549106746,
+        "high_f1": 0.10704408654628274,
+        "roc_auc": 0.3263796111975972,
+        "always_attentive_accuracy": 0.4951143809633291
+      }
+    },
+    "room_C": {
+      "test_windows": 4130,
+      "test_low_windows": 807,
+      "test_persons": 19,
+      "train_rooms": [
+        "classroom_01",
+        "room_B"
+      ],
+      "bigru": {
+        "n": 4130,
+        "accuracy": 0.4438256658595642,
+        "balanced_accuracy": 0.4728321365004749,
+        "macro_f1": 0.40970083040406513,
+        "low_recall": 0.5204460966542751,
+        "low_precision": 0.18025751072961374,
+        "low_f1": 0.267771756455212,
+        "high_f1": 0.5516299043529183,
+        "roc_auc": 0.4288815774999152,
+        "always_attentive_accuracy": 0.8046004842615012,
+        "threshold": 0.69,
+        "ci95_person_bootstrap": {
+          "accuracy": [
+            0.3156,
+            0.5796
+          ],
+          "balanced_accuracy": [
+            0.3497,
+            0.6237
+          ],
+          "macro_f1": [
+            0.2926,
+            0.5338
+          ],
+          "low_recall": [
+            0.3346,
+            0.7737
+          ],
+          "roc_auc": [
+            0.2562,
+            0.6356
+          ]
+        }
+      },
+      "logreg": {
+        "n": 4130,
+        "accuracy": 0.6174334140435835,
+        "balanced_accuracy": 0.4817338955222155,
+        "macro_f1": 0.4784468275365752,
+        "low_recall": 0.2589838909541512,
+        "low_precision": 0.17548278757346766,
+        "low_f1": 0.2092092092092092,
+        "high_f1": 0.7476844458639412,
+        "roc_auc": 0.4374810984684492,
+        "always_attentive_accuracy": 0.8046004842615012,
+        "threshold": 0.3,
+        "ci95_person_bootstrap": {
+          "accuracy": [
+            0.4818,
+            0.7476
+          ],
+          "balanced_accuracy": [
+            0.3668,
+            0.6101
+          ],
+          "macro_f1": [
+            0.3767,
+            0.5952
+          ],
+          "low_recall": [
+            0.0873,
+            0.463
+          ],
+          "roc_auc": [
+            0.3055,
+            0.5897
+          ]
+        }
+      },
+      "deployed_checkpoint_thr_0.50": {
+        "n": 4130,
+        "accuracy": 0.33995157384987895,
+        "balanced_accuracy": 0.4805253162126011,
+        "macro_f1": 0.33740575506474935,
+        "low_recall": 0.711276332094176,
+        "low_precision": 0.18715357026410173,
+        "low_f1": 0.2963345379452762,
+        "high_f1": 0.37847697218422255,
+        "roc_auc": 0.45925267958925453,
+        "always_attentive_accuracy": 0.8046004842615012
+      }
+    }
+  },
+  "pooled_held_out": {
+    "bigru": {
+      "n": 22878,
+      "accuracy": 0.4017396625579159,
+      "balanced_accuracy": 0.4227676157899934,
+      "macro_f1": 0.3913362906778395,
+      "low_recall": 0.4721291501675297,
+      "low_precision": 0.2327152616169957,
+      "low_f1": 0.311761452204958,
+      "high_f1": 0.4709111291507209,
+      "roc_auc": 0.4227676157899934,
+      "always_attentive_accuracy": 0.7129993880583967,
+      "roc_auc_within_room_mean": 0.4434112412827482,
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.3238,
+          0.4828
+        ],
+        "balanced_accuracy": [
+          0.3569,
+          0.4932
+        ],
+        "macro_f1": [
+          0.319,
+          0.4639
+        ],
+        "low_recall": [
+          0.3772,
+          0.5726
+        ],
+        "roc_auc": [
+          0.3569,
+          0.4932
+        ]
+      }
+    },
+    "logreg": {
+      "n": 22878,
+      "accuracy": 0.44540606696389545,
+      "balanced_accuracy": 0.4962024690780765,
+      "macro_f1": 0.4406572755369873,
+      "low_recall": 0.6154431922022541,
+      "low_precision": 0.28449732469726835,
+      "low_f1": 0.38911892152142513,
+      "high_f1": 0.4921956295525494,
+      "roc_auc": 0.4962024690780765,
+      "always_attentive_accuracy": 0.7129993880583967,
+      "roc_auc_within_room_mean": 0.483779316039412,
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.3588,
+          0.5276
+        ],
+        "balanced_accuracy": [
+          0.4196,
+          0.5689
+        ],
+        "macro_f1": [
+          0.3522,
+          0.5202
+        ],
+        "low_recall": [
+          0.4985,
+          0.7291
+        ],
+        "roc_auc": [
+          0.4196,
+          0.5689
+        ]
+      }
+    }
+  }
+}

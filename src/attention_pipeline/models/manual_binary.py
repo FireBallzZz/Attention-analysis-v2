@@ -34,6 +34,13 @@ class ManualBinaryAttentionClassifier(nn.Module):
             for p in self.frame_encoder.parameters():
                 p.requires_grad = False
 
+        # Per-channel input mask (1 = use, 0 = ignore). All ones by default so
+        # older checkpoints behave exactly as before. Not part of state_dict;
+        # stored as "input_mask" in the checkpoint dict.
+        feat_dim = base_net.frame_encoder[0].in_features
+        self.register_buffer("input_mask", torch.ones(feat_dim), persistent=False)
+        self.threshold = 0.5  # validated decision threshold; set by load()
+
         # Concat last (128) + mean (128) + max (128) = 384-D
         self.head = nn.Sequential(
             nn.Linear(128 * 3, 128),
@@ -47,6 +54,7 @@ class ManualBinaryAttentionClassifier(nn.Module):
         )
 
     def encode_temporal(self, x: torch.Tensor) -> torch.Tensor:
+        x = x * self.input_mask
         b, t, d = x.shape
         if self.freeze_frame_encoder:
             with torch.no_grad():
@@ -72,18 +80,25 @@ class ManualBinaryAttentionClassifier(nn.Module):
     def score(self, window: torch.Tensor) -> torch.Tensor:
         """Returns attention score in [0.0, 100.0] for pipeline compatibility.
         
-        Score represents P(HIGH) * 100.0.
-        Score >= 50.0 corresponds to HIGH (Attentive).
-        Score < 50.0 corresponds to LOW (Non-Attentive).
+        P(HIGH) is rescaled piecewise-linearly so that the checkpoint's
+        validated decision threshold lands exactly on 50:
+            p in [0, thr]  -> [0, 50]      p in [thr, 1] -> [50, 100]
+        Score >= 50.0 is HIGH (Attentive), < 50.0 is LOW. With threshold 0.5
+        (older checkpoints) this is plain P(HIGH) * 100.
         """
         if window.dim() == 2:
             window = window.unsqueeze(0)
-        probs = self.predict_proba(window)
-        return probs[:, 1] * 100.0
+        p = self.predict_proba(window)[:, 1]
+        thr = float(min(max(self.threshold, 1e-3), 1 - 1e-3))
+        return torch.where(p < thr, 50.0 * p / thr, 50.0 + 50.0 * (p - thr) / (1.0 - thr))
 
     def load(self, path: str | Path, map_location: str | torch.device = "cpu") -> "ManualBinaryAttentionClassifier":
         ckpt = torch.load(path, map_location=map_location, weights_only=False)
         state = ckpt["model"] if isinstance(ckpt, dict) and "model" in ckpt else ckpt
         self.load_state_dict(state)
+        mask = ckpt.get("input_mask") if isinstance(ckpt, dict) else None
+        if mask is not None:
+            self.input_mask.copy_(torch.as_tensor(mask, dtype=torch.float32, device=self.input_mask.device))
+        self.threshold = float(ckpt.get("calibrated_threshold", 0.5)) if isinstance(ckpt, dict) else 0.5
         self.eval()
         return self

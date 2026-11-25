@@ -1,0 +1,120 @@
+{
+ "full box (current)": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.5688,
+    "auc": 0.5951
+   },
+   "room_B": {
+    "balacc": 0.5452,
+    "auc": 0.5648
+   },
+   "room_C": {
+    "balacc": 0.6637,
+    "auc": 0.7053
+   }
+  },
+  "mean": {
+   "balacc": 0.5926,
+   "auc": 0.6217
+  },
+  "coef_last_fold": [
+   -0.365
+  ]
+ },
+ "head only": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.4822,
+    "auc": 0.5189
+   },
+   "room_B": {
+    "balacc": 0.5026,
+    "auc": 0.5818
+   },
+   "room_C": {
+    "balacc": 0.6525,
+    "auc": 0.7005
+   }
+  },
+  "mean": {
+   "balacc": 0.5458,
+   "auc": 0.6004
+  },
+  "coef_last_fold": [
+   -0.144
+  ]
+ },
+ "body only": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.581,
+    "auc": 0.6147
+   },
+   "room_B": {
+    "balacc": 0.5546,
+    "auc": 0.519
+   },
+   "room_C": {
+    "balacc": 0.6225,
+    "auc": 0.6973
+   }
+  },
+  "mean": {
+   "balacc": 0.586,
+   "auc": 0.6103
+  },
+  "coef_last_fold": [
+   -0.346
+  ]
+ },
+ "head + body": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.4777,
+    "auc": 0.5046
+   },
+   "room_B": {
+    "balacc": 0.5342,
+    "auc": 0.5295
+   },
+   "room_C": {
+    "balacc": 0.5949,
+    "auc": 0.6704
+   }
+  },
+  "mean": {
+   "balacc": 0.5356,
+   "auc": 0.5682
+  },
+  "coef_last_fold": [
+   0.095,
+   -0.409
+  ]
+ },
+ "full + head + body": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.5023,
+    "auc": 0.5073
+   },
+   "room_B": {
+    "balacc": 0.5129,
+    "auc": 0.5501
+   },
+   "room_C": {
+    "balacc": 0.5362,
+    "auc": 0.6533
+   }
+  },
+  "mean": {
+   "balacc": 0.5171,
+   "auc": 0.5702
+  },
+  "coef_last_fold": [
+   -2.742,
+   1.07,
+   1.393
+  ]
+ }
+}

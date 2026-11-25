@@ -27,11 +27,15 @@ data:
   l2cs_repo: third_party/L2CS-Net
   scb_repo: third_party/SCB-dataset
 
+# The 20-sample checkpoints are not present in this repository, so every
+# "_20" weight below used to resolve to a missing file and the pipeline
+# silently fell back to the rubric heuristic. Point these at real artifacts
+# after retraining, or keep them empty and use the official weights.
 models:
-  gaze_weights: checkpoints/l2cs_finetuned_20.pt
-  posture_weights: checkpoints/posture_scb.pt
-  scb_weights: checkpoints/scb_yolo11n_20.pt
-  fusion_weights: checkpoints/fusion_daisee_20.pt
+  gaze_weights: ""
+  posture_weights: ""
+  scb_weights: checkpoints/scb_yolo.pt
+  fusion_weights: ""
 
 scb:
   conf: 0.45

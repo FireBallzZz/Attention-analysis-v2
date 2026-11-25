@@ -1,7 +1,7 @@
 Evaluation_Set,Annotation_Source,N_Samples,Accuracy_Pct,Balanced_Acc_Pct,True_Macro_F1_Pct,Positive_Class_F1_Pct,Negative_Class_F1_Pct,Sensitivity_Pct,Specificity_Pct,TN,FP,FN,TP,ROC_AUC,PR_AUC
-Clip 001 (IoU >= 0.30),User Human CVAT XML,1067,95.13,49.95,48.75,97.50,0.00,99.90,0.00,0,51,1,1015,0.3827,0.9292
-Clip 007 (IoU >= 0.30),Repo CVAT XML + CSV,863,80.65,50.75,46.36,89.25,3.47,99.71,1.79,3,165,2,693,0.6032,0.8672
+Clip 001 (IoU >= 0.30),User Human CVAT XML,1201,91.09,49.71,48.58,95.33,1.83,98.29,1.12,1,88,19,1093,0.2925,0.8694
+Clip 007 (IoU >= 0.30),Repo CVAT XML + CSV,894,78.41,49.05,44.95,87.87,2.03,96.95,1.16,2,171,22,699,0.6101,0.8936
 Held-Out Validation (tau=0.50),Dataset Ground Truth (6 St.),4602,87.74,70.74,72.06,92.99,51.13,94.05,47.43,295,327,237,3743,0.7367,0.9242
 Held-Out Validation (tau*=0.50),Dataset Ground Truth (6 St. Calibrated),4602,87.74,70.74,72.06,92.99,51.13,94.05,47.43,295,327,237,3743,0.7367,0.9242
-Video Project 3 (Consistency),Heuristic Rule Rubric (NO CVAT GT),7075,93.81,88.24,89.13,96.26,81.99,96.86,79.63,997,255,183,5640,0.9068,0.9697
-Test 4 (Consistency),Heuristic Rule Rubric (NO CVAT GT),1928,93.46,93.50,93.46,93.40,93.53,94.79,92.21,911,77,49,891,0.9719,0.9477
+Video Project 3 (Consistency),Heuristic Rule Rubric (NO CVAT GT),7118,90.80,75.24,78.69,94.75,62.64,97.13,53.35,549,480,175,5914,0.8928,0.9756
+Test 4 (Consistency),Heuristic Rule Rubric (NO CVAT GT),1668,89.51,81.37,83.30,93.48,73.12,95.51,67.23,238,116,59,1255,0.8882,0.9575

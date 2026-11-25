@@ -1,0 +1,144 @@
+{
+ "cue_auc": {
+  "BowHead": {
+   "classroom_01": 0.5,
+   "room_B": 0.5,
+   "room_C": 0.5,
+   "present_pct": 0.0
+  },
+  "TurnHead": {
+   "classroom_01": 0.632,
+   "room_B": 0.456,
+   "room_C": 0.522,
+   "present_pct": 1.5
+  },
+  "discuss": {
+   "classroom_01": 0.493,
+   "room_B": 0.552,
+   "room_C": 0.513,
+   "present_pct": 0.2
+  }
+ },
+ "variants": {
+  "current final (motion + study protection)": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5764,
+     "auc": 0.648
+    },
+    "room_B": {
+     "balacc": 0.5866,
+     "auc": 0.5531
+    },
+    "room_C": {
+     "balacc": 0.69,
+     "auc": 0.7421
+    }
+   },
+   "mean": {
+    "balacc": 0.6177,
+    "auc": 0.6477
+   }
+  },
+  "+ BowHead >= 0.5 lowers score to <= 40": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5764,
+     "auc": 0.648
+    },
+    "room_B": {
+     "balacc": 0.5866,
+     "auc": 0.5531
+    },
+    "room_C": {
+     "balacc": 0.69,
+     "auc": 0.7421
+    }
+   },
+   "mean": {
+    "balacc": 0.6177,
+    "auc": 0.6477
+   }
+  },
+  "+ TurnHead >= 0.5 lowers score to <= 40": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5665,
+     "auc": 0.6329
+    },
+    "room_B": {
+     "balacc": 0.594,
+     "auc": 0.5596
+    },
+    "room_C": {
+     "balacc": 0.6888,
+     "auc": 0.7403
+    }
+   },
+   "mean": {
+    "balacc": 0.6164,
+    "auc": 0.6443
+   }
+  },
+  "+ discuss >= 0.5 lowers score to <= 40": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5764,
+     "auc": 0.648
+    },
+    "room_B": {
+     "balacc": 0.5826,
+     "auc": 0.548
+    },
+    "room_C": {
+     "balacc": 0.6892,
+     "auc": 0.7414
+    }
+   },
+   "mean": {
+    "balacc": 0.6161,
+    "auc": 0.6458
+   }
+  },
+  "+ TurnHead or discuss >= 0.5 lowers to <= 40": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5665,
+     "auc": 0.6329
+    },
+    "room_B": {
+     "balacc": 0.59,
+     "auc": 0.5546
+    },
+    "room_C": {
+     "balacc": 0.6888,
+     "auc": 0.74
+    }
+   },
+   "mean": {
+    "balacc": 0.6151,
+    "auc": 0.6425
+   }
+  },
+  "learned: motion + SCB5 cues": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.4921,
+     "auc": 0.4937
+    },
+    "room_B": {
+     "balacc": 0.5554,
+     "auc": 0.547
+    },
+    "room_C": {
+     "balacc": 0.6445,
+     "auc": 0.7168
+    }
+   },
+   "mean": {
+    "balacc": 0.564,
+    "auc": 0.5858
+   }
+  }
+ }
+}

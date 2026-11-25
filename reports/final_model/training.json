@@ -1,0 +1,181 @@
+{
+  "checkpoint": "checkpoints\\final_human_v1.pt",
+  "sha256": "0d4ad13234eb2dce499ac0fcaf01aacbc15c9c1723a2acc7d537172096c6f260",
+  "threshold": 0.8800000000000001,
+  "rooms": {
+    "classroom_01": {
+      "windows": 10049,
+      "low": 1367
+    },
+    "room_B": {
+      "windows": 8699,
+      "low": 4392
+    },
+    "room_C": {
+      "windows": 4130,
+      "low": 807
+    }
+  },
+  "inner_val_metrics": {
+    "n": 5711,
+    "accuracy": 0.6053230607599369,
+    "balanced_accuracy": 0.6220842353438563,
+    "macro_f1": 0.5865479736389603,
+    "low_recall": 0.6631142687981054,
+    "low_precision": 0.39928698752228164,
+    "low_f1": 0.4984423676012461,
+    "high_f1": 0.6746535796766744,
+    "roc_auc": 0.676592241782099,
+    "always_attentive_accuracy": 0.7042549465942917
+  },
+  "masked_channels": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    21
+  ],
+  "expected_unseen_classroom_performance": {
+    "n": 22878,
+    "accuracy": 0.6009266544278346,
+    "balanced_accuracy": 0.5828329750791638,
+    "macro_f1": 0.5640728536045359,
+    "low_recall": 0.5403594273530308,
+    "low_precision": 0.367287784679089,
+    "low_f1": 0.4373228152348083,
+    "high_f1": 0.6908228919742635,
+    "roc_auc": 0.5828329750791638,
+    "always_attentive_accuracy": 0.7129993880583967,
+    "roc_auc_within_room_mean": 0.5353526602117941,
+    "ci95_person_bootstrap": {
+      "accuracy": [
+        0.5052,
+        0.6806
+      ],
+      "balanced_accuracy": [
+        0.5009,
+        0.66
+      ],
+      "macro_f1": [
+        0.4789,
+        0.6381
+      ],
+      "low_recall": [
+        0.4104,
+        0.6737
+      ],
+      "roc_auc": [
+        0.5009,
+        0.66
+      ]
+    }
+  },
+  "per_unseen_room": {
+    "classroom_01": {
+      "n": 10049,
+      "accuracy": 0.8371977311175242,
+      "balanced_accuracy": 0.5467593320489027,
+      "macro_f1": 0.5537211251761752,
+      "low_recall": 0.14776883686905634,
+      "low_precision": 0.300148588410104,
+      "low_f1": 0.1980392156862745,
+      "high_f1": 0.909403034666076,
+      "roc_auc": 0.5847924309930306,
+      "always_attentive_accuracy": 0.8639665638371977,
+      "threshold": 0.18,
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.7458,
+          0.9126
+        ],
+        "balanced_accuracy": [
+          0.4562,
+          0.6806
+        ],
+        "macro_f1": [
+          0.4428,
+          0.6941
+        ],
+        "low_recall": [
+          0.0057,
+          0.4156
+        ],
+        "roc_auc": [
+          0.3829,
+          0.7797
+        ]
+      }
+    },
+    "room_B": {
+      "n": 8699,
+      "accuracy": 0.47856075410966775,
+      "balanced_accuracy": 0.47732019464226283,
+      "macro_f1": 0.46936756692730663,
+      "low_recall": 0.6042805100182149,
+      "low_precision": 0.4867938371239912,
+      "low_f1": 0.539211702559935,
+      "high_f1": 0.3995234312946783,
+      "roc_auc": 0.5563205025241664,
+      "always_attentive_accuracy": 0.4951143809633291,
+      "threshold": 0.61,
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.3512,
+          0.5982
+        ],
+        "balanced_accuracy": [
+          0.3604,
+          0.592
+        ],
+        "macro_f1": [
+          0.3373,
+          0.5873
+        ],
+        "low_recall": [
+          0.4588,
+          0.7461
+        ],
+        "roc_auc": [
+          0.408,
+          0.6856
+        ]
+      }
+    },
+    "room_C": {
+      "n": 4130,
+      "accuracy": 0.2837772397094431,
+      "balanced_accuracy": 0.5009723451249057,
+      "macro_f1": 0.28188504602292647,
+      "low_recall": 0.8574969021065675,
+      "low_precision": 0.19575671852899576,
+      "low_f1": 0.3187471211423307,
+      "high_f1": 0.2450229709035222,
+      "roc_auc": 0.46494504711818535,
+      "always_attentive_accuracy": 0.8046004842615012,
+      "threshold": 0.66,
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.158,
+          0.4257
+        ],
+        "balanced_accuracy": [
+          0.3992,
+          0.5979
+        ],
+        "macro_f1": [
+          0.1491,
+          0.4184
+        ],
+        "low_recall": [
+          0.684,
+          1.0
+        ],
+        "roc_auc": [
+          0.3242,
+          0.5799
+        ]
+      }
+    }
+  }
+}

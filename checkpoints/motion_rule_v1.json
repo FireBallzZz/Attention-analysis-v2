@@ -1,0 +1,46 @@
+{
+ "a": 0.05146313837433718,
+ "b": -0.5478782788839786,
+ "threshold": 0.5144989565915651,
+ "window": 16,
+ "trained_on": "classroom_01, room_B, room_C (human labels)",
+ "expected_unseen_classroom": {
+  "balacc": 0.5926,
+  "acc": 0.5689,
+  "macro_f1": 0.5222,
+  "auc": 0.6217,
+  "low_recall": 0.6135,
+  "always_high": 0.7247,
+  "pooled_balacc": 0.543,
+  "pooled_acc": 0.5209
+ },
+ "per_unseen_room": {
+  "classroom_01": {
+   "balacc": 0.5688,
+   "acc": 0.3914,
+   "macro_f1": 0.371,
+   "auc": 0.5951,
+   "low_recall": 0.8089,
+   "always_high": 0.8693,
+   "n": 3444.0
+  },
+  "room_B": {
+   "balacc": 0.5452,
+   "acc": 0.5451,
+   "macro_f1": 0.5451,
+   "auc": 0.5648,
+   "low_recall": 0.5385,
+   "always_high": 0.4921,
+   "n": 2585.0
+  },
+  "room_C": {
+   "balacc": 0.6637,
+   "acc": 0.7703,
+   "macro_f1": 0.6505,
+   "auc": 0.7053,
+   "low_recall": 0.4931,
+   "always_high": 0.8126,
+   "n": 1537.0
+  }
+ }
+}

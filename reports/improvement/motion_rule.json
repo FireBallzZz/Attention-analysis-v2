@@ -1,0 +1,86 @@
+{
+ "1.6s": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.5688,
+    "acc": 0.3914,
+    "macro_f1": 0.371,
+    "auc": 0.5951,
+    "low_recall": 0.8089,
+    "always_high": 0.8693,
+    "n": 3444.0
+   },
+   "room_B": {
+    "balacc": 0.5452,
+    "acc": 0.5451,
+    "macro_f1": 0.5451,
+    "auc": 0.5648,
+    "low_recall": 0.5385,
+    "always_high": 0.4921,
+    "n": 2585.0
+   },
+   "room_C": {
+    "balacc": 0.6637,
+    "acc": 0.7703,
+    "macro_f1": 0.6505,
+    "auc": 0.7053,
+    "low_recall": 0.4931,
+    "always_high": 0.8126,
+    "n": 1537.0
+   }
+  },
+  "mean_over_rooms": {
+   "balacc": 0.5926,
+   "acc": 0.5689,
+   "macro_f1": 0.5222,
+   "auc": 0.6217,
+   "low_recall": 0.6135,
+   "always_high": 0.7247,
+   "pooled_balacc": 0.543,
+   "pooled_acc": 0.5209
+  },
+  "threshold": 0.5144989565915651
+ },
+ "3s": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.5826,
+    "acc": 0.4564,
+    "macro_f1": 0.4172,
+    "auc": 0.6092,
+    "low_recall": 0.7533,
+    "always_high": 0.8693,
+    "n": 3444.0
+   },
+   "room_B": {
+    "balacc": 0.5515,
+    "acc": 0.5516,
+    "macro_f1": 0.5515,
+    "auc": 0.5901,
+    "low_recall": 0.559,
+    "always_high": 0.4921,
+    "n": 2585.0
+   },
+   "room_C": {
+    "balacc": 0.6001,
+    "acc": 0.743,
+    "macro_f1": 0.5956,
+    "auc": 0.6799,
+    "low_recall": 0.3715,
+    "always_high": 0.8126,
+    "n": 1537.0
+   }
+  },
+  "mean_over_rooms": {
+   "balacc": 0.5781,
+   "acc": 0.5837,
+   "macro_f1": 0.5214,
+   "auc": 0.6264,
+   "low_recall": 0.5613,
+   "always_high": 0.7247,
+   "pooled_balacc": 0.556,
+   "pooled_acc": 0.5472
+  },
+  "threshold": 0.4997260626591577
+ }
+}

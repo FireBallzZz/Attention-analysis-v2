@@ -49,6 +49,18 @@ class StudentFrame:
     mouth_aspect: float
     features: np.ndarray  # (FEAT_DIM,)
     has_phone_obj: bool = False
+    # Live face evidence. The rubric may only claim "sleeping" or "talking"
+    # when these are backed by a real measurement.
+    mouth_motion: float = 0.0
+    eye_closed: bool = False
+    mouth_active: bool = False
+    pose_reliable: bool = True
+    aspects_valid: bool = False
+    # Head pitch relative to this student's own neutral, in degrees.
+    pitch_delta: float | None = None
+    # Jitter-resilient body motion & class-relative gaze yaw for rubric rules (never alters FEAT_DIM=32).
+    body_motion: float | None = None
+    rel_gaze_yaw: float | None = None
 
 
 @dataclass

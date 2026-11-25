@@ -30,3 +30,8 @@ attention-infer = "attention_pipeline.cli:infer_main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+# scripts/test_trained.py is a runnable script, not a test module.
+testpaths = ["tests"]
+pythonpath = ["src", "scripts"]

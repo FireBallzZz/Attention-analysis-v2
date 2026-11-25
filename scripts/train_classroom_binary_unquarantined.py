@@ -1,4 +1,10 @@
-"""Unquarantined Classroom Binary Attention Model Training.
+"""LEGACY - do not use for reported results. Use scripts/train_final_model.py.
+
+Known problems: clip_001/clip_008 labels here are model pre-annotations, the
+split holds out per-clip track IDs (not physical people), and epoch/threshold
+are chosen on the reported validation set.
+
+Unquarantined Classroom Binary Attention Model Training.
 
 Trains ManualBinaryAttentionClassifier on ALL classroom video footage:
 - classroom_clip_001_v3_hardened.npz (5,192 sequences)
@@ -115,12 +121,26 @@ def main():
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--lr-temporal", type=float, default=8e-5)
     parser.add_argument("--lr-head", type=float, default=1.5e-3)
+    parser.add_argument("--lr-encoder", type=float, default=5e-5,
+                        help="Learning rate for the frame encoder when it is trainable")
     parser.add_argument("--weight-decay", type=float, default=1e-3)
     parser.add_argument("--val-students", type=str, default="2,5,8,14,16,18")
     parser.add_argument("--init-backbone", default="checkpoints/baseline/fusion_daisee.pt")
+    parser.add_argument("--freeze-frame-encoder", default="1",
+                        choices=["0", "1"],
+                        help="1 = freeze the frame encoder (previous default), 0 = train it")
+    parser.add_argument("--no-pretrain", action="store_true",
+                        help="Ignore --init-backbone and start from a random initialisation")
     parser.add_argument("--out-ckpt", default="checkpoints/classroom_manual_binary_unquarantined.pt")
     parser.add_argument("--out-report", default="runs/reports/classroom_unquarantined_binary_report.md")
     parser.add_argument("--out-json", default="runs/reports/classroom_unquarantined_binary_metrics.json")
+    parser.add_argument(
+        "--clip-files",
+        default=("classroom_clip_001_v3_hardened.npz,"
+                 "classroom_clip_004_v3_hardened.npz,"
+                 "classroom_clip_008_v3_hardened.npz"),
+        help="Comma-separated dataset file names inside data/processed.",
+    )
     args = parser.parse_args()
 
     set_seed(args.seed)
@@ -138,9 +158,9 @@ def main():
     # 1. Load All 3 Classroom Clips (001, 004, 008)
     data_dir = WORKSPACE_ROOT / "data" / "processed"
     clip_files = [
-        data_dir / "classroom_clip_001_v3_hardened.npz",
-        data_dir / "classroom_clip_004_v3_hardened.npz",
-        data_dir / "classroom_clip_008_v3_hardened.npz",
+        data_dir / name.strip()
+        for name in args.clip_files.split(",")
+        if name.strip()
     ]
 
     all_feats, all_sids, all_targets = [], [], []
@@ -184,19 +204,24 @@ def main():
     print(f"    Val Classes:   HIGH={np.sum(y_val==1):,} ({np.sum(y_val==1)/len(y_val)*100:.1f}%), LOW={np.sum(y_val==0):,} ({np.sum(y_val==0)/len(y_val)*100:.1f}%)")
 
     # 3. Model Architecture & Backbone Transfer
-    backbone_path = WORKSPACE_ROOT / args.init_backbone
-    if not backbone_path.exists():
-        backbone_path = WORKSPACE_ROOT / "checkpoints" / "fusion_daisee.pt"
-    if not backbone_path.exists():
-        raise FileNotFoundError(f"Missing pretrained backbone initialization: {backbone_path}")
-
-    print(f"\nInitializing backbone from: {backbone_path.name}")
     base_net = AttentionFusionNet(feat_dim=32, hidden=64)
-    init_ckpt = torch.load(backbone_path, map_location="cpu", weights_only=False)
-    state = init_ckpt["model"] if isinstance(init_ckpt, dict) and "model" in init_ckpt else init_ckpt
-    base_net.load_state_dict(state, strict=False)
+    if args.no_pretrain:
+        print("\nBackbone: random initialisation (no DAiSEE pretraining)")
+    else:
+        backbone_path = WORKSPACE_ROOT / args.init_backbone
+        if not backbone_path.exists():
+            backbone_path = WORKSPACE_ROOT / "checkpoints" / "fusion_daisee.pt"
+        if not backbone_path.exists():
+            raise FileNotFoundError(f"Missing pretrained backbone initialization: {backbone_path}")
 
-    model = ManualBinaryAttentionClassifier(base_net, freeze_frame_encoder=True).to(device)
+        print(f"\nInitializing backbone from: {backbone_path.name}")
+        init_ckpt = torch.load(backbone_path, map_location="cpu", weights_only=False)
+        state = init_ckpt["model"] if isinstance(init_ckpt, dict) and "model" in init_ckpt else init_ckpt
+        base_net.load_state_dict(state, strict=False)
+
+    freeze_encoder = args.freeze_frame_encoder == "1"
+    model = ManualBinaryAttentionClassifier(base_net, freeze_frame_encoder=freeze_encoder).to(device)
+    print(f"Frame encoder: {'FROZEN' if freeze_encoder else 'TRAINABLE'}")
 
     # 4. Focal/Balanced Loss to ensure >= 80% accuracy with high minority recall
     counts = np.bincount(y_train, minlength=2)
@@ -209,7 +234,11 @@ def main():
         [
             {"params": model.temporal.parameters(), "lr": args.lr_temporal, "weight_decay": 1e-4},
             {"params": model.head.parameters(), "lr": args.lr_head, "weight_decay": args.weight_decay},
-        ]
+        ] + (
+            [] if freeze_encoder else
+            [{"params": model.frame_encoder.parameters(), "lr": args.lr_encoder,
+              "weight_decay": args.weight_decay}]
+        )
     )
 
     train_loader = DataLoader(
@@ -355,7 +384,7 @@ def main():
 
 ---
 
-## 1. Validation Performance Summary (4,386 Held-Out Sequences)
+## 1. Validation Performance Summary ({len(x_val):,} Held-Out Sequences)
 
 | Metric | Default Threshold (tau=0.50) | Calibrated Threshold (tau*={best_tau:.2f}) |
 | :--- | :---: | :---: |

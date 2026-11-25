@@ -1,0 +1,234 @@
+{
+ "calibrate on first 30% of each video | classroom-behaviour crops (SCB)": {
+  "per_video": {
+   "11": {
+    "n": 1386,
+    "acc": 0.8874,
+    "balacc": 0.6941,
+    "macro_f1": 0.7474,
+    "low_recall": 0.3882,
+    "always_high": 0.816,
+    "auc": 0.5549
+   },
+   "clip_001": {
+    "n": 1800,
+    "acc": 0.8328,
+    "balacc": 0.7106,
+    "macro_f1": 0.6297,
+    "low_recall": 0.5646,
+    "always_high": 0.9183,
+    "auc": 0.8004
+   },
+   "clip_004": {
+    "n": 1890,
+    "acc": 0.7524,
+    "balacc": 0.7278,
+    "macro_f1": 0.6633,
+    "low_recall": 0.6902,
+    "always_high": 0.8275,
+    "auc": 0.7749
+   },
+   "non_attentive_1": {
+    "n": 1399,
+    "acc": 0.7999,
+    "balacc": 0.6307,
+    "macro_f1": 0.5966,
+    "low_recall": 0.8468,
+    "always_high": 0.1086,
+    "auc": 0.6581
+   },
+   "test_8": {
+    "n": 1300,
+    "acc": 0.7631,
+    "balacc": 0.778,
+    "macro_f1": 0.6702,
+    "low_recall": 0.7989,
+    "always_high": 0.8546,
+    "auc": 0.8243
+   }
+  },
+  "pooled": {
+   "n": 7775,
+   "acc": 0.8054,
+   "balacc": 0.7871,
+   "macro_f1": 0.7704,
+   "low_recall": 0.7458,
+   "always_high": 0.7217,
+   "auc": 0.7871
+  }
+ },
+ "calibrate on first 30% of each video | SCB + head gaze": {
+  "per_video": {
+   "11": {
+    "n": 1386,
+    "acc": 0.8781,
+    "balacc": 0.6686,
+    "macro_f1": 0.7174,
+    "low_recall": 0.3373,
+    "always_high": 0.816,
+    "auc": 0.6641
+   },
+   "clip_001": {
+    "n": 1800,
+    "acc": 0.9161,
+    "balacc": 0.7219,
+    "macro_f1": 0.7212,
+    "low_recall": 0.4898,
+    "always_high": 0.9183,
+    "auc": 0.8141
+   },
+   "clip_004": {
+    "n": 1890,
+    "acc": 0.7212,
+    "balacc": 0.687,
+    "macro_f1": 0.6272,
+    "low_recall": 0.635,
+    "always_high": 0.8275,
+    "auc": 0.7828
+   },
+   "non_attentive_1": {
+    "n": 1399,
+    "acc": 0.8127,
+    "balacc": 0.7101,
+    "macro_f1": 0.6454,
+    "low_recall": 0.8412,
+    "always_high": 0.1086,
+    "auc": 0.6688
+   },
+   "test_8": {
+    "n": 1300,
+    "acc": 0.6185,
+    "balacc": 0.5946,
+    "macro_f1": 0.5186,
+    "low_recall": 0.5608,
+    "always_high": 0.8546,
+    "auc": 0.6384
+   }
+  },
+  "pooled": {
+   "n": 7775,
+   "acc": 0.7936,
+   "balacc": 0.7656,
+   "macro_f1": 0.7536,
+   "low_recall": 0.7024,
+   "always_high": 0.7217,
+   "auc": 0.7656
+  }
+ },
+ "calibrate on first 50% of each video | classroom-behaviour crops (SCB)": {
+  "per_video": {
+   "11": {
+    "n": 938,
+    "acc": 0.7697,
+    "balacc": 0.6915,
+    "macro_f1": 0.6783,
+    "low_recall": 0.555,
+    "always_high": 0.7868,
+    "auc": 0.6417
+   },
+   "clip_001": {
+    "n": 1200,
+    "acc": 0.3692,
+    "balacc": 0.5506,
+    "macro_f1": 0.3199,
+    "low_recall": 0.7595,
+    "always_high": 0.9342,
+    "auc": 0.7577
+   },
+   "clip_004": {
+    "n": 1260,
+    "acc": 0.7722,
+    "balacc": 0.7634,
+    "macro_f1": 0.6879,
+    "low_recall": 0.75,
+    "always_high": 0.8317,
+    "auc": 0.8867
+   },
+   "non_attentive_1": {
+    "n": 949,
+    "acc": 0.804,
+    "balacc": 0.7041,
+    "macro_f1": 0.6396,
+    "low_recall": 0.8327,
+    "always_high": 0.1117,
+    "auc": 0.7051
+   },
+   "test_8": {
+    "n": 864,
+    "acc": 0.8715,
+    "balacc": 0.5271,
+    "macro_f1": 0.5283,
+    "low_recall": 0.1194,
+    "always_high": 0.9225,
+    "auc": 0.7597
+   }
+  },
+  "pooled": {
+   "n": 5211,
+   "acc": 0.7012,
+   "balacc": 0.7142,
+   "macro_f1": 0.6712,
+   "low_recall": 0.7423,
+   "always_high": 0.7311,
+   "auc": 0.7142
+  }
+ },
+ "calibrate on first 50% of each video | SCB + head gaze": {
+  "per_video": {
+   "11": {
+    "n": 938,
+    "acc": 0.7591,
+    "balacc": 0.7084,
+    "macro_f1": 0.681,
+    "low_recall": 0.62,
+    "always_high": 0.7868,
+    "auc": 0.7651
+   },
+   "clip_001": {
+    "n": 1200,
+    "acc": 0.7933,
+    "balacc": 0.7776,
+    "macro_f1": 0.602,
+    "low_recall": 0.7595,
+    "always_high": 0.9342,
+    "auc": 0.7829
+   },
+   "clip_004": {
+    "n": 1260,
+    "acc": 0.6865,
+    "balacc": 0.7739,
+    "macro_f1": 0.633,
+    "low_recall": 0.9057,
+    "always_high": 0.8317,
+    "auc": 0.8737
+   },
+   "non_attentive_1": {
+    "n": 949,
+    "acc": 0.8894,
+    "balacc": 0.748,
+    "macro_f1": 0.7353,
+    "low_recall": 0.93,
+    "always_high": 0.1117,
+    "auc": 0.655
+   },
+   "test_8": {
+    "n": 864,
+    "acc": 0.8356,
+    "balacc": 0.5486,
+    "macro_f1": 0.5368,
+    "low_recall": 0.209,
+    "always_high": 0.9225,
+    "auc": 0.6486
+   }
+  },
+  "pooled": {
+   "n": 5211,
+   "acc": 0.7858,
+   "balacc": 0.8023,
+   "macro_f1": 0.7587,
+   "low_recall": 0.838,
+   "always_high": 0.7311,
+   "auc": 0.8023
+  }
+ }
+}

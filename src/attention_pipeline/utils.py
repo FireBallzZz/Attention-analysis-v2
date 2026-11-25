@@ -24,6 +24,11 @@ def project_path(path: str | Path | None) -> Path | None:
     """Resolve a path relative to the thesis project root when it is not absolute."""
     if path is None:
         return None
+    # An empty string means "this modality is intentionally disabled". Without
+    # this guard, Path("") resolves to the project root, which exists, and the
+    # caller would try to load a directory as a checkpoint.
+    if isinstance(path, str) and not path.strip():
+        return None
     p = Path(path)
     if p.is_absolute():
         return p

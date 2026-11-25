@@ -1,0 +1,57 @@
+{
+ "clip_004": {
+  "room": "classroom_01",
+  "matched": 1305,
+  "low_share": 0.211,
+  "auc": 0.625,
+  "balanced_accuracy": 0.571,
+  "accuracy": 0.715,
+  "always_high": 0.789,
+  "auc_model_only": 0.633,
+  "balanced_accuracy_model_only": 0.583
+ },
+ "clip_001": {
+  "room": "classroom_01",
+  "matched": 1531,
+  "low_share": 0.081,
+  "auc": 0.681,
+  "balanced_accuracy": 0.578,
+  "accuracy": 0.766,
+  "always_high": 0.919,
+  "auc_model_only": 0.688,
+  "balanced_accuracy_model_only": 0.604
+ },
+ "11": {
+  "room": "room_B",
+  "matched": 1168,
+  "low_share": 0.152,
+  "auc": 0.777,
+  "balanced_accuracy": 0.74,
+  "accuracy": 0.673,
+  "always_high": 0.848,
+  "auc_model_only": 0.778,
+  "balanced_accuracy_model_only": 0.747
+ },
+ "non_attentive_1": {
+  "room": "room_B",
+  "matched": 1199,
+  "low_share": 0.877,
+  "auc": 0.399,
+  "balanced_accuracy": 0.475,
+  "accuracy": 0.536,
+  "always_high": 0.123,
+  "auc_model_only": 0.435,
+  "balanced_accuracy_model_only": 0.46
+ },
+ "test_8": {
+  "room": "room_C",
+  "matched": 1512,
+  "low_share": 0.187,
+  "auc": 0.84,
+  "balanced_accuracy": 0.777,
+  "accuracy": 0.767,
+  "always_high": 0.813,
+  "auc_model_only": 0.731,
+  "balanced_accuracy_model_only": 0.63
+ }
+}

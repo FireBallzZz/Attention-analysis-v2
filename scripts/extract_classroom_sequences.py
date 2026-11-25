@@ -196,7 +196,10 @@ def main():
             if crop.size > 0:
                 prev_frames[sid] = crop.copy()
 
-            # Pack 32-D features
+            # Pack 32-D features. The live eye/mouth measurements are passed
+            # through so channels 19, 20 and 24 carry real evidence instead of
+            # the constant 0.3 / 0.0 the training sets were originally built
+            # with.
             feat = pack_features(
                 head_pose=face.head_pose,
                 gaze=face.gaze,
@@ -206,6 +209,9 @@ def main():
                 eye_aspect=face.eye_aspect,
                 mouth_aspect=face.mouth_aspect,
                 keypoints=kpts,
+                eye_openness=face.eye_openness,
+                mouth_openness=face.mouth_openness,
+                mouth_motion=face.mouth_motion,
             )
 
             buf = student_histories[sid]

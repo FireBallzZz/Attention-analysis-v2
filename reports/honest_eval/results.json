@@ -1,0 +1,553 @@
+{
+  "config": {
+    "folds": 5,
+    "seeds": 3,
+    "epochs": 15,
+    "inner_val_frac": 0.25,
+    "min_iou": 0.3,
+    "max_seat_px": 60.0,
+    "out_dir": "reports/honest_eval"
+  },
+  "device": "cuda",
+  "data": {
+    "clip_004": {
+      "windows": 5985,
+      "label_source": "Anno\\ground_truth.csv"
+    },
+    "clip_001": {
+      "windows_total": 5192,
+      "windows_with_human_label": 4064,
+      "label_source": "runs\\Annoted file for clip 1\\annotations.xml",
+      "agreement_old_model_labels_vs_human": 0.8083,
+      "old_labels_disengaged_share": 0.1592,
+      "human_labels_disengaged_share": 0.0797
+    },
+    "person_matching": {
+      "max_seat_px": 60.0,
+      "matched_pairs": [
+        {
+          "clip_001_track": 0,
+          "clip_004_track": 0,
+          "px": 44.3
+        },
+        {
+          "clip_001_track": 1,
+          "clip_004_track": 1,
+          "px": 54.9
+        },
+        {
+          "clip_001_track": 2,
+          "clip_004_track": 2,
+          "px": 56.3
+        },
+        {
+          "clip_001_track": 3,
+          "clip_004_track": 3,
+          "px": 37.7
+        },
+        {
+          "clip_001_track": 4,
+          "clip_004_track": 4,
+          "px": 13.0
+        },
+        {
+          "clip_001_track": 5,
+          "clip_004_track": 5,
+          "px": 5.7
+        },
+        {
+          "clip_001_track": 6,
+          "clip_004_track": 6,
+          "px": 36.6
+        },
+        {
+          "clip_001_track": 7,
+          "clip_004_track": 7,
+          "px": 28.3
+        },
+        {
+          "clip_001_track": 8,
+          "clip_004_track": 8,
+          "px": 35.9
+        },
+        {
+          "clip_001_track": 9,
+          "clip_004_track": 9,
+          "px": 51.0
+        },
+        {
+          "clip_001_track": 10,
+          "clip_004_track": 11,
+          "px": 58.4
+        },
+        {
+          "clip_001_track": 12,
+          "clip_004_track": 10,
+          "px": 29.4
+        },
+        {
+          "clip_001_track": 13,
+          "clip_004_track": 12,
+          "px": 56.3
+        },
+        {
+          "clip_001_track": 14,
+          "clip_004_track": 13,
+          "px": 56.8
+        },
+        {
+          "clip_001_track": 16,
+          "clip_004_track": 16,
+          "px": 54.9
+        },
+        {
+          "clip_001_track": 17,
+          "clip_004_track": 17,
+          "px": 54.4
+        },
+        {
+          "clip_001_track": 18,
+          "clip_004_track": 15,
+          "px": 16.5
+        },
+        {
+          "clip_001_track": 19,
+          "clip_004_track": 19,
+          "px": 15.2
+        }
+      ],
+      "persons_total": 23
+    },
+    "total_windows": 10049,
+    "persons": 23,
+    "disengaged_share": 0.13603343616280228,
+    "persons_with_any_disengaged": 10,
+    "approx_non_overlapping_windows": 697
+  },
+  "deployed_checkpoint_on_human_labels": {
+    "note": "Trained on these exact windows (clip_004) and on clip_001 windows with model labels; NOT a held-out score. Shown for reference only.",
+    "thr_0.50": {
+      "n": 10049,
+      "accuracy": 0.8833714797492288,
+      "balanced_accuracy": 0.7593102260527083,
+      "macro_f1": 0.7555186386962088,
+      "low_recall": 0.5888807607900512,
+      "low_precision": 0.568904593639576,
+      "low_f1": 0.5787203450754853,
+      "high_f1": 0.9323169323169324,
+      "roc_auc": 0.8356014352189118,
+      "always_attentive_accuracy": 0.8639665638371977
+    },
+    "thr_0.45": {
+      "n": 10049,
+      "accuracy": 0.8849636779779082,
+      "balanced_accuracy": 0.7337287060802504,
+      "macro_f1": 0.7441570795493467,
+      "low_recall": 0.5259692757863935,
+      "low_precision": 0.5859820700896495,
+      "low_f1": 0.5543562066306862,
+      "high_f1": 0.9339579524680073,
+      "roc_auc": 0.8356014352189118,
+      "always_attentive_accuracy": 0.8639665638371977
+    },
+    "per_clip_thr_0.50": {
+      "clip_001": {
+        "n": 4064,
+        "accuracy": 0.8166830708661418,
+        "balanced_accuracy": 0.5536591404238463,
+        "macro_f1": 0.5350276517320744,
+        "low_recall": 0.24074074074074073,
+        "low_precision": 0.13518197573656845,
+        "low_f1": 0.17314095449500555,
+        "high_f1": 0.8969143489691435,
+        "roc_auc": 0.6547963293061333,
+        "always_attentive_accuracy": 0.9202755905511811
+      },
+      "clip_004": {
+        "n": 5985,
+        "accuracy": 0.928654970760234,
+        "balanced_accuracy": 0.8372836310598921,
+        "macro_f1": 0.8653348831760963,
+        "low_recall": 0.6970278044103547,
+        "low_precision": 0.8675417661097852,
+        "low_f1": 0.7729930887825625,
+        "high_f1": 0.9576766775696303,
+        "roc_auc": 0.9011710336548255,
+        "always_attentive_accuracy": 0.8257309941520468
+      }
+    }
+  },
+  "leave_persons_out_cv": {
+    "bigru_seed_ensemble": {
+      "model": "BiGRU (DAiSEE init, mean of seeds)",
+      "pooled": {
+        "n": 10049,
+        "accuracy": 0.7913225196536969,
+        "balanced_accuracy": 0.5192856277406003,
+        "macro_f1": 0.5201958083069508,
+        "low_recall": 0.14557425018288223,
+        "low_precision": 0.17641843971631205,
+        "low_f1": 0.1595190380761523,
+        "high_f1": 0.8808725785377493,
+        "roc_auc": 0.604906021033857,
+        "always_attentive_accuracy": 0.8639665638371977
+      },
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.694,
+          0.8777
+        ],
+        "balanced_accuracy": [
+          0.4474,
+          0.6028
+        ],
+        "macro_f1": [
+          0.45,
+          0.6169
+        ],
+        "low_recall": [
+          0.0318,
+          0.3028
+        ],
+        "roc_auc": [
+          0.4626,
+          0.7635
+        ]
+      },
+      "per_clip": {
+        "clip_001": {
+          "n": 4064,
+          "accuracy": 0.8651574803149606,
+          "balanced_accuracy": 0.5447580378952928,
+          "macro_f1": 0.5443793325526454,
+          "low_recall": 0.16358024691358025,
+          "low_precision": 0.1606060606060606,
+          "low_f1": 0.1620795107033639,
+          "high_f1": 0.9266791544019267,
+          "roc_auc": 0.593527183600713,
+          "always_attentive_accuracy": 0.9202755905511811
+        },
+        "clip_004": {
+          "n": 5985,
+          "accuracy": 0.741186299081036,
+          "balanced_accuracy": 0.5040252159954804,
+          "macro_f1": 0.5028411063816689,
+          "low_recall": 0.13998082454458294,
+          "low_precision": 0.18295739348370926,
+          "low_f1": 0.15860945138511678,
+          "high_f1": 0.847072761378221,
+          "roc_auc": 0.576864203863571,
+          "always_attentive_accuracy": 0.8257309941520468
+        }
+      }
+    },
+    "bigru_per_seed_pooled": [
+      {
+        "n": 10049,
+        "accuracy": 0.7958005771718579,
+        "balanced_accuracy": 0.5061603209357638,
+        "macro_f1": 0.5052295510713343,
+        "low_recall": 0.10826627651792246,
+        "low_precision": 0.15086646279306828,
+        "low_f1": 0.1260647359454855,
+        "high_f1": 0.8843943661971831,
+        "roc_auc": 0.605010079797484,
+        "always_attentive_accuracy": 0.8639665638371977
+      },
+      {
+        "n": 10049,
+        "accuracy": 0.7426609612896805,
+        "balanced_accuracy": 0.5502933277520763,
+        "macro_f1": 0.5388063245652269,
+        "low_recall": 0.28602779809802487,
+        "low_precision": 0.19540229885057472,
+        "low_f1": 0.2321852731591449,
+        "high_f1": 0.845427375971309,
+        "roc_auc": 0.5462945221950181,
+        "always_attentive_accuracy": 0.8639665638371977
+      },
+      {
+        "n": 10049,
+        "accuracy": 0.8087371877798786,
+        "balanced_accuracy": 0.517653337539498,
+        "macro_f1": 0.5179214072871121,
+        "low_recall": 0.11777615215801024,
+        "low_precision": 0.18358038768529075,
+        "low_f1": 0.14349376114081996,
+        "high_f1": 0.8923490534334043,
+        "roc_auc": 0.5938312616792271,
+        "always_attentive_accuracy": 0.8639665638371977
+      }
+    ],
+    "logreg_window_stats": {
+      "model": "Logistic regression on window statistics",
+      "pooled": {
+        "n": 10049,
+        "accuracy": 0.7167877400736392,
+        "balanced_accuracy": 0.5895584487543029,
+        "macro_f1": 0.5541759236684727,
+        "low_recall": 0.41477688368690563,
+        "low_precision": 0.21699196326061998,
+        "low_f1": 0.28492462311557787,
+        "high_f1": 0.8234272242213674,
+        "roc_auc": 0.6578733219787106,
+        "always_attentive_accuracy": 0.8639665638371977
+      },
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.5928,
+          0.8229
+        ],
+        "balanced_accuracy": [
+          0.4707,
+          0.711
+        ],
+        "macro_f1": [
+          0.4454,
+          0.663
+        ],
+        "low_recall": [
+          0.2141,
+          0.6389
+        ],
+        "roc_auc": [
+          0.4775,
+          0.8127
+        ]
+      },
+      "per_clip": {
+        "clip_001": {
+          "n": 4064,
+          "accuracy": 0.8021653543307087,
+          "balanced_accuracy": 0.6190664818115799,
+          "macro_f1": 0.5652721838571514,
+          "low_recall": 0.4012345679012346,
+          "low_precision": 0.17567567567567569,
+          "low_f1": 0.24436090225563908,
+          "high_f1": 0.8861834654586637,
+          "roc_auc": 0.8079842543077838,
+          "always_attentive_accuracy": 0.9202755905511811
+        },
+        "clip_004": {
+          "n": 5985,
+          "accuracy": 0.6588137009189641,
+          "balanced_accuracy": 0.5642065408401891,
+          "macro_f1": 0.5370949883688267,
+          "low_recall": 0.4189837008628955,
+          "low_precision": 0.23331553657234383,
+          "low_f1": 0.2997256515775034,
+          "high_f1": 0.7744643251601502,
+          "roc_auc": 0.5816832883694383,
+          "always_attentive_accuracy": 0.8257309941520468
+        }
+      }
+    },
+    "always_attentive": {
+      "model": "Always predict attentive",
+      "pooled": {
+        "n": 10049,
+        "accuracy": 0.8639665638371977,
+        "balanced_accuracy": 0.5,
+        "macro_f1": 0.4635096898190166,
+        "low_recall": 0.0,
+        "low_precision": 0.0,
+        "low_f1": 0.0,
+        "high_f1": 0.9270193796380332,
+        "roc_auc": 0.5,
+        "always_attentive_accuracy": 0.8639665638371977
+      }
+    }
+  },
+  "folds": [
+    {
+      "fold": 0,
+      "test_persons": [
+        6,
+        16,
+        21,
+        22
+      ],
+      "test_windows": 1687,
+      "test_disengaged": 253,
+      "inner_val_persons": [
+        2,
+        12,
+        13,
+        15
+      ],
+      "bigru_thresholds": [
+        0.2,
+        0.78,
+        0.72
+      ],
+      "logreg_threshold": 0.6
+    },
+    {
+      "fold": 1,
+      "test_persons": [
+        0,
+        1,
+        5,
+        10
+      ],
+      "test_windows": 1996,
+      "test_disengaged": 244,
+      "inner_val_persons": [
+        7,
+        9,
+        16,
+        20
+      ],
+      "bigru_thresholds": [
+        0.1,
+        0.1,
+        0.2
+      ],
+      "logreg_threshold": 0.1
+    },
+    {
+      "fold": 2,
+      "test_persons": [
+        4,
+        7,
+        8,
+        17,
+        19,
+        20
+      ],
+      "test_windows": 2492,
+      "test_disengaged": 404,
+      "inner_val_persons": [
+        2,
+        9,
+        11,
+        12
+      ],
+      "bigru_thresholds": [
+        0.56,
+        0.5,
+        0.2
+      ],
+      "logreg_threshold": 0.1
+    },
+    {
+      "fold": 3,
+      "test_persons": [
+        3,
+        9,
+        11,
+        13,
+        18
+      ],
+      "test_windows": 1960,
+      "test_disengaged": 247,
+      "inner_val_persons": [
+        1,
+        5,
+        6,
+        10
+      ],
+      "bigru_thresholds": [
+        0.88,
+        0.88,
+        0.36
+      ],
+      "logreg_threshold": 0.9
+    },
+    {
+      "fold": 4,
+      "test_persons": [
+        2,
+        12,
+        14,
+        15
+      ],
+      "test_windows": 1914,
+      "test_disengaged": 219,
+      "inner_val_persons": [
+        7,
+        13,
+        17,
+        18
+      ],
+      "bigru_thresholds": [
+        0.1,
+        0.9,
+        0.12
+      ],
+      "logreg_threshold": 0.82
+    }
+  ],
+  "cross_segment_transfer": {
+    "clip_004->clip_001": {
+      "n": 4064,
+      "accuracy": 0.811761811023622,
+      "balanced_accuracy": 0.5298425430778372,
+      "macro_f1": 0.5178536784174479,
+      "low_recall": 0.19444444444444445,
+      "low_precision": 0.1111111111111111,
+      "low_f1": 0.1414141414141414,
+      "high_f1": 0.8942932154207545,
+      "roc_auc": 0.604595794546775,
+      "always_attentive_accuracy": 0.9202755905511811,
+      "threshold": 0.7800000000000001,
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.6834,
+          0.9124
+        ],
+        "balanced_accuracy": [
+          0.4009,
+          0.6045
+        ],
+        "macro_f1": [
+          0.4342,
+          0.6124
+        ],
+        "low_recall": [
+          0.0,
+          0.3085
+        ],
+        "roc_auc": [
+          0.2072,
+          0.7742
+        ]
+      }
+    },
+    "clip_001->clip_004": {
+      "n": 5985,
+      "accuracy": 0.5512113617376775,
+      "balanced_accuracy": 0.6363419695311248,
+      "macro_f1": 0.5118754619898497,
+      "low_recall": 0.7670182166826462,
+      "low_precision": 0.24668516805427074,
+      "low_f1": 0.3733084461035931,
+      "high_f1": 0.6504424778761062,
+      "roc_auc": 0.5954715156020771,
+      "always_attentive_accuracy": 0.8257309941520468,
+      "threshold": 0.8400000000000002,
+      "ci95_person_bootstrap": {
+        "accuracy": [
+          0.3956,
+          0.7182
+        ],
+        "balanced_accuracy": [
+          0.4646,
+          0.7752
+        ],
+        "macro_f1": [
+          0.346,
+          0.6774
+        ],
+        "low_recall": [
+          0.4618,
+          0.9811
+        ],
+        "roc_auc": [
+          0.3785,
+          0.7987
+        ]
+      }
+    }
+  }
+}

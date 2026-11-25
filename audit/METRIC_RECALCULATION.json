@@ -1,107 +1,165 @@
 {
-  "timestamp": "2026-11-08 14:10:09",
+  "timestamp": "2026-11-10 01:05:02",
   "clip_001": {
     "ground_truth_eval_iou_0_30": {
-      "n_samples": 1067,
+      "n_samples": 1201,
       "confusion_matrix": {
-        "TN": 0,
-        "FP": 51,
-        "FN": 1,
-        "TP": 1015
+        "TN": 1,
+        "FP": 88,
+        "FN": 19,
+        "TP": 1093
       },
-      "accuracy": 0.9513,
-      "balanced_accuracy": 0.4995,
-      "macro_f1": 0.4875,
-      "weighted_f1": 0.9284,
-      "sensitivity": 0.999,
-      "specificity": 0.0,
+      "accuracy": 0.9109,
+      "balanced_accuracy": 0.4971,
+      "macro_f1": 0.4858,
+      "weighted_f1": 0.884,
+      "sensitivity": 0.9829,
+      "specificity": 0.0112,
       "class_0_low": {
-        "support": 51,
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0
+        "support": 89,
+        "precision": 0.05,
+        "recall": 0.0112,
+        "f1": 0.0183
       },
       "class_1_high": {
-        "support": 1016,
-        "precision": 0.9522,
-        "recall": 0.999,
-        "f1": 0.975
+        "support": 1112,
+        "precision": 0.9255,
+        "recall": 0.9829,
+        "f1": 0.9533
       },
-      "roc_auc": 0.3827,
-      "pr_auc": 0.9292
+      "roc_auc": 0.2925,
+      "pr_auc": 0.8694
     },
     "iou_sensitivity": {
       "iou_0.15": {
-        "n_samples": 1349,
+        "n_samples": 1512,
         "confusion_matrix": {
-          "TN": 0,
-          "FP": 83,
-          "FN": 2,
-          "TP": 1264
+          "TN": 2,
+          "FP": 130,
+          "FN": 20,
+          "TP": 1360
         },
-        "accuracy": 0.937,
-        "balanced_accuracy": 0.4992,
-        "macro_f1": 0.4837,
-        "weighted_f1": 0.9079,
-        "sensitivity": 0.9984,
-        "specificity": 0.0,
+        "accuracy": 0.9008,
+        "balanced_accuracy": 0.5003,
+        "macro_f1": 0.4869,
+        "weighted_f1": 0.8673,
+        "sensitivity": 0.9855,
+        "specificity": 0.0152,
         "class_0_low": {
-          "support": 83,
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0
+          "support": 132,
+          "precision": 0.0909,
+          "recall": 0.0152,
+          "f1": 0.026
         },
         "class_1_high": {
-          "support": 1266,
-          "precision": 0.9384,
-          "recall": 0.9984,
-          "f1": 0.9675
+          "support": 1380,
+          "precision": 0.9128,
+          "recall": 0.9855,
+          "f1": 0.9477
         },
-        "roc_auc": 0.2912,
-        "pr_auc": 0.8935
+        "roc_auc": 0.2569,
+        "pr_auc": 0.8409
       },
       "iou_0.20": {
-        "n_samples": 1331,
+        "n_samples": 1491,
         "confusion_matrix": {
-          "TN": 0,
-          "FP": 83,
-          "FN": 1,
-          "TP": 1247
+          "TN": 2,
+          "FP": 130,
+          "FN": 19,
+          "TP": 1340
         },
-        "accuracy": 0.9369,
-        "balanced_accuracy": 0.4996,
-        "macro_f1": 0.4837,
-        "weighted_f1": 0.9071,
-        "sensitivity": 0.9992,
-        "specificity": 0.0,
+        "accuracy": 0.9001,
+        "balanced_accuracy": 0.5006,
+        "macro_f1": 0.4867,
+        "weighted_f1": 0.8658,
+        "sensitivity": 0.986,
+        "specificity": 0.0152,
         "class_0_low": {
-          "support": 83,
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0
+          "support": 132,
+          "precision": 0.0952,
+          "recall": 0.0152,
+          "f1": 0.0261
         },
         "class_1_high": {
-          "support": 1248,
-          "precision": 0.9376,
-          "recall": 0.9992,
-          "f1": 0.9674
+          "support": 1359,
+          "precision": 0.9116,
+          "recall": 0.986,
+          "f1": 0.9473
         },
-        "roc_auc": 0.2914,
-        "pr_auc": 0.8924
+        "roc_auc": 0.256,
+        "pr_auc": 0.839
       },
       "iou_0.25": {
-        "n_samples": 1219,
+        "n_samples": 1376,
+        "confusion_matrix": {
+          "TN": 1,
+          "FP": 126,
+          "FN": 19,
+          "TP": 1230
+        },
+        "accuracy": 0.8946,
+        "balanced_accuracy": 0.4963,
+        "macro_f1": 0.479,
+        "weighted_f1": 0.8584,
+        "sensitivity": 0.9848,
+        "specificity": 0.0079,
+        "class_0_low": {
+          "support": 127,
+          "precision": 0.05,
+          "recall": 0.0079,
+          "f1": 0.0136
+        },
+        "class_1_high": {
+          "support": 1249,
+          "precision": 0.9071,
+          "recall": 0.9848,
+          "f1": 0.9443
+        },
+        "roc_auc": 0.2445,
+        "pr_auc": 0.8314
+      },
+      "iou_0.30": {
+        "n_samples": 1201,
+        "confusion_matrix": {
+          "TN": 1,
+          "FP": 88,
+          "FN": 19,
+          "TP": 1093
+        },
+        "accuracy": 0.9109,
+        "balanced_accuracy": 0.4971,
+        "macro_f1": 0.4858,
+        "weighted_f1": 0.884,
+        "sensitivity": 0.9829,
+        "specificity": 0.0112,
+        "class_0_low": {
+          "support": 89,
+          "precision": 0.05,
+          "recall": 0.0112,
+          "f1": 0.0183
+        },
+        "class_1_high": {
+          "support": 1112,
+          "precision": 0.9255,
+          "recall": 0.9829,
+          "f1": 0.9533
+        },
+        "roc_auc": 0.2925,
+        "pr_auc": 0.8694
+      },
+      "iou_0.35": {
+        "n_samples": 1062,
         "confusion_matrix": {
           "TN": 0,
           "FP": 73,
-          "FN": 1,
-          "TP": 1145
+          "FN": 19,
+          "TP": 970
         },
-        "accuracy": 0.9393,
-        "balanced_accuracy": 0.4996,
-        "macro_f1": 0.4843,
-        "weighted_f1": 0.9107,
-        "sensitivity": 0.9991,
+        "accuracy": 0.9134,
+        "balanced_accuracy": 0.4904,
+        "macro_f1": 0.4774,
+        "weighted_f1": 0.8891,
+        "sensitivity": 0.9808,
         "specificity": 0.0,
         "class_0_low": {
           "support": 73,
@@ -110,254 +168,196 @@
           "f1": 0.0
         },
         "class_1_high": {
-          "support": 1146,
-          "precision": 0.9401,
-          "recall": 0.9991,
-          "f1": 0.9687
+          "support": 989,
+          "precision": 0.93,
+          "recall": 0.9808,
+          "f1": 0.9547
         },
-        "roc_auc": 0.3025,
-        "pr_auc": 0.8955
+        "roc_auc": 0.3181,
+        "pr_auc": 0.8867
       },
-      "iou_0.30": {
-        "n_samples": 1067,
+      "iou_0.40": {
+        "n_samples": 966,
         "confusion_matrix": {
           "TN": 0,
-          "FP": 51,
-          "FN": 1,
-          "TP": 1015
+          "FP": 62,
+          "FN": 19,
+          "TP": 885
         },
-        "accuracy": 0.9513,
-        "balanced_accuracy": 0.4995,
-        "macro_f1": 0.4875,
-        "weighted_f1": 0.9284,
-        "sensitivity": 0.999,
+        "accuracy": 0.9161,
+        "balanced_accuracy": 0.4895,
+        "macro_f1": 0.4781,
+        "weighted_f1": 0.8949,
+        "sensitivity": 0.979,
         "specificity": 0.0,
         "class_0_low": {
-          "support": 51,
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0
-        },
-        "class_1_high": {
-          "support": 1016,
-          "precision": 0.9522,
-          "recall": 0.999,
-          "f1": 0.975
-        },
-        "roc_auc": 0.3827,
-        "pr_auc": 0.9292
-      },
-      "iou_0.35": {
-        "n_samples": 945,
-        "confusion_matrix": {
-          "TN": 0,
-          "FP": 41,
-          "FN": 1,
-          "TP": 903
-        },
-        "accuracy": 0.9556,
-        "balanced_accuracy": 0.4994,
-        "macro_f1": 0.4886,
-        "weighted_f1": 0.9349,
-        "sensitivity": 0.9989,
-        "specificity": 0.0,
-        "class_0_low": {
-          "support": 41,
+          "support": 62,
           "precision": 0.0,
           "recall": 0.0,
           "f1": 0.0
         },
         "class_1_high": {
           "support": 904,
-          "precision": 0.9566,
-          "recall": 0.9989,
-          "f1": 0.9773
+          "precision": 0.9345,
+          "recall": 0.979,
+          "f1": 0.9562
         },
-        "roc_auc": 0.4104,
-        "pr_auc": 0.9373
-      },
-      "iou_0.40": {
-        "n_samples": 868,
-        "confusion_matrix": {
-          "TN": 0,
-          "FP": 36,
-          "FN": 1,
-          "TP": 831
-        },
-        "accuracy": 0.9574,
-        "balanced_accuracy": 0.4994,
-        "macro_f1": 0.4891,
-        "weighted_f1": 0.9377,
-        "sensitivity": 0.9988,
-        "specificity": 0.0,
-        "class_0_low": {
-          "support": 36,
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0
-        },
-        "class_1_high": {
-          "support": 832,
-          "precision": 0.9585,
-          "recall": 0.9988,
-          "f1": 0.9782
-        },
-        "roc_auc": 0.4419,
-        "pr_auc": 0.9424
+        "roc_auc": 0.3285,
+        "pr_auc": 0.8986
       },
       "iou_0.45": {
-        "n_samples": 781,
+        "n_samples": 854,
         "confusion_matrix": {
           "TN": 0,
-          "FP": 28,
-          "FN": 1,
-          "TP": 752
+          "FP": 44,
+          "FN": 19,
+          "TP": 791
         },
-        "accuracy": 0.9629,
-        "balanced_accuracy": 0.4993,
-        "macro_f1": 0.4905,
-        "weighted_f1": 0.9459,
-        "sensitivity": 0.9987,
+        "accuracy": 0.9262,
+        "balanced_accuracy": 0.4883,
+        "macro_f1": 0.4809,
+        "weighted_f1": 0.9122,
+        "sensitivity": 0.9765,
         "specificity": 0.0,
         "class_0_low": {
-          "support": 28,
+          "support": 44,
           "precision": 0.0,
           "recall": 0.0,
           "f1": 0.0
         },
         "class_1_high": {
-          "support": 753,
-          "precision": 0.9641,
-          "recall": 0.9987,
-          "f1": 0.9811
+          "support": 810,
+          "precision": 0.9473,
+          "recall": 0.9765,
+          "f1": 0.9617
         },
-        "roc_auc": 0.3983,
-        "pr_auc": 0.9434
+        "roc_auc": 0.3795,
+        "pr_auc": 0.9239
       },
       "iou_0.50": {
-        "n_samples": 620,
+        "n_samples": 664,
         "confusion_matrix": {
           "TN": 0,
-          "FP": 24,
-          "FN": 1,
-          "TP": 595
+          "FP": 33,
+          "FN": 19,
+          "TP": 612
         },
-        "accuracy": 0.9597,
-        "balanced_accuracy": 0.4992,
-        "macro_f1": 0.4897,
-        "weighted_f1": 0.9415,
-        "sensitivity": 0.9983,
+        "accuracy": 0.9217,
+        "balanced_accuracy": 0.4849,
+        "macro_f1": 0.4796,
+        "weighted_f1": 0.9116,
+        "sensitivity": 0.9699,
         "specificity": 0.0,
         "class_0_low": {
-          "support": 24,
+          "support": 33,
           "precision": 0.0,
           "recall": 0.0,
           "f1": 0.0
         },
         "class_1_high": {
-          "support": 596,
-          "precision": 0.9612,
-          "recall": 0.9983,
-          "f1": 0.9794
+          "support": 631,
+          "precision": 0.9488,
+          "recall": 0.9699,
+          "f1": 0.9592
         },
-        "roc_auc": 0.4052,
-        "pr_auc": 0.9369
+        "roc_auc": 0.4132,
+        "pr_auc": 0.9364
       }
     }
   },
   "clip_007": {
     "ground_truth_eval_iou_0_30": {
-      "n_samples": 863,
+      "n_samples": 894,
       "confusion_matrix": {
-        "TN": 3,
-        "FP": 165,
-        "FN": 2,
-        "TP": 693
+        "TN": 2,
+        "FP": 171,
+        "FN": 22,
+        "TP": 699
       },
-      "accuracy": 0.8065,
-      "balanced_accuracy": 0.5075,
-      "macro_f1": 0.4636,
-      "weighted_f1": 0.7255,
-      "sensitivity": 0.9971,
-      "specificity": 0.0179,
+      "accuracy": 0.7841,
+      "balanced_accuracy": 0.4905,
+      "macro_f1": 0.4495,
+      "weighted_f1": 0.7126,
+      "sensitivity": 0.9695,
+      "specificity": 0.0116,
       "class_0_low": {
-        "support": 168,
-        "precision": 0.6,
-        "recall": 0.0179,
-        "f1": 0.0347
+        "support": 173,
+        "precision": 0.0833,
+        "recall": 0.0116,
+        "f1": 0.0203
       },
       "class_1_high": {
-        "support": 695,
-        "precision": 0.8077,
-        "recall": 0.9971,
-        "f1": 0.8925
+        "support": 721,
+        "precision": 0.8034,
+        "recall": 0.9695,
+        "f1": 0.8787
       },
-      "roc_auc": 0.6032,
-      "pr_auc": 0.8672
+      "roc_auc": 0.6101,
+      "pr_auc": 0.8936
     }
   },
   "video_project_3": {
     "heuristic_agreement": {
-      "n_samples": 7075,
+      "n_samples": 7118,
       "confusion_matrix": {
-        "TN": 997,
-        "FP": 255,
-        "FN": 183,
-        "TP": 5640
+        "TN": 549,
+        "FP": 480,
+        "FN": 175,
+        "TP": 5914
       },
-      "accuracy": 0.9381,
-      "balanced_accuracy": 0.8824,
-      "macro_f1": 0.8913,
-      "weighted_f1": 0.9374,
-      "sensitivity": 0.9686,
-      "specificity": 0.7963,
+      "accuracy": 0.908,
+      "balanced_accuracy": 0.7524,
+      "macro_f1": 0.7869,
+      "weighted_f1": 0.9011,
+      "sensitivity": 0.9713,
+      "specificity": 0.5335,
       "class_0_low": {
-        "support": 1252,
-        "precision": 0.8449,
-        "recall": 0.7963,
-        "f1": 0.8199
+        "support": 1029,
+        "precision": 0.7583,
+        "recall": 0.5335,
+        "f1": 0.6264
       },
       "class_1_high": {
-        "support": 5823,
-        "precision": 0.9567,
-        "recall": 0.9686,
-        "f1": 0.9626
+        "support": 6089,
+        "precision": 0.9249,
+        "recall": 0.9713,
+        "f1": 0.9475
       },
-      "roc_auc": 0.9068,
-      "pr_auc": 0.9697
+      "roc_auc": 0.8928,
+      "pr_auc": 0.9756
     },
     "ground_truth": null,
     "ground_truth_note": "No human CVAT ground-truth exists for Video Project 3. Evaluated against rule-based heuristic rubric only."
   },
   "test_4": {
     "heuristic_agreement": {
-      "n_samples": 1928,
+      "n_samples": 1668,
       "confusion_matrix": {
-        "TN": 911,
-        "FP": 77,
-        "FN": 49,
-        "TP": 891
+        "TN": 238,
+        "FP": 116,
+        "FN": 59,
+        "TP": 1255
       },
-      "accuracy": 0.9346,
-      "balanced_accuracy": 0.935,
-      "macro_f1": 0.9346,
-      "weighted_f1": 0.9347,
-      "sensitivity": 0.9479,
-      "specificity": 0.9221,
+      "accuracy": 0.8951,
+      "balanced_accuracy": 0.8137,
+      "macro_f1": 0.833,
+      "weighted_f1": 0.8916,
+      "sensitivity": 0.9551,
+      "specificity": 0.6723,
       "class_0_low": {
-        "support": 988,
-        "precision": 0.949,
-        "recall": 0.9221,
-        "f1": 0.9353
+        "support": 354,
+        "precision": 0.8013,
+        "recall": 0.6723,
+        "f1": 0.7312
       },
       "class_1_high": {
-        "support": 940,
-        "precision": 0.9205,
-        "recall": 0.9479,
-        "f1": 0.934
+        "support": 1314,
+        "precision": 0.9154,
+        "recall": 0.9551,
+        "f1": 0.9348
       },
-      "roc_auc": 0.9719,
-      "pr_auc": 0.9477
+      "roc_auc": 0.8882,
+      "pr_auc": 0.9575
     },
     "ground_truth": null,
     "ground_truth_note": "No human CVAT ground-truth exists for test 4. Evaluated against rule-based heuristic rubric only."

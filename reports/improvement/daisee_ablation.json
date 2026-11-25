@@ -1,0 +1,86 @@
+{
+ "no_daisee": {
+  "per_room": {
+   "classroom_01": {
+    "accuracy": 0.572,
+    "balanced_accuracy": 0.454,
+    "low_recall": 0.2919,
+    "roc_auc": 0.3876
+   },
+   "room_B": {
+    "accuracy": 0.5958,
+    "balanced_accuracy": 0.5985,
+    "low_recall": 0.3217,
+    "roc_auc": 0.5884
+   },
+   "room_C": {
+    "accuracy": 0.4496,
+    "balanced_accuracy": 0.529,
+    "low_recall": 0.6592,
+    "roc_auc": 0.5512
+   }
+  },
+  "pooled": {
+   "accuracy": 0.559,
+   "balanced_accuracy": 0.4986,
+   "macro_f1": 0.4958,
+   "low_recall": 0.357
+  }
+ },
+ "daisee_init": {
+  "per_room": {
+   "classroom_01": {
+    "accuracy": 0.8638,
+    "balanced_accuracy": 0.5467,
+    "low_recall": 0.1112,
+    "roc_auc": 0.5942
+   },
+   "room_B": {
+    "accuracy": 0.5118,
+    "balanced_accuracy": 0.507,
+    "low_recall": 0.9943,
+    "roc_auc": 0.5162
+   },
+   "room_C": {
+    "accuracy": 0.5869,
+    "balanced_accuracy": 0.5801,
+    "low_recall": 0.5688,
+    "roc_auc": 0.5516
+   }
+  },
+  "pooled": {
+   "accuracy": 0.68,
+   "balanced_accuracy": 0.7033,
+   "macro_f1": 0.6596,
+   "low_recall": 0.7581
+  }
+ },
+ "daisee_init+mix": {
+  "per_room": {
+   "classroom_01": {
+    "accuracy": 0.4871,
+    "balanced_accuracy": 0.4668,
+    "low_recall": 0.4389,
+    "roc_auc": 0.4803
+   },
+   "room_B": {
+    "accuracy": 0.5859,
+    "balanced_accuracy": 0.5892,
+    "low_recall": 0.2502,
+    "roc_auc": 0.5576
+   },
+   "room_C": {
+    "accuracy": 0.6235,
+    "balanced_accuracy": 0.5826,
+    "low_recall": 0.5155,
+    "roc_auc": 0.5931
+   }
+  },
+  "pooled": {
+   "accuracy": 0.5493,
+   "balanced_accuracy": 0.4814,
+   "macro_f1": 0.4803,
+   "low_recall": 0.3221
+  }
+ }
+}

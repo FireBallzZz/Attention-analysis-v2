@@ -1,0 +1,48 @@
+{
+ "components": [
+  "motion"
+ ],
+ "widths": {
+  "motion": 1
+ },
+ "coef": [
+  0.3585
+ ],
+ "intercept": 0.026989009122033582,
+ "threshold": 0.4857698353598903,
+ "expected_unseen_classroom": {
+  "balacc": 0.6016,
+  "acc": 0.5792,
+  "macro_f1": 0.5313,
+  "auc": 0.6486,
+  "low_recall": 0.566,
+  "always_high": 0.7174
+ },
+ "per_unseen_room": {
+  "classroom_01": {
+   "balacc": 0.588,
+   "acc": 0.5149,
+   "macro_f1": 0.4599,
+   "auc": 0.6487,
+   "low_recall": 0.69,
+   "always_high": 0.8582
+  },
+  "room_B": {
+   "balacc": 0.5527,
+   "acc": 0.5456,
+   "macro_f1": 0.5326,
+   "auc": 0.5662,
+   "low_recall": 0.365,
+   "always_high": 0.4811
+  },
+  "room_C": {
+   "balacc": 0.6641,
+   "acc": 0.6772,
+   "macro_f1": 0.6013,
+   "auc": 0.7308,
+   "low_recall": 0.6431,
+   "always_high": 0.8128
+  }
+ },
+ "note": "inputs are z-scored within the video (live: running class mean/std)"
+}

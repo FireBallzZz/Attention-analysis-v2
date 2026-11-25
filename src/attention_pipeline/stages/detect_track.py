@@ -65,6 +65,20 @@ class DetectorTracker:
         self._instructor_misses = 0
         self._yunet = None
         self._yunet_ready = False
+    def reset(self) -> None:
+        """Clear tracking state so the detector can start a new video.
+
+        Loaded model weights are kept; only the per-video track state is
+        discarded.
+        """
+        self._frame_count = 0
+        self._detected_counts.clear()
+        self._next_id = 1
+        self._active_tracks.clear()
+        self._prev.clear()
+        self._instructor = None
+        self._instructor_misses = 0
+
 
     def _lazy_load(self) -> None:
         if self._yolo is not None:
@@ -83,7 +97,7 @@ class DetectorTracker:
         self._lazy_load()
         self._frame_count += 1
         packed = self._detect_people(frame)
-        frame_h = int(frame.shape[0])
+        frame_h, frame_w = int(frame.shape[0]), int(frame.shape[1])
         packed, self._instructor, self._instructor_misses = _drop_instructors(
             packed, frame_h, self._instructor, self._instructor_misses
         )
@@ -108,24 +122,39 @@ class DetectorTracker:
         # 1. Intra-frame duplicate suppression: eliminate overlapping boxes on the same student
         packed.sort(key=lambda item: item[1], reverse=True)
         deduped: list[tuple[np.ndarray, float, np.ndarray]] = []
+        deduped_heads: list[tuple[float, float, float]] = []
         for box, conf, kpts in packed:
+            head = _head_point(box, kpts, frame_w)
             dup = False
-            for prev_b, _c, _k in deduped:
-                if _iou(box, prev_b) > 0.40 or _iomin(box, prev_b) > 0.50:
+            for (prev_b, _c, prev_k), phead in zip(deduped, deduped_heads):
+                if _duplicate_of(box, kpts, head, prev_b, prev_k, phead, frame_w):
                     dup = True
                     break
             if not dup:
                 deduped.append((box, conf, kpts))
+                deduped_heads.append(head)
         packed = deduped
 
         # 2. Match detections with existing active tracks
         eligible_tracks = [
             (tid, t["box"]) for tid, t in self._active_tracks.items() if t["age"] <= self.max_age
         ]
+        det_heads = [_head_point(box, kpts, frame_w) for box, _conf, kpts in packed]
+        track_heads = [
+            _head_point(self._active_tracks[tid]["box"], self._active_tracks[tid]["kpts"], frame_w)
+            for tid, _prev_box in eligible_tracks
+        ]
         pairs: list[tuple[float, int, int]] = []
         for di, (box, _conf, _k) in enumerate(packed):
+            dhead = det_heads[di]
             for pi, (_tid, prev_box) in enumerate(eligible_tracks):
                 score = _track_score(box, prev_box)
+                if score < 0.30:
+                    phead = track_heads[pi]
+                    if _heads_match(*dhead, *phead) or _same_student(*dhead, *phead, frame_w):
+                        iou = _iou(box, prev_box)
+                        if iou >= 0.12 or _iomin(box, prev_box) >= 0.50:
+                            score = max(score, 0.35 + 0.30 * iou)
                 if score >= 0.30:
                     pairs.append((score, di, pi))
         pairs.sort(reverse=True)
@@ -192,14 +221,10 @@ class DetectorTracker:
 
             # Check overlap against currently assigned tracks to prevent duplicate box for same student
             overlap = False
-            hx, hy, _ = _head_point(box, kpts, frame_w=1920)
+            head = _head_point(box, kpts, frame_w)
             for _atid, abox, _aconf, akpts in assigned:
-                ahx, ahy, _ = _head_point(abox, akpts, frame_w=1920)
-                hdist = ((hx - ahx) ** 2 + (hy - ahy) ** 2) ** 0.5
-                # If head landmarks are distinct across consecutive classroom rows, allow the track
-                if hdist >= 35.0 and abs(hy - ahy) >= 18.0:
-                    continue
-                if _iou(box, abox) > 0.35 or _iomin(box, abox) > 0.45:
+                ahead = _head_point(abox, akpts, frame_w)
+                if _duplicate_of(box, kpts, head, abox, akpts, ahead, frame_w):
                     overlap = True
                     break
             if overlap:
@@ -226,26 +251,56 @@ class DetectorTracker:
                     # Coast confirmed active student tracks only when no fresh box already covers this student
                     if t.get("hits", 0) >= 2:
                         already_covered = False
-                        for _atid, abox, _aconf, _akpts in assigned:
-                            if _iou(t["box"], abox) > 0.25 or _iomin(t["box"], abox) > 0.35:
+                        thead = _head_point(t["box"], t["kpts"], frame_w)
+                        t_has_head = _has_head_landmarks(t["kpts"], t["box"])
+                        for _atid, abox, _aconf, akpts in assigned:
+                            ahead = _head_point(abox, akpts, frame_w)
+                            if _duplicate_of(t["box"], t["kpts"], thead, abox, akpts, ahead, frame_w):
                                 already_covered = True
                                 break
+                            if t["age"] >= 4:
+                                iomin = _iomin(t["box"], abox)
+                                if not t_has_head and (
+                                    iomin >= 0.35
+                                    or any(
+                                        _kp_ok(t["kpts"], ki, 0.25)
+                                        and _point_in_box(float(t["kpts"][ki, 0]), float(t["kpts"][ki, 1]), abox, pad=6.0)
+                                        for ki in (0, 1, 2, 3, 4)
+                                    )
+                                ):
+                                    already_covered = True
+                                    break
+                                if iomin >= 0.55:
+                                    dist = ((thead[0] - ahead[0]) ** 2 + (thead[1] - ahead[1]) ** 2) ** 0.5
+                                    if dist < max(28.0, 0.55 * max(thead[2], ahead[2])):
+                                        already_covered = True
+                                        break
                         if not already_covered:
                             assigned.append((tid, t["box"], max(0.10, t["conf"] * 0.98), t["kpts"]))
                 else:
                     del self._active_tracks[tid]
 
         # 6. Final strict non-maximum suppression / deduplication to permanently stop duplicate boxes
-        assigned.sort(key=lambda item: (item[2], item[0]), reverse=True)
+        assigned.sort(
+            key=lambda item: (
+                0 if self._active_tracks.get(item[0], {}).get("age", 0) == 0 else -1,
+                item[2],
+                item[0],
+            ),
+            reverse=True,
+        )
         final_assigned: list[tuple[int, np.ndarray, float, np.ndarray]] = []
+        final_heads: list[tuple[float, float, float]] = []
         for item in assigned:
             dup = False
-            for _ftid, fbox, _fconf, _fkpts in final_assigned:
-                if _iou(item[1], fbox) > 0.30 or _iomin(item[1], fbox) > 0.35:
+            item_head = _head_point(item[1], item[3], frame_w)
+            for (_ftid, fbox, _fconf, fkpts), fhead in zip(final_assigned, final_heads):
+                if _duplicate_of(item[1], item[3], item_head, fbox, fkpts, fhead, frame_w):
                     dup = True
                     break
             if not dup:
                 final_assigned.append(item)
+                final_heads.append(item_head)
         assigned = final_assigned
 
         if self.max_people is not None and len(assigned) > self.max_people:
@@ -326,8 +381,15 @@ class DetectorTracker:
                     if has_both_shoulders:
                         sh_y = (float(kpts[5, 1]) + float(kpts[6, 1])) / 2.0
                     nose_y = float(kpts[0, 1])
-                    # Head must be anatomically above or level with shoulders (not below)
+                    # Head above/level with shoulders, or collapsed onto desk with valid shoulders.
                     if nose_y < sh_y + 0.15 * bh:
+                        valid_anatomy = True
+                    elif (
+                        has_both_shoulders
+                        and conf >= 0.30
+                        and 0.12 * bw < abs(float(kpts[5, 0]) - float(kpts[6, 0])) < 0.98 * bw
+                        and nose_y <= float(box[3]) + 0.05 * bh
+                    ):
                         valid_anatomy = True
                 elif has_face:
                     valid_anatomy = True
@@ -623,7 +685,7 @@ def _drop_instructors(
 
     heads = [_head_top(box, kpts) for box, _conf, kpts in people]
     band = sorted(head[1] for head in heads)[max(0, int(0.2 * (len(heads) - 1)))]
-    margin = max(50.0, 0.05 * frame_h)
+    margin = max(18.0, 0.03 * frame_h)
     standing_above: list[int] = []
     for index, ((box, _conf, kpts), head) in enumerate(zip(people, heads)):
         if _legs_extended(kpts) and head[1] < band - margin:
@@ -635,15 +697,15 @@ def _drop_instructors(
 
     drop: set[int] = set(standing_above)
     if remembered is not None and len(standing_above) <= 2:
-        reach = max(80.0, 0.06 * frame_h)
+        reach = max(90.0, 0.07 * frame_h)
         for index, head in enumerate(heads):
             dist = ((head[0] - remembered[0]) ** 2 + (head[1] - remembered[1]) ** 2) ** 0.5
-            if dist <= reach and head[1] < band - margin * 0.5:
+            if dist <= reach and head[1] < band - margin * 0.4:
                 drop.add(index)
 
     if not drop:
         misses += 1
-        if misses > 12:
+        if misses > 25:
             remembered = None
         return people, remembered, misses
 
@@ -884,26 +946,36 @@ def _same_student(
     """True when two marks are the same child, including a second detector."""
     dist = ((ax - bx) ** 2 + (ay - by) ** 2) ** 0.5
     small = min(a_size, b_size)
-    dy = abs(ay - by)
-    # Scale with the frame so a small clip does not merge the next student.
-    near = max(16.0, 0.016 * frame_w)
-    row = max(20.0, 0.026 * frame_w)
-    row_dy = max(10.0, 0.011 * frame_w)
-    if dist < max(near, 0.75 * small):
-        return True
-    return dy <= max(row_dy, 0.45 * small) and dist < max(row, 1.0 * small)
+    # Scale with the frame so neither high-res nor low-res classrooms merge adjacent rows.
+    near = max(10.0, 0.011 * frame_w)
+    return dist < max(near, 0.48 * small)
 
 
 def _heads_match(ax: float, ay: float, a_size: float, bx: float, by: float, b_size: float) -> bool:
     dist = ((ax - bx) ** 2 + (ay - by) ** 2) ** 0.5
     small = min(a_size, b_size)
-    dy = abs(ay - by)
-    # Same row and almost the same face: a tile and a face detector on one student.
-    if dy <= max(14.0, 0.4 * small) and dist < max(24.0, 0.85 * small):
-        return True
     # Tile crops land a few pixels apart on the same face. A wider radius
-    # merges the next student in a packed row.
-    return dist < max(18.0, 0.62 * small)
+    # merges adjacent students sitting in staggered rows.
+    return dist < max(10.0, 0.45 * small)
+
+
+def _has_head_landmarks(kpts: np.ndarray, box: np.ndarray | None = None) -> bool:
+    has_eyes = _kp_ok(kpts, 1, 0.25) and _kp_ok(kpts, 2, 0.25)
+    has_ears = _kp_ok(kpts, 3, 0.25) and _kp_ok(kpts, 4, 0.25)
+    has_nose = _kp_ok(kpts, 0, 0.25)
+    if not (has_eyes or has_ears or has_nose):
+        return False
+    if box is None:
+        return True
+    if has_eyes:
+        hx = (float(kpts[1, 0]) + float(kpts[2, 0])) / 2.0
+        hy = (float(kpts[1, 1]) + float(kpts[2, 1])) / 2.0
+    elif has_ears:
+        hx = (float(kpts[3, 0]) + float(kpts[4, 0])) / 2.0
+        hy = (float(kpts[3, 1]) + float(kpts[4, 1])) / 2.0
+    else:
+        hx, hy = float(kpts[0, 0]), float(kpts[0, 1])
+    return _point_in_box(hx, hy, box, pad=6.0)
 
 
 def _suppress_duplicate_boxes(
@@ -948,36 +1020,32 @@ def _duplicate_of(
     hx, hy, hs = head
     ox, oy, os_ = other_head
     dist = ((hx - ox) ** 2 + (hy - oy) ** 2) ** 0.5
+    small = min(hs, os_)
     iou = _iou(box, other)
     iomin = _iomin(box, other)
-
-    # Definite geometric duplicate: high box overlap
-    if iou >= 0.40 or iomin >= 0.55:
-        return True
 
     if _heads_match(hx, hy, hs, ox, oy, os_) or _same_student(
         hx, hy, hs, ox, oy, os_, frame_w
     ):
         return True
 
-    # A student in the next row can overlap the box behind them,
-    # as long as their head points are genuinely separated in 2D space (distinct classroom depth tiers).
-    dy = abs(hy - oy)
-    if (dy >= max(18.0, 0.38 * min(hs, os_)) or dist >= max(35.0, 0.75 * min(hs, os_))) and iou < 0.35:
+    # Extreme whole-box overlap always identifies the same detection
+    if iou >= 0.50:
+        return True
+
+    # Multi-row classroom perspective: a student behind or beside a larger front-row
+    # student often overlaps heavily in iomin while keeping distinct head landmarks.
+    both_heads = _has_head_landmarks(kpts, box) and _has_head_landmarks(other_kpts, other)
+    min_sep = max(12.0, 0.014 * frame_w, 0.55 * small)
+    if both_heads and dist >= min_sep and iou < 0.45:
         return False
 
-    # A small box mostly inside a larger one is the same student counted twice (only if heads match)
-    if iomin >= 0.55 and dist < max(28.0, 0.6 * min(hs, os_)):
+    # A small or faceless box overlapping another box without distinct head landmarks is a duplicate.
+    if iou >= 0.35 or iomin >= 0.50:
         return True
-    if iomin >= 0.35 and dist < max(28.0, 0.6 * min(hs, os_)) and (
+    if iomin >= 0.35 and dist < max(24.0, 0.6 * small) and (
         _point_in_box(hx, hy, other, pad=8.0) or _point_in_box(ox, oy, box, pad=8.0)
     ):
-        return True
-    overlap = iou >= 0.35 or iomin >= 0.45
-    if overlap and dist < max(28.0, 0.7 * min(hs, os_)):
-        return True
-    dy = abs(hy - oy)
-    if dy < 0.45 * max(hs, os_) and dist < 0.75 * max(hs, os_) and iomin >= 0.4:
         return True
     return _torso_under_face(box, kpts, head, other, other_kpts, other_head)
 

@@ -1,0 +1,62 @@
+{
+ "pixel difference (current)": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.5688,
+    "auc": 0.5951
+   },
+   "room_B": {
+    "balacc": 0.5452,
+    "auc": 0.5648
+   },
+   "room_C": {
+    "balacc": 0.6637,
+    "auc": 0.7053
+   }
+  },
+  "mean": {
+   "balacc": 0.5926,
+   "auc": 0.6217
+  }
+ },
+ "optical flow": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.5037,
+    "auc": 0.5191
+   },
+   "room_B": {
+    "balacc": 0.5075,
+    "auc": 0.5228
+   },
+   "room_C": {
+    "balacc": 0.6701,
+    "auc": 0.6848
+   }
+  },
+  "mean": {
+   "balacc": 0.5604,
+   "auc": 0.5756
+  }
+ },
+ "difference + flow": {
+  "per_room": {
+   "classroom_01": {
+    "balacc": 0.5381,
+    "auc": 0.6318
+   },
+   "room_B": {
+    "balacc": 0.53,
+    "auc": 0.5767
+   },
+   "room_C": {
+    "balacc": 0.5847,
+    "auc": 0.6584
+   }
+  },
+  "mean": {
+   "balacc": 0.5509,
+   "auc": 0.6223
+  }
+ }
+}

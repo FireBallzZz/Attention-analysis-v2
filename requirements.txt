@@ -1,11 +1,28 @@
-numpy>=1.24
-opencv-python>=4.8
-torch>=2.1
-torchvision>=0.16
-PyYAML>=6.0
-Pillow>=10.0
-ultralytics>=8.3
-deep-sort-realtime>=1.5
-safetensors>=0.4
-huggingface_hub>=0.24
-kagglehub>=0.3
+# Runtime (tested versions in comments; Python 3.14, CUDA 12.6, Windows 11)
+numpy>=1.24            # 2.4.4
+opencv-python>=4.8     # 5.0.0.93
+torch>=2.1             # 2.14.1+cu126  (install the CUDA build from pytorch.org for GPU)
+torchvision>=0.16      # 0.29.1+cu126
+PyYAML>=6.0            # 6.0.3
+Pillow>=10.0           # 12.3.0
+ultralytics>=8.3       # 8.4.182
+lap>=0.5               # 0.5.13  (ByteTrack tracker)
+safetensors>=0.4       # 0.8.0
+huggingface_hub>=0.24  # 2.2.0
+scikit-learn>=1.3      # 1.8.0
+scipy>=1.10            # 1.17.1
+
+# Needed by the YOLOv7 code behind checkpoints/scb_yolo.pt
+pandas>=1.5            # 3.0.2
+matplotlib>=3.6        # 3.10.8
+seaborn>=0.12          # 0.13.2
+tqdm>=4.60             # 4.67.3
+requests>=2.26         # 2.26.0
+
+# Dashboard, uploads, reports
+flask>=3.0             # 3.1.3
+imageio-ffmpeg>=0.4    # 0.8.1  (H.264 output videos)
+markdown>=3.4          # 3.11   (report PDF)
+
+# Tests
+pytest>=8.0            # 8.3.4

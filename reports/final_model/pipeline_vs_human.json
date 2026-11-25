@@ -1,0 +1,57 @@
+{
+ "clip_004": {
+  "room": "classroom_01",
+  "matched": 882,
+  "low_share": 0.187,
+  "auc": 0.589,
+  "balanced_accuracy": 0.546,
+  "accuracy": 0.816,
+  "always_high": 0.813,
+  "auc_model_only": 0.642,
+  "balanced_accuracy_model_only": 0.591
+ },
+ "clip_001": {
+  "room": "classroom_01",
+  "matched": 1237,
+  "low_share": 0.071,
+  "auc": 0.276,
+  "balanced_accuracy": 0.491,
+  "accuracy": 0.903,
+  "always_high": 0.929,
+  "auc_model_only": 0.738,
+  "balanced_accuracy_model_only": 0.621
+ },
+ "11": {
+  "room": "room_B",
+  "matched": 684,
+  "low_share": 0.168,
+  "auc": 0.37,
+  "balanced_accuracy": 0.496,
+  "accuracy": 0.813,
+  "always_high": 0.832,
+  "auc_model_only": 0.823,
+  "balanced_accuracy_model_only": 0.744
+ },
+ "non_attentive_1": {
+  "room": "room_B",
+  "matched": 623,
+  "low_share": 0.9,
+  "auc": 0.586,
+  "balanced_accuracy": 0.552,
+  "accuracy": 0.323,
+  "always_high": 0.1,
+  "auc_model_only": 0.529,
+  "balanced_accuracy_model_only": 0.524
+ },
+ "test_8": {
+  "room": "room_C",
+  "matched": 991,
+  "low_share": 0.157,
+  "auc": 0.656,
+  "balanced_accuracy": 0.648,
+  "accuracy": 0.82,
+  "always_high": 0.843,
+  "auc_model_only": 0.714,
+  "balanced_accuracy_model_only": 0.641
+ }
+}

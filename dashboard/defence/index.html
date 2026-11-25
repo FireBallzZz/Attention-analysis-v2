@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classroom Attention Analysis</title>
+<style>
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --surface-2:#f0f2f5; --border:#e2e5ea;
+  --text:#14171c; --muted:#5d6672; --faint:#8a929c;
+  --accent:#3b5bdb; --accent-soft:#e7ecff;
+  --high:#2f9e44; --high-soft:#e3f5e7; --low:#e03131; --low-soft:#fde8e8;
+  --warn:#e8590c; --warn-soft:#fff0e6; --chance:#868e96;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
+  --radius:12px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1116; --surface:#161a21; --surface-2:#1d222b; --border:#2a313c;
+  --text:#e8ebf0; --muted:#9aa4b2; --faint:#6b7480;
+  --accent:#7c94ff; --accent-soft:#1f2747;
+  --high:#51cf66; --high-soft:#16301d; --low:#ff6b6b; --low-soft:#3a1b1d;
+  --warn:#ff922b; --warn-soft:#3a2614; --chance:#8a929c; --shadow:none;}}
+:root[data-theme="dark"]{
+  --bg:#0e1116; --surface:#161a21; --surface-2:#1d222b; --border:#2a313c;
+  --text:#e8ebf0; --muted:#9aa4b2; --faint:#6b7480;
+  --accent:#7c94ff; --accent-soft:#1f2747;
+  --high:#51cf66; --high-soft:#16301d; --low:#ff6b6b; --low-soft:#3a1b1d;
+  --warn:#ff922b; --warn-soft:#3a2614; --chance:#8a929c; --shadow:none;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+nav{position:sticky;top:0;height:100vh;padding:22px 14px;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 10px 18px}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:#fff;font-weight:700}
+.brand b{display:block;font-size:14px}.brand span{font-size:12px;color:var(--muted)}
+nav button{all:unset;cursor:pointer;padding:9px 12px;border-radius:8px;color:var(--muted);font-size:14px;display:flex;gap:10px;align-items:center}
+nav button:hover{background:var(--surface-2);color:var(--text)}
+nav button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+nav button:focus-visible{outline:2px solid var(--accent)}
+.nav-foot{margin-top:auto;padding:10px;font-size:12px;color:var(--faint)}
+.theme{all:unset;cursor:pointer;margin:8px 10px 0;font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:6px 10px;text-align:center}
+main{padding:28px 34px 60px;max-width:1280px;width:100%}
+.page{display:none}.page.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+h1{font-size:26px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 12px}
+h3{font-size:14px;margin:0 0 8px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.lead{color:var(--muted);margin:0 0 22px;max-width:860px}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);min-width:0}
+.kpi .v{font-size:28px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--muted);font-size:13px}.kpi .s{font-size:12px;color:var(--faint);margin-top:4px}
+.pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;font-weight:600}
+.p-high{background:var(--high-soft);color:var(--high)}.p-low{background:var(--low-soft);color:var(--low)}
+.p-warn{background:var(--warn-soft);color:var(--warn)}.p-acc{background:var(--accent-soft);color:var(--accent)}
+.p-mute{background:var(--surface-2);color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right}
+.tw{overflow-x:auto}
+.stages{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;position:relative}
+.stage{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative}
+.stage .num{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.05em}
+.stage b{display:block;margin:4px 0 4px;font-size:14px}
+.stage p{margin:0;font-size:12.5px;color:var(--muted)}
+.stage.weak{border-color:var(--warn)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:8px;margin:0 0 18px}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout p{margin:0}
+.demo-top{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+select{font:inherit;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+video{width:100%;border-radius:10px;background:#000;display:block;aspect-ratio:16/9}
+.chart{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:11px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.alerts{max-height:420px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.alert{border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;background:var(--surface)}
+.alert:hover{border-color:var(--accent)}
+.alert .h{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:600}
+.alert p{margin:5px 0 0;font-size:12.5px;color:var(--muted)}
+.bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar>div{height:100%;border-radius:99px}
+.muted{color:var(--muted)}.small{font-size:12.5px}
+ul.clean{margin:0;padding-left:18px}ul.clean li{margin:4px 0}
+.qa details{border:1px solid var(--border);border-radius:10px;padding:12px 16px;background:var(--surface);margin-bottom:10px}
+.qa summary{cursor:pointer;font-weight:600}
+.qa p{margin:10px 0 0;color:var(--muted)}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:6px 12px;font-size:13px;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--border)}
+.seg button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.seg button:focus-visible{outline:2px solid var(--accent)}
+.hm-wrap{border-radius:10px;overflow:hidden;background:#000}
+.heat{display:block;width:100%;height:auto}
+.heat text{font-size:13px;font-weight:700;fill:#fff;paint-order:stroke;stroke:rgba(0,0,0,.65);stroke-width:3px}
+.hm-legend{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.hm-bar{width:180px;height:10px;border-radius:99px;background:linear-gradient(90deg,#e03131,#f59f00,#2f9e44)}
+.drop{display:flex;flex-direction:column;align-items:center;gap:6px;padding:36px 16px;border:2px dashed var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over,.drop:focus-visible{border-color:var(--accent);background:var(--accent-soft);outline:none}
+.drop.busy{opacity:.55;pointer-events:none}
+.drop-ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:20px}
+.prog{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:8px 0 6px}
+.prog>div{height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .4s}
+.btn{all:unset;cursor:pointer;background:var(--accent);color:#fff;padding:8px 16px;border-radius:8px;font-weight:600;font-size:14px}
+.btn:focus-visible{outline:2px solid var(--text)}
+.up-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);color:var(--text)}
+.up-row:last-child{border-bottom:0}
+@media (max-width:1050px){.g4{grid-template-columns:repeat(2,1fr)}.stages{grid-template-columns:repeat(3,1fr)}.g3,.g2{grid-template-columns:1fr}}
+main{min-width:0}
+@media (max-width:760px){.app{grid-template-columns:minmax(0,1fr)}nav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--border)}.brand,.nav-foot{display:none}main{padding:18px 16px 40px}.g4{grid-template-columns:1fr 1fr}.stages{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<nav aria-label="Sections">
+  <div class="brand"><div class="logo">A</div><div><b>Attention Analysis</b><span>Thesis defence</span></div></div>
+  <button data-p="overview" class="on">Overview</button>
+  <button data-p="demo">Live demo</button>
+  <button data-p="upload">Analyse a video</button>
+  <button data-p="results">Results</button>
+  <button data-p="improve">Improving accuracy</button>
+  <button data-p="finding">Key finding</button>
+  <button data-p="data">Data &amp; labels</button>
+  <button data-p="audit">Corrections</button>
+  <button data-p="limits">Limitations &amp; Q&amp;A</button>
+  <button class="theme" id="theme">Toggle dark / light</button>
+  <div class="nav-foot" id="built"></div>
+</nav>
+<main>
+
+<section class="page on" id="overview">
+  <h1>Hybrid classroom attention analysis</h1>
+  <p class="lead">A six-stage system that finds every student in classroom video, measures pose, gaze and behaviour, scores attention over time and suggests a teaching response when attention drops — evaluated honestly on classrooms it has never seen.</p>
+  <div class="grid g4" id="kpis"></div>
+  <h2 style="margin-top:26px">Pipeline</h2>
+  <div class="stages">
+    <div class="stage"><div class="num">STAGE 1</div><b>Video input</b><p>Any classroom video, resampled to 10 fps.</p></div>
+    <div class="stage"><div class="num">STAGE 2</div><b>Detect &amp; track</b><p>YOLO11-Pose (COCO) + tracking: one ID per student.</p></div>
+    <div class="stage"><div class="num">STAGE 3</div><b>Modalities</b><p>Head pose, L2CS gaze (Gaze360), SCB behaviour (reading, writing, hand-raise, phone).</p></div>
+    <div class="stage weak"><div class="num">STAGE 4</div><b>Attention model</b><p>Each student's movement relative to the class over 1.6 s. Hard evidence (phone, sleeping) lowers it; confident SCB reading/writing protects it. Chosen because it transfers between classrooms.</p></div>
+    <div class="stage"><div class="num">STAGE 5</div><b>Drop detector</b><p>Sustained (&lt;40 for 3 s) or sudden (−20 in 2 s) drops, 8 s cooldown.</p></div>
+    <div class="stage"><div class="num">STAGE 6</div><b>Recommendation</b><p>Rule-based teaching suggestion per alert (LLM option off).</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><h3>Contributions</h3><ul class="clean">
+      <li>Working end-to-end pipeline on real classroom video, real-time capable on a laptop GPU.</li>
+      <li>Human-labelled HIGH/LOW attention data for three classrooms.</li>
+      <li>Leakage-free evaluation: split by person and by classroom, epoch and threshold chosen on held-out people only.</li>
+      <li>Finding: camera-relative head/gaze cues flip meaning between rooms, and learned models recognise <i>who</i> a student is rather than attention; class-relative motion is the cue that transfers.</li>
+    </ul></div>
+    <div class="card"><h3>Honest headline</h3><p id="headline" style="margin:0"></p></div>
+  </div>
+</section>
+
+<section class="page" id="demo">
+  <h1>Live demo</h1>
+  <p class="lead">Output of the final pipeline. Boxes show each tracked student and score; the chart follows the video. Click an alert to jump to it. Scores are <b>relative to the class</b>: students who move more than their classmates score lower, so read the video by <i>who scores lowest</i>, not by how many boxes are red. The text under each box is the detected behaviour, not the score.</p>
+  <div class="demo-top"><label for="pick" class="muted small">Video</label><select id="pick"></select><span id="demo-tag"></span></div>
+  <div class="grid g3" style="grid-template-columns:2fr 1fr">
+    <div class="card" style="padding:12px"><video id="vid" controls muted playsinline preload="metadata"></video></div>
+    <div class="card"><h3>Teacher alerts</h3><div class="alerts" id="alerts"></div></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h2 style="margin:0">Class attention over time</h2>
+      <div class="legend"><span><i style="background:var(--accent)"></i>Mean class score</span><span><i style="background:var(--low)"></i>% students LOW</span><span><i style="background:var(--faint)"></i>Alert threshold (40)</span></div></div>
+    <svg class="chart" id="tl" viewBox="0 0 1000 220" role="img" aria-label="Class attention timeline"></svg>
+  </div>
+  <div class="grid g4" id="demo-kpis" style="margin-top:16px"></div>
+  <div class="card" style="margin-top:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+      <h2 style="margin:0">Classroom attention heatmap</h2>
+      <div class="seg" role="group" aria-label="Heatmap mode">
+        <button data-hm="mean" class="on">Whole clip</button><button data-hm="follow">Follow the video</button><button data-hm="low">% time LOW</button>
+      </div>
+    </div>
+    <div class="hm-wrap"><svg id="heat" class="heat" role="img" aria-label="Seat heatmap"></svg></div>
+    <div class="hm-legend"><span id="hm-lo">LOW</span><div class="hm-bar"></div><span id="hm-hi">HIGH</span><span class="muted small" id="hm-note"></span></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>Students</h2><div class="tw"><table id="students"></table></div>
+    <p class="small muted" id="students-note" style="display:none">The attention score comes from the motion model. <b>SCB behaviour</b> (SCB-dataset detector) and <b>DAiSEE engagement / boredom</b> (the DAiSEE-only network applied to each student individually) are shown as extra information; adding them to the score lowered accuracy on unseen classrooms (Improving accuracy page).</p></div>
+</section>
+
+<section class="page" id="upload">
+  <h1>Analyse a video</h1>
+  <p class="lead">Upload any classroom video. The full pipeline (detection, tracking, gaze, behaviour, final attention model, alerts) runs in the background; the result opens in the Live demo view with its heatmap.</p>
+  <div class="callout warn" id="no-server" style="display:none"><p>Uploading needs the dashboard server. Close this page and start it with <b>Start_Defence_Dashboard.bat</b>.</p></div>
+  <div class="card">
+    <label class="drop" id="drop" tabindex="0">
+      <input type="file" id="file" accept="video/*,.mp4,.mov,.avi,.mkv,.webm,.m4v" hidden>
+      <div class="drop-ic" aria-hidden="true">⬆</div>
+      <b id="drop-t">Drop a video here, or click to choose</b>
+      <span class="muted small">MP4, MOV, AVI, MKV or WEBM · up to 2 GB · analysed on this computer</span>
+    </label>
+    <div id="job" style="display:none;margin-top:16px">
+      <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><b id="job-name"></b><span id="job-pct" class="muted"></span></div>
+      <div class="prog"><div id="job-bar"></div></div>
+      <div class="small muted" id="job-stage"></div>
+      <div id="job-done" style="display:none;margin-top:12px"><button class="btn" id="job-open">Open results</button></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>Analysed uploads</h2><div id="up-list" class="small muted">None yet.</div></div>
+</section>
+
+<section class="page" id="results">
+  <h1>Results on unseen classrooms</h1>
+  <p class="lead">Leave-one-classroom-out: train on two classrooms, test on the third — new room, new camera, new students. Numbers are averaged over the three unseen rooms. ROC-AUC 0.5 is a coin flip; the grey line marks it.</p>
+  <div class="grid g4" id="final-kpis"></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h2>ROC-AUC per unseen classroom</h2><svg class="chart" id="auc" viewBox="0 0 520 260" role="img" aria-label="AUC per room"></svg>
+      <div class="legend" id="auc-legend"></div></div>
+    <div class="card"><h2>What the numbers mean</h2><ul class="clean small" id="explain"></ul></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>All models on unseen classrooms — full table</h2><div class="tw"><table id="t-final"></table></div>
+    <p class="small muted">95% confidence intervals resample whole people. The old deployed model was trained on classroom_01, so its score there is not a held-out result.</p></div>
+  <div class="card" style="margin-top:16px"><h2>Within one classroom (people never seen in training)</h2><p class="small muted" id="pcv-info"></p><div class="tw"><table id="t-pcv"></table></div></div>
+</section>
+
+<section class="page" id="improve">
+  <h1>Improving accuracy: two deployment settings</h1>
+  <p class="lead">Accuracy depends on what "unseen" means. A brand-new classroom with no setup is the hardest case (59%). After a short calibration on the teacher's own class, the system reaches about 71% balanced accuracy and 81% accuracy.</p>
+  <div class="grid g2" id="imp-settings"></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h2>Balanced accuracy by setting</h2><svg class="chart" id="imp-chart" viewBox="0 0 520 250" role="img" aria-label="Balanced accuracy by setting"></svg></div>
+    <div class="card"><h2>Why a new classroom is hard</h2><p class="small muted" style="margin-top:0">Same image model, inside each video. It can follow a student it has already seen, but it cannot judge a new person.</p><div class="tw"><table id="t-ident"></table></div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>Learned models tried for the no-setup setting</h2><p class="small muted" id="imp-tried"></p><div class="tw"><table id="t-top"></table></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h2>Does DAiSEE help?</h2><p class="small muted" style="margin-top:0">Same BiGRU, unseen classrooms, mean over rooms.</p><div class="tw"><table id="t-daisee"></table></div>
+      <p class="small muted">Pre-training helps a little; adding DAiSEE clips to training does not. DAiSEE is webcam video of one learner (5.7% LOW), not a classroom.</p></div>
+    <div class="card"><h2>Does adding DAiSEE or SCB to the score help?</h2><p class="small muted" style="margin-top:0">Live-pipeline components, unseen classrooms, mean over rooms. Each component normalised within its own video.</p><div class="tw"><table id="t-datasets"></table></div>
+      <p class="small muted">The DAiSEE-only model applied to each student individually is at chance on classroom students; SCB behaviour cues flip between rooms. Both are shown per student in the Live demo, but the score uses motion only.</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h2>Other datasets considered</h2><ul class="clean small">
+      <li><b>SCB</b> (classroom behaviour): used for behaviour detection and image features; its cues flip between rooms, so they are not used to score attention directly.</li>
+      <li><b>FER2013 / RAF-DB</b>: not used — faces at classroom distance are 30–60 px and emotion is not attention.</li>
+      <li><b>DIPSER</b> (54 students, 51 h, per-second attention ratings in a real classroom): the best fit for future work; access needs an application.</li>
+      <li>Published online-to-classroom transfer reaches about 71% (binary), in line with these results.</li></ul></div>
+  </div>
+  <div class="callout" style="margin-top:16px"><p><b>How to state it at the defence:</b> "In a classroom it has never seen, with no setup, the system reaches about 59% balanced accuracy, better than the neural model's 52%, because it uses the one cue that transfers: movement relative to the class. After a short labelled calibration of the teacher's own class it reaches about 71% balanced and 81% accuracy on the rest of the lesson."</p></div>
+</section>
+
+<section class="page" id="finding">
+  <h1>Key finding: cues measured from the camera do not transfer</h1>
+  <div class="callout"><p>Head pose and gaze are measured relative to the <b>camera</b>. Attention means looking at the <b>teacher or board</b> — and the board sits somewhere different in every room. A cue that means "attentive" in one classroom means "inattentive" in another.</p></div>
+  <div class="grid g2">
+    <div class="card"><h2>One cue, opposite meanings</h2><p class="small muted">Single-feature AUC per video. Green: high value goes with HIGH attention. Red: it goes with LOW.</p><div class="tw"><table id="t-flip"></table></div></div>
+    <div class="card"><h2>Removing camera-relative cues helps</h2><p class="small muted">Mean ROC-AUC on unseen classrooms (logistic regression), per feature variant.</p><svg class="chart" id="abl" viewBox="0 0 520 230" role="img" aria-label="Ablation"></svg></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>Implication</h2><p style="margin:0">The final model ignores camera-relative head/gaze channels. The principled fix — future work — is a <b>"looking at the board"</b> feature: mark the board once per camera and measure each student's head direction relative to it.</p></div>
+</section>
+
+<section class="page" id="data">
+  <h1>Data &amp; labels</h1>
+  <p class="lead">Only human labels are used. Each 16-frame window (1.6 s) of a student is one sample; HIGH = attentive, LOW = not attentive.</p>
+  <div class="grid g3" id="room-cards"></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Labelling rule</h3><ul class="clean small">
+      <li><span class="pill p-high">HIGH</span> looking at teacher/board/screen, writing or reading lesson material (head down is fine), raising a hand. Short glances away count as HIGH.</li>
+      <li><span class="pill p-low">LOW</span> lasting more than ~2 s: phone, head turned far away, head on desk / sleeping, chatting, playing with objects.</li>
+      <li>Unsure → HIGH. Only clear cases are LOW.</li></ul></div>
+    <div class="card"><h3>Pretrained components (not trained here)</h3><ul class="clean small">
+      <li><b>COCO</b> via YOLO11-Pose — student detection and keypoints.</li>
+      <li><b>Gaze360</b> via L2CS-Net — gaze direction.</li>
+      <li><b>SCB-dataset</b> — classroom behaviour (hand-raise, reading, writing…).</li>
+      <li><b>DAiSEE</b> — pre-training of the attention network.</li></ul></div>
+  </div>
+</section>
+
+<section class="page" id="audit">
+  <h1>Corrections to earlier results</h1>
+  <div class="callout warn"><p>An internal audit found leakage and metric errors in the earlier report. Every number in this dashboard comes from the corrected, leakage-free evaluation.</p></div>
+  <div class="card"><div class="tw"><table id="t-claims"></table></div></div>
+  <div class="card" style="margin-top:16px"><h2>Quality checks</h2><div id="tests"></div></div>
+</section>
+
+<section class="page" id="limits">
+  <h1>Limitations, future work &amp; likely questions</h1>
+  <div class="grid g2">
+    <div class="card"><h3>Limitations</h3><ul class="clean small">
+      <li>Three labelled classrooms and short clips — confidence intervals are wide.</li>
+      <li>Attention is inferred from visible behaviour; it is not a measure of learning or cognition.</li>
+      <li>Head/gaze measured relative to the camera; removed in the final model.</li>
+      <li>One room's "non attentive" clip is staged; acted inattention may differ from real.</li>
+      <li>Recommendations are rule-based; the LLM option is not enabled.</li></ul></div>
+    <div class="card"><h3>Future work</h3><ul class="clean small">
+      <li>Board-relative gaze feature (one click per camera).</li>
+      <li>More classrooms rather than more clips of the same room.</li>
+      <li>Model on student image crops instead of 32 hand-made features.</li>
+      <li>Second annotator and Cohen's κ for label reliability.</li>
+      <li>Privacy: on-device processing, no identities stored.</li></ul></div>
+  </div>
+  <h2 style="margin-top:22px">Likely questions</h2>
+  <div class="qa" id="qa"></div>
+</section>
+
+</main>
+</div>
+<script src="data.js"></script>
+<script>
+(function(){
+"use strict";
+const D = window.DASH;
+const $ = s => document.querySelector(s);
+const pct = v => v==null ? "—" : (v*100).toFixed(1)+"%";
+const f2 = v => v==null ? "—" : Number(v).toFixed(2);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ROOMNAME = {classroom_01:"Classroom 01 (computer lab)", room_B:"Room B (seminar)", room_C:"Room C", room_D:"Room D"};
+
+if(!D){document.querySelector("main").innerHTML='<div class="empty">data.js missing — run <code>python scripts/build_defence_dashboard.py</code></div>';return;}
+
+/* nav + theme */
+const show = id => { document.querySelectorAll(".page").forEach(p=>p.classList.toggle("on",p.id===id));
+  document.querySelectorAll("nav button[data-p]").forEach(b=>b.classList.toggle("on",b.dataset.p===id));
+  try{localStorage.setItem("dash-page",id)}catch(e){} window.scrollTo(0,0); if(id==="demo") drawTimeline();
+  if((id==="upload"||id==="demo") && window.loadUploads) window.loadUploads(); };
+document.querySelectorAll("nav button[data-p]").forEach(b=>b.onclick=()=>show(b.dataset.p));
+$("#theme").onclick=()=>{const r=document.documentElement; const dark = r.dataset.theme ? r.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme = dark ? "light":"dark"; try{localStorage.setItem("dash-theme",r.dataset.theme)}catch(e){} redraw();};
+try{const t=localStorage.getItem("dash-theme"); if(t) document.documentElement.dataset.theme=t;}catch(e){}
+$("#built").textContent = "Built "+D.built;
+
+/* overview */
+const fm = D.final_model, un = fm.unseen;
+const kpi = (v,l,s,cls="") => `<div class="card kpi"><div class="v ${cls}">${v}</div><div class="l">${l}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+const nRooms = Object.keys(D.rooms).length;
+$("#kpis").innerHTML =
+  kpi(nRooms, "Human-labelled classrooms", "plus an unlabelled lecture-hall demo") +
+  kpi(D.human_windows.toLocaleString(), "Labelled student windows", (D.human_low/D.human_windows*100).toFixed(1)+"% LOW") +
+  kpi(pct(un.balanced_accuracy), "Balanced accuracy, new classroom", "mean over unseen rooms; chance 50%") +
+  kpi(D.tests.passed!=null ? D.tests.passed+" / "+(D.tests.passed+D.tests.failed) : "—", "Automated tests passing", D.tests.summary);
+const _c30 = D.improvement && D.improvement.calibrated["30%"];
+$("#headline").innerHTML = `In a classroom it has never seen, with no setup, the final model reaches <b>${pct(un.balanced_accuracy)}</b> balanced accuracy (AUC ${f2(un.roc_auc)}; chance 50% / 0.5), better than the neural model (52%).` +
+  (_c30 ? ` After a short per-class calibration: <b>${pct(_c30.balacc)}</b> balanced accuracy and <b>${pct(_c30.acc)}</b> accuracy on the rest of the lesson.` : "") +
+  ` Detection, tracking and alerts work reliably; telling attention apart in a new room is the open problem, and we show why.`;
+
+/* demo */
+const pick = $("#pick"), vid = $("#vid");
+let cur = null;
+const ALL = D.demos.slice();          // demos + uploaded analyses
+function refreshPick(selectIdx){
+  const up = ALL.filter(a=>a.room==="uploaded"), demo = ALL.filter(a=>a.room!=="uploaded");
+  const opt = a => `<option value="${ALL.indexOf(a)}">${esc(a.title)}</option>`;
+  pick.innerHTML = `<optgroup label="Demo videos">${demo.map(opt).join("")}</optgroup>` +
+    (up.length ? `<optgroup label="Your uploads">${up.map(opt).join("")}</optgroup>` : "");
+  if(selectIdx!=null) pick.value = String(selectIdx);
+}
+refreshPick();
+if(!ALL.length) $("#demo").insertAdjacentHTML("beforeend",'<div class="empty">No demo videos built yet.</div>');
+function loadDemo(i){
+  cur = ALL[i]; if(!cur) return;
+  vid.src = cur.video; vid.poster = cur.poster;
+  $("#demo-tag").innerHTML = cur.room==="uploaded" ? `<span class="pill p-warn">uploaded ${esc(cur.uploaded_at||"")}</span>` :
+    cur.labelled ? '<span class="pill p-acc">human-labelled room</span>' : '<span class="pill p-mute">no labels — demo only</span>';
+  $("#demo-kpis").innerHTML = kpi(cur.students_tracked,"Students tracked") + kpi(cur.class_mean==null?"—":cur.class_mean.toFixed(0),"Mean class score","0–100; ≥50 = HIGH") +
+    kpi(cur.low_share==null?"—":cur.low_share.toFixed(0)+"%","Average share LOW") + kpi(cur.alerts.length,"Teacher alerts", cur.duration.toFixed(0)+" s of video");
+  $("#alerts").innerHTML = cur.alerts.length ? cur.alerts.map((a,k)=>`<div class="alert" data-t="${a.t}" tabindex="0"><div class="h"><span>${a.t.toFixed(1)} s · Student ${a.student}</span><span class="pill ${a.kind==="sustained"?"p-low":"p-warn"}">${a.kind}</span></div><p><b>Cue:</b> ${esc(a.cue)} · score ${a.score.toFixed(0)}</p><p>${esc(a.recommendation)}</p></div>`).join("") : '<div class="empty small">No alerts in this clip.</div>';
+  document.querySelectorAll(".alert").forEach(el=>{const go=()=>{vid.currentTime=+el.dataset.t; vid.play().catch(()=>{});}; el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter")go();};});
+  const hasDz = cur.students.some(s=>s.daisee!=null), hasScb = cur.students.some(s=>s.scb);
+  $("#students").innerHTML = `<tr><th>Student</th><th class="n">Windows</th><th>Attention score</th><th class="n">% LOW</th><th>Most common cue</th>${hasScb?'<th title="SCB-dataset behaviour detector (shown, not used in the score)">SCB behaviour</th>':""}${hasDz?'<th class="n" title="DAiSEE-only network applied to this student (shown, not used in the score)">DAiSEE engagement</th><th class="n" title="DAiSEE boredom rating, 0-3">DAiSEE boredom</th>':""}<th class="n">Alerts</th></tr>` +
+    cur.students.map(s=>`<tr><td>#${s.id}</td><td class="n">${s.n}</td><td style="min-width:140px"><div style="display:flex;gap:8px;align-items:center"><div class="bar" style="flex:1"><div style="width:${s.mean}%;background:${s.mean>=50?"var(--high)":"var(--low)"}"></div></div><span>${s.mean.toFixed(0)}</span></div></td><td class="n">${s.low_pct.toFixed(0)}%</td><td>${esc(s.cue)}</td>${hasScb?`<td title="mean probability ${s.scb_p!=null?s.scb_p:"—"}">${s.scb && s.scb_p>=0.3?esc(s.scb):'<span class="muted">no clear behaviour</span>'}</td>`:""}${hasDz?`<td class="n">${s.daisee!=null?s.daisee.toFixed(0):"—"}</td><td class="n">${s.daisee_aux?Math.min(3,Math.max(0,s.daisee_aux[1])).toFixed(2):"—"}</td>`:""}<td class="n">${s.alerts||""}</td></tr>`).join("");
+  $("#students-note").style.display = (hasDz||hasScb) ? "block" : "none";
+  drawTimeline(); drawHeat();
+}
+pick.onchange = () => loadDemo(+pick.value);
+
+/* ---- seat heatmap ---- */
+let hmMode = "mean";
+document.querySelectorAll("[data-hm]").forEach(b=>b.onclick=()=>{hmMode=b.dataset.hm;
+  document.querySelectorAll("[data-hm]").forEach(x=>x.classList.toggle("on",x===b)); drawHeat();});
+function heatColor(v){ // 0 red -> 50 amber -> 100 green
+  const c=[[224,49,49],[245,159,0],[47,158,68]], t=Math.max(0,Math.min(100,v))/50, i=Math.min(1,Math.floor(t)), f=t-i;
+  const a=c[i], b=c[i+1]; return `rgb(${a.map((x,k)=>Math.round(x+(b[k]-x)*f)).join(",")})`;
+}
+function seatValue(s){
+  if(hmMode==="low") return 100 - s.low_pct;               // high value = rarely LOW
+  if(hmMode==="follow"){ const t=vid.currentTime||0; let best=null, bd=1e9;
+    for(const p of s.series){const d=Math.abs(p[0]-t); if(d<bd){bd=d;best=p;}}
+    return best && bd<=1.5 ? best[1] : null; }
+  return s.mean;
+}
+function drawHeat(){
+  const svg=$("#heat"); if(!cur||!svg) return;
+  const seats=cur.seats||[], fw=cur.frame?.[0]||16, fh=cur.frame?.[1]||9, W=1000, H=Math.round(1000*fh/fw);
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  let g=`<defs><filter id="hb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${W*0.018}"/></filter></defs>`;
+  g+=`<image href="${cur.poster}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice" opacity=".55"/>`;
+  g+=`<rect width="${W}" height="${H}" fill="#000" opacity=".25"/>`;
+  const vals = seats.map(seatValue);
+  seats.forEach((s,i)=>{const v=vals[i]; if(v==null) return; const r=Math.max(s.w*W,s.h*H)*0.62;
+    g+=`<circle cx="${s.cx*W}" cy="${s.cy*H}" r="${r}" fill="${heatColor(v)}" opacity=".78" filter="url(#hb)"/>`;});
+  seats.forEach((s,i)=>{const v=vals[i]; const x=s.cx*W, y=s.cy*H;
+    g+=`<g><title>Student ${s.id}: ${v==null?"not visible now":Math.round(v)+(hmMode==="low"?" (100 − % time LOW)":"/100")} · ${esc(s.cue)}</title>`+
+       `<circle cx="${x}" cy="${y}" r="${W*0.013}" fill="${v==null?"#666":heatColor(v)}" stroke="#fff" stroke-width="2"/>`+
+       `<text x="${x}" y="${y-W*0.02}" text-anchor="middle">${v==null?"–":Math.round(v)}</text></g>`;});
+  svg.innerHTML=g;
+  $("#hm-lo").textContent = hmMode==="low" ? "often LOW" : "LOW (0)";
+  $("#hm-hi").textContent = hmMode==="low" ? "rarely LOW" : "HIGH (100)";
+  $("#hm-note").textContent = hmMode==="follow" ? `at ${(vid.currentTime||0).toFixed(1)} s — play the video to watch it change` :
+    hmMode==="low" ? "share of the clip each student was scored LOW" : `mean attention score per student over the clip · ${seats.length} seats`;
+}
+let hmTick=0;
+vid.addEventListener("timeupdate",()=>{ if(hmMode==="follow"){ const now=performance.now(); if(now-hmTick>250){hmTick=now; drawHeat();} } });
+vid.addEventListener("seeked",()=>{ if(hmMode==="follow") drawHeat(); });
+
+/* ---- upload & background analysis ---- */
+const isServer = location.protocol.startsWith("http");
+const drop=$("#drop"), fileIn=$("#file");
+function upRow(a){ return `<div class="up-row"><div><b>${esc(a.title)}</b><div class="muted small">${esc(a.uploaded_at||"")} · ${a.students_tracked} students · ${a.duration.toFixed(0)} s · ${a.alerts.length} alerts</div></div><button class="btn" data-open="${ALL.indexOf(a)}">Open</button></div>`; }
+function renderUploads(){ const up=ALL.filter(a=>a.room==="uploaded");
+  $("#up-list").innerHTML = up.length ? up.map(upRow).join("") : "None yet.";
+  document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openAnalysis(+b.dataset.open)); }
+function openAnalysis(i){ refreshPick(i); loadDemo(i); show("demo"); }
+function addUpload(p){ const k=ALL.findIndex(a=>a.key===p.key); if(k>=0) ALL[k]=p; else ALL.push(p); refreshPick(); renderUploads(); return ALL.findIndex(a=>a.key===p.key); }
+function loadUploads(){
+  if(!isServer) return;
+  const keep = pick.value;
+  fetch("api/uploads").then(r=>r.ok?r.json():[]).then(list=>{
+    list.reverse().forEach(p=>{ if(!ALL.some(a=>a.key===p.key)) ALL.push(p); });
+    refreshPick(); if(keep) pick.value = keep; renderUploads(); }).catch(()=>{});
+}
+window.loadUploads = loadUploads;
+if(isServer) loadUploads(); else { $("#no-server").style.display="block"; drop.classList.add("busy"); }
+function setJob(pct, stage){ $("#job").style.display="block"; $("#job-bar").style.width=Math.round(pct*100)+"%";
+  $("#job-pct").textContent=Math.round(pct*100)+"%"; $("#job-stage").textContent=stage; }
+function startUpload(file){
+  if(!file||!isServer) return;
+  drop.classList.add("busy"); $("#job-done").style.display="none"; $("#job-name").textContent=file.name;
+  const fd=new FormData(); fd.append("video",file);
+  const xhr=new XMLHttpRequest(); xhr.open("POST","api/upload");
+  xhr.upload.onprogress=e=>{ if(e.lengthComputable) setJob(0.1*e.loaded/e.total, `Uploading… ${(e.loaded/1048576).toFixed(0)} / ${(e.total/1048576).toFixed(0)} MB`); };
+  xhr.onload=()=>{ let r={}; try{r=JSON.parse(xhr.responseText);}catch(e){}
+    if(xhr.status!==200||!r.job_id){ setJob(0, "Upload failed: "+(r.error||xhr.status)); drop.classList.remove("busy"); return; }
+    poll(r.job_id); };
+  xhr.onerror=()=>{ setJob(0,"Upload failed — is the dashboard server still running?"); drop.classList.remove("busy"); };
+  setJob(0,"Uploading…"); xhr.send(fd);
+}
+function poll(id){
+  fetch("api/job/"+id).then(r=>r.json()).then(j=>{
+    if(j.status==="error"){ setJob(1,"Failed: "+(j.error||"unknown error")); $("#job-bar").style.background="var(--low)"; drop.classList.remove("busy"); return; }
+    if(j.status==="done" && j.payload){ setJob(1,"Done — analysis complete."); drop.classList.remove("busy");
+      const i=addUpload(j.payload); $("#job-done").style.display="block"; $("#job-open").onclick=()=>openAnalysis(i); return; }
+    setJob(0.1+0.9*(j.progress||0), j.stage||"Working…"); setTimeout(()=>poll(id),1000);
+  }).catch(()=>setTimeout(()=>poll(id),2000));
+}
+drop.addEventListener("click",e=>{ if(e.target!==fileIn) fileIn.click(); e.preventDefault(); });
+drop.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); fileIn.click(); }});
+fileIn.onchange=()=>startUpload(fileIn.files[0]);
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault(); drop.classList.add("over");}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault(); drop.classList.remove("over");}));
+drop.addEventListener("drop",e=>startUpload(e.dataTransfer.files[0]));
+function drawTimeline(){
+  const svg = $("#tl"); if(!cur||!svg) return;
+  const W=1000,H=220,L=40,R=12,T=12,B=26, tl=cur.timeline, dur=Math.max(cur.duration, tl.length?tl[tl.length-1][0]:1);
+  const x=t=>L+(W-L-R)*t/dur, y=v=>T+(H-T-B)*(1-v/100);
+  let g="";
+  [0,25,50,75,100].forEach(v=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="${css("--border")}"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end">${v}</text>`;});
+  const step = dur>30?10:dur>12?5:2;
+  for(let t=0;t<=dur;t+=step) g+=`<text x="${x(t)}" y="${H-6}" text-anchor="middle">${t}s</text>`;
+  g+=`<line x1="${L}" x2="${W-R}" y1="${y(40)}" y2="${y(40)}" stroke="${css("--faint")}" stroke-dasharray="5 4"/>`;
+  if(tl.length){
+    const area = `M${x(tl[0][0])},${y(0)} `+tl.map(p=>`L${x(p[0])},${y(p[2])}`).join(" ")+` L${x(tl[tl.length-1][0])},${y(0)}Z`;
+    g+=`<path d="${area}" fill="${css("--low")}" opacity=".16"/>`;
+    g+=`<path d="${tl.map((p,i)=>(i?"L":"M")+x(p[0])+","+y(p[1])).join(" ")}" fill="none" stroke="${css("--accent")}" stroke-width="2.2"/>`;
+    g+=`<path d="${tl.map((p,i)=>(i?"L":"M")+x(p[0])+","+y(p[2])).join(" ")}" fill="none" stroke="${css("--low")}" stroke-width="1.4"/>`;
+  }
+  cur.alerts.forEach(a=>{g+=`<circle cx="${x(a.t)}" cy="${y(Math.max(4,a.score))}" r="4.5" fill="${a.kind==="sustained"?css("--low"):css("--warn")}" stroke="${css("--surface")}" stroke-width="1.5"><title>${a.t}s student ${a.student}: ${esc(a.cue)}</title></circle>`;});
+  g+=`<line id="ph" x1="${L}" x2="${L}" y1="${T}" y2="${H-B}" stroke="${css("--text")}" stroke-width="1" opacity=".5"/>`;
+  svg.innerHTML=g;
+  svg.onclick=e=>{const r=svg.getBoundingClientRect(); const t=((e.clientX-r.left)/r.width*W-L)/(W-L-R)*dur; if(t>=0){vid.currentTime=Math.min(t,dur);}};
+  svg._x=x;
+}
+vid.addEventListener("timeupdate",()=>{const ph=document.getElementById("ph"), svg=$("#tl"); if(ph&&svg._x){const xx=svg._x(vid.currentTime); ph.setAttribute("x1",xx); ph.setAttribute("x2",xx);}});
+if(D.demos.length) loadDemo(0);
+
+/* results */
+const fr = D.final_model.per_room;
+$("#final-kpis").innerHTML =
+  kpi(pct(un.balanced_accuracy),"Balanced accuracy","final model, mean of unseen rooms; chance 50%") +
+  kpi(pct(un.macro_f1),"Macro-F1","both classes weighted equally") +
+  kpi(pct(un.low_recall),"LOW moments caught","recall of the LOW class") +
+  kpi(f2(un.roc_auc),"ROC-AUC","0.5 = chance; previous BiGRU 0.53");
+const motionRows = Object.entries(fm.per_room).map(([r,m])=>({room:r, model:"Motion model (final)", acc:m.acc, balacc:m.balacc, macro_f1:m.macro_f1, low_recall:m.low_recall, auc:m.auc, auc_ci:null, always_high:m.always_high}));
+const rowsFinal = motionRows.concat(D.cross_final.map(r=>r.model==="BiGRU"?{...r, model:"BiGRU (previous)"}:r)), rooms = [...new Set(rowsFinal.map(r=>r.room))];
+function aucChart(){
+  const svg=$("#auc"), W=520,H=260,L=36,B=46,T=14,R=8, models=["Motion model (final)","BiGRU (previous)","Logistic regression","Old deployed model"],
+    cols=[css("--high"),css("--accent"),"#9775fa",css("--chance")], gw=(W-L-R)/rooms.length, bw=gw/(models.length+1.2);
+  const y=v=>T+(H-T-B)*(1-v);
+  let g=""; [0,.25,.5,.75,1].forEach(v=>g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="${css("--border")}"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${v}</text>`);
+  rooms.forEach((rm,i)=>{models.forEach((m,j)=>{const r=rowsFinal.find(z=>z.room===rm&&z.model===m); if(!r||r.auc==null)return;
+      const x0=L+i*gw+bw*0.6+j*bw, op=r.contaminated?.35:1;
+      g+=`<rect x="${x0}" y="${y(r.auc)}" width="${bw-4}" height="${y(0)-y(r.auc)}" rx="3" fill="${cols[j]}" opacity="${op}"><title>${m} · ${rm}: ${r.auc.toFixed(2)}${r.contaminated?" (trained on this room)":""}</title></rect>`;
+      if(r.auc_ci) g+=`<line x1="${x0+(bw-4)/2}" x2="${x0+(bw-4)/2}" y1="${y(r.auc_ci[0])}" y2="${y(r.auc_ci[1])}" stroke="${css("--text")}" opacity=".55"/>`;});
+    g+=`<text x="${L+i*gw+gw/2}" y="${H-24}" text-anchor="middle">${esc(ROOMNAME[rm]||rm)}</text>`;});
+  g+=`<line x1="${L}" x2="${W-R}" y1="${y(.5)}" y2="${y(.5)}" stroke="${css("--chance")}" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${W-R}" y="${y(.5)-5}" text-anchor="end">chance</text>`;
+  svg.innerHTML=g;
+  $("#auc-legend").innerHTML = models.map((m,j)=>`<span><i style="background:${cols[j]}"></i>${m}</span>`).join("")+'<span class="small">faded = trained on that room</span>';
+}
+$("#explain").innerHTML = [
+  `<b>Accuracy</b> alone misleads: most windows are HIGH, so answering "always HIGH" already scores ${pct(un.always_attentive_accuracy)} pooled.`,
+  `<b>Balanced accuracy</b> averages the hit rate on HIGH and LOW; 50% is chance.`,
+  `<b>ROC-AUC</b> asks whether LOW windows get lower scores than HIGH ones, independent of the threshold; 0.5 is chance, below 0.5 means reversed.`,
+  `The final <b>motion model</b> judges each student by how much they move <i>relative to their own class</i> (no labels needed for that). Leave-one-out it scores ${pct(un.balanced_accuracy)} vs ${D.improvement&&D.improvement.bigru_seeds?pct(D.improvement.bigru_seeds.mean_room_balacc[0]):"52%"} for the BiGRU (5 seeds).`,
+  `Live end-to-end check (full pipeline vs human labels, 5 videos): mean AUC ${fm.live_mean?f2(fm.live_mean.auc):"—"}, balanced accuracy ${fm.live_mean?pct(fm.live_mean.balanced_accuracy):"—"} (rooms the rule's 2 coefficients were fitted on).`,
+  `<b>Study protection</b>: motion alone scored 31% of attentive students LOW (writing moves the hands). When SCB confidently detects reading, writing or hand-raising, the score now stays ≥ 50: live-component test ${D.improvement&&D.improvement.datasets&&D.improvement.datasets[0]?pct(D.improvement.datasets[0].balacc)+" vs "+pct(D.improvement.datasets[1].balacc):"64.9% vs 63.1%"} balanced accuracy (mainly Room C, +6 points).`,
+  `Pooling all rooms into one number flatters results because rooms differ in how often students are LOW, so every number here is a mean over rooms.`,
+  `Epoch and threshold were always chosen on held-out people from the training rooms — never on the test room.`].map(s=>`<li>${s}</li>`).join("");
+const tbl = (rows, extraRoom) => `<tr>${extraRoom?"<th>Test room</th>":""}<th>Model</th><th class="n">Accuracy</th><th class="n">Balanced acc.</th><th class="n">Macro-F1</th><th class="n">LOW recall</th><th class="n">ROC-AUC [95% CI]</th>${extraRoom?'<th class="n">Always-HIGH acc.</th>':""}</tr>` +
+  rows.map(r=>`<tr${r.contaminated?' style="opacity:.55"':""}>${extraRoom?`<td>${esc(ROOMNAME[r.room]||r.room)}</td>`:""}<td>${esc(r.model)}${r.contaminated?' <span class="pill p-mute">trained here</span>':""}</td><td class="n">${pct(r.acc)}</td><td class="n">${pct(r.balacc)}</td><td class="n">${pct(r.macro_f1)}</td><td class="n">${pct(r.low_recall)}</td><td class="n">${f2(r.auc)}${r.auc_ci?` <span class="muted">[${f2(r.auc_ci[0])}–${f2(r.auc_ci[1])}]</span>`:""}</td>${extraRoom?`<td class="n">${pct(r.always_high)}</td>`:""}</tr>`).join("");
+$("#t-final").innerHTML = tbl(rowsFinal, true);
+const pi = D.person_cv_info;
+$("#pcv-info").textContent = `Classroom 01 only: ${pi.windows.toLocaleString()} windows, ${pi.persons} people (${pi.persons_low} ever LOW), about ${pi.non_overlapping} non-overlapping windows. 5-fold split by person.`;
+$("#t-pcv").innerHTML = tbl(D.person_cv, false);
+
+/* finding */
+const flipCols = D.flips.length ? Object.keys(D.flips[0]).filter(k=>k!=="video") : [];
+const VN = {clip_004:"Classroom 01 · clip 007", clip_001:"Classroom 01 · clip 001", "11":"Room B · video 11", non_attentive_1:"Room B · non attentive 1", test_8:"Room C · Test 8"};
+$("#t-flip").innerHTML = `<tr><th>Video</th>${flipCols.map(c=>`<th class="n">${esc(c)}</th>`).join("")}</tr>` +
+  D.flips.map(f=>`<tr><td>${esc(VN[f.video]||f.video)}</td>${flipCols.map(c=>{const v=f[c]; const cls=v==null?"":v>=.6?"p-high":v<=.4?"p-low":"p-mute"; return `<td class="n"><span class="pill ${cls}">${f2(v)}</span></td>`;}).join("")}</tr>`).join("");
+function ablChart(){
+  const svg=$("#abl"), W=520,H=230,L=196,R=40,T=10, a=D.ablation, bh=(H-T-22)/a.length;
+  const SHORT={"Raw (relative to camera)":"Raw, relative to camera","Relative to the student's usual direction":"Relative to own usual direction",
+    "Relative to the whole class's direction":"Relative to class direction","Head/gaze direction removed":"Head/gaze direction removed"};
+  const x=v=>L+(W-L-R)*v/0.7;  // axis 0 .. 0.7
+  a.forEach(r=>r.variant=SHORT[r.variant]||r.variant);
+  let g=`<line x1="${x(.5)}" x2="${x(.5)}" y1="${T}" y2="${H-18}" stroke="${css("--chance")}" stroke-dasharray="5 4"/><text x="${x(.5)}" y="${H-4}" text-anchor="middle">chance 0.5</text>`;
+  [0,.2].forEach(v=>g+=`<text x="${x(v)}" y="${H-4}" text-anchor="middle" opacity=".7">${v}</text>`);
+  a.forEach((r,i)=>{const yy=T+i*bh, best=r.mean===Math.max(...a.map(z=>z.mean));
+    g+=`<text x="${L-10}" y="${yy+bh/2+4}" text-anchor="end" style="font-size:12px">${esc(r.variant)}</text>`;
+    g+=`<rect x="${L}" y="${yy+bh*.2}" width="${x(r.mean)-L}" height="${bh*.6}" rx="4" fill="${best?css("--high"):css("--accent")}" opacity="${best?1:.55}"/>`;
+    g+=`<text x="${x(r.mean)+6}" y="${yy+bh/2+4}" style="font-weight:600">${f2(r.mean)}</text>`;});
+  svg.innerHTML=g;
+}
+
+/* data */
+$("#room-cards").innerHTML = Object.entries(D.rooms).map(([k,v])=>`<div class="card"><h3>${esc(ROOMNAME[k]||k)}</h3><div class="kpi"><div class="v">${v.windows.toLocaleString()}</div><div class="l">labelled windows</div></div>
+  <div class="bar" style="margin:12px 0 6px"><div style="width:${100-v.low/v.windows*100}%;background:var(--high)"></div></div><div class="small muted">${(100-v.low/v.windows*100).toFixed(1)}% HIGH · ${(v.low/v.windows*100).toFixed(1)}% LOW</div></div>`).join("");
+
+/* audit */
+$("#t-claims").innerHTML = `<tr><th>Earlier claim</th><th>What was wrong</th><th>Corrected</th></tr>` +
+  D.old_claims.map(c=>`<tr><td><span style="text-decoration:line-through;color:var(--muted)">${esc(c.claim)}</span></td><td>${esc(c.truth)}</td><td>${esc(c.fixed)}</td></tr>`).join("");
+$("#tests").innerHTML = `<ul class="clean small">
+  <li><b>${D.tests.passed!=null?D.tests.passed+" automated tests pass":"tests not run"}</b>${D.tests.failed?` · <span style="color:var(--low)">${D.tests.failed} failing</span>`:""} — including correct macro-F1, the input mask, threshold rescaling and that no person appears in two classrooms.</li>
+  <li>Final model <code>${esc(fm.checkpoint)}</code>: P(HIGH) = sigmoid(${fm.coef.a} ${fm.coef.b<0?"−":"+"} ${Math.abs(fm.coef.b)} × relative log-motion), threshold ${fm.coef.threshold} chosen on held-out classrooms. Previous BiGRU kept at <code>${esc(D.bigru_final.checkpoint)}</code>.</li>
+  <li>Reproduce: <code>python scripts/motion_rule.py</code> (evaluate + fit), <code>python scripts/evaluate_pipeline_vs_human.py --combine model_floor</code> (live check).</li></ul>`;
+
+/* Q&A */
+const QA = [
+ ["Why is accuracy not your headline metric?", `Most windows are HIGH, so always answering HIGH already scores ${pct(un.always_attentive_accuracy)} on unseen rooms. Balanced accuracy, macro-F1, LOW recall and ROC-AUC show whether the model actually finds inattention.`],
+ ["How do you know there is no data leakage?", "Labels are human-only. Test classrooms share no people, camera or video with training. Epoch and threshold are chosen on held-out people from the training rooms. A test checks that no person appears in two rooms."],
+ ["Your earlier report said 95% accuracy. What happened?", "An audit found the test clip overlapped the training data, two thirds of labels came from an older model, and the F1 of one class was reported as macro-F1. All of it is corrected here (see Corrections)."],
+ ["Why not 80%+ on any unseen classroom?", "Over 40 learned variants were tested (image, head-gaze, DAiSEE). On new people they stay at 52–58%. Inside one video the same models follow a known student well (AUC up to 0.95) but not a new one (about 0.5): with ~70 students and mostly constant labels per student, they learn who someone is, not attention. The motion model (59%) is the best that transfers; with a short per-class calibration the system reaches about 71% balanced / 81% accuracy."],
+ ["Why a simple motion rule instead of a deep model?", "Because it was the only thing that kept its meaning in every unseen classroom. The training rooms picked motion on their own in every leave-one-out fold. Its two coefficients cannot memorise people; a deep model with this little data learned identities."],
+ ["Did you use DAiSEE?", "Yes, to pre-train the neural model, and I measured it: pre-training raises the unseen-room AUC from 0.51 to 0.55; adding DAiSEE clips to training adds nothing. It is webcam footage of one learner, not a classroom."],
+ ["Why does the model not generalise better?", "Head and gaze are measured relative to the camera, and the board's direction differs per room, so the cue flips meaning. Removing those cues helped; a board-relative feature is the proposed fix. Also: only three labelled rooms."],
+ ["Is this measuring learning?", "No. It measures visible behaviour associated with attention. It is a support tool for the teacher, not an assessment of students."],
+ ["What about privacy and ethics?", "Runs locally, stores no identities (only track numbers), and recommendations address the whole class or a quiet check-in, never public call-outs."],
+ ["Why not a bigger model?", "With ~70 labelled people, bigger models memorise identities faster. The bottleneck is the number of different students, not model size."],
+];
+$("#qa").innerHTML = QA.map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${a}</p></details>`).join("");
+
+/* improving accuracy */
+const IMP = D.improvement;
+function impChart(){
+  const svg=$("#imp-chart"); if(!IMP||!svg) return;
+  const cal=IMP.calibrated, top=IMP.top[0];
+  const bars=[["Always HIGH",0.5,css("--chance")],["A: previous BiGRU",IMP.bigru_seeds?IMP.bigru_seeds.mean_room_balacc[0]:null,css("--accent")],
+    ["A: best of "+IMP.n_variants+" learned variants",top.balacc,css("--accent")],["A: motion model (final)",un.balanced_accuracy,css("--high")],
+    ["B: calibrated on 30% of lesson",cal["30%"]?.balacc,"#2b8a3e"],["B: calibrated on 50% of lesson",cal["50%"]?.balacc,"#2b8a3e"]].filter(b=>b[1]!=null);
+  const W=520,H=250,L=196,R=46,T=8,bh=(H-T-24)/bars.length, x=v=>L+(W-L-R)*v;
+  let g="";
+  bars.forEach((b,i)=>{const y=T+i*bh;
+    g+=`<text x="${L-10}" y="${y+bh/2+4}" text-anchor="end" style="font-size:12px">${esc(b[0])}</text>`;
+    g+=`<rect x="${L}" y="${y+bh*.18}" width="${x(b[1])-L}" height="${bh*.64}" rx="4" fill="${b[2]}" opacity="${i<3?.75:1}"/>`;
+    g+=`<text x="${x(b[1])+6}" y="${y+bh/2+4}" style="font-weight:600">${(b[1]*100).toFixed(1)}%</text>`;});
+  g+=`<line x1="${x(.8)}" x2="${x(.8)}" y1="${T}" y2="${H-20}" stroke="${css("--warn")}" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${x(.8)}" y="${H-6}" text-anchor="middle" style="fill:${css("--warn")}">80% target</text>`;
+  g+=`<text x="${x(.5)}" y="${H-6}" text-anchor="middle">50% chance</text>`;
+  svg.innerHTML=g;
+}
+if(IMP){
+  const c30=IMP.calibrated["30%"], c50=IMP.calibrated["50%"];
+  $("#imp-settings").innerHTML =
+   `<div class="card"><h3>Setting A · new classroom, no setup</h3><div class="grid g2" style="gap:10px">${kpi(pct(un.balanced_accuracy),"Balanced accuracy","final motion model")}${kpi(f2(un.roc_auc),"ROC-AUC","previous BiGRU: 0.53")}</div>
+     <p class="small muted" style="margin:10px 0 0">Train on two classrooms, test on the third: new room, camera and students. Mean over the three unseen rooms.</p></div>` +
+   `<div class="card" style="border-color:var(--high)"><h3>Setting B · after per-class calibration</h3><div class="grid g2" style="gap:10px">${kpi(pct(c30.balacc),"Balanced accuracy","first 30% of lesson labelled")}${kpi(pct(c30.acc),"Accuracy","always-HIGH: "+pct(c30.always_high))}</div>
+     <p class="small muted" style="margin:10px 0 0">Label the first part of the lesson, then monitor the rest (2 s gap). Mean over 5 videos. Same students; new moments. Uses the classroom-behaviour image model.</p></div>`;
+  const VN2 = {clip_004:"Classroom 01 · clip 007", clip_001:"Classroom 01 · clip 001", "11":"Room B · video 11", non_attentive_1:"Room B · non attentive 1", test_8:"Room C · Test 8"};
+  $("#t-ident").innerHTML = `<tr><th>Video</th><th class="n">New students (AUC)</th><th class="n">Same students later (AUC)</th></tr>` +
+    Object.entries(IMP.identity).map(([v,m])=>`<tr><td>${esc(VN2[v]||v)}</td><td class="n"><span class="pill ${m.unseen_students_auc<.6?"p-low":"p-high"}">${f2(m.unseen_students_auc)}</span></td><td class="n"><span class="pill ${m.same_students_later_auc>=.75?"p-high":"p-warn"}">${f2(m.same_students_later_auc)}</span></td></tr>`).join("");
+  $("#imp-tried").textContent = `${IMP.n_variants} variants: 32-D pipeline features, classroom-behaviour image embeddings, person embeddings and head-gaze features; logistic regression and gradient boosting; with/without per-video normalisation; 1.6 s windows or 5 s segments. Mean over unseen rooms; top five (all below the motion model):`;
+  $("#t-top").innerHTML = `<tr><th>Variant</th><th class="n">Balanced acc.</th><th class="n">ROC-AUC</th></tr>` +
+    IMP.top.map(v=>`<tr><td>${esc(v.name)}</td><td class="n">${pct(v.balacc)}</td><td class="n">${f2(v.auc)}</td></tr>`).join("");
+  $("#t-datasets").innerHTML = `<tr><th>Attention score built from</th><th class="n">Balanced acc.</th><th class="n">ROC-AUC</th></tr>` +
+    (IMP.datasets||[]).map((v,i)=>`<tr${i===0?' style="font-weight:600"':""}><td>${esc(v.name)}</td><td class="n">${pct(v.balacc)}</td><td class="n"><span class="pill ${v.auc>=.6?"p-high":v.auc<.5?"p-low":"p-mute"}">${f2(v.auc)}</span></td></tr>`).join("");
+  const dz = IMP.daisee||{}; const DZN={"no_daisee":"No DAiSEE (random start)","daisee_init":"DAiSEE pre-training","daisee_init+mix":"DAiSEE pre-training + DAiSEE clips in training"};
+  $("#t-daisee").innerHTML = `<tr><th>BiGRU variant</th><th class="n">Balanced acc.</th><th class="n">ROC-AUC</th></tr>` +
+    Object.entries(dz).map(([k,v])=>`<tr><td>${esc(DZN[k]||k)}</td><td class="n">${pct(v.mean_room_balacc)}</td><td class="n">${f2(v.mean_room_auc)}</td></tr>`).join("");
+}
+function redraw(){ aucChart(); ablChart(); drawTimeline(); drawHeat(); impChart(); }
+redraw();
+const hashPage = location.hash.slice(1);
+if(hashPage && document.getElementById(hashPage)) show(hashPage);
+else { try{const p=localStorage.getItem("dash-page"); if(p && document.getElementById(p)) show(p);}catch(e){} }
+window.addEventListener("hashchange",()=>{const h=location.hash.slice(1); if(document.getElementById(h)) show(h);});
+})();
+</script>
+</body>
+</html>

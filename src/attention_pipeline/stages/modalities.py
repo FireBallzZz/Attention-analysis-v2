@@ -11,6 +11,7 @@ from torchvision.transforms import functional as TF
 
 from attention_pipeline.models.l2cs_net import L2CSNet
 from attention_pipeline.models.posture_mlp import PostureMLP, normalize_keypoints
+from attention_pipeline.stages import face_evidence
 from attention_pipeline.types import EMOTION_LABELS, POSTURE_LABELS
 
 
@@ -23,6 +24,12 @@ class FaceSignals:
     eye_aspect: float
     mouth_aspect: float
     landmarks: np.ndarray | None = None
+    # Live face evidence for the rubric (None means "could not measure").
+    eye_openness: float | None = None
+    mouth_openness: float | None = None
+    mouth_motion: float = 0.0
+    aspects_valid: bool = False
+    pose_valid: bool = True
 
 
 class FaceModalityExtractor:
@@ -45,9 +52,20 @@ class FaceModalityExtractor:
         self.min_face_px = min_face_px
         self.use_l2cs = use_l2cs and gaze is not None
         self._prev_landmarks: dict[int, np.ndarray] = {}
+        self._prev_face_crops: dict[int, np.ndarray] = {}
+        self._prev_mouth_patches: dict[int, list[np.ndarray]] = {}
+        self._prev_head_poses: dict[int, list[np.ndarray]] = {}
         self._osf = None
         if backend == "openseeface":
             self._try_openseeface()
+
+    def reset(self) -> None:
+        """Clear per-student motion history between videos."""
+        self._prev_landmarks.clear()
+        self._prev_face_crops.clear()
+        self._prev_mouth_patches.clear()
+        self._prev_head_poses.clear()
+
 
     def _try_openseeface(self) -> None:
         try:
@@ -58,12 +76,63 @@ class FaceModalityExtractor:
         except Exception:
             self._osf = None
 
-    def extract(self, frame: np.ndarray, det, student_id: int) -> FaceSignals:
+    @staticmethod
+    def _pose_is_valid(kpts: np.ndarray | None) -> bool:
+        if kpts is None or kpts.shape[0] < 5:
+            return False
+        if float(kpts[0, 2]) < 0.2:
+            return False
+        return float(kpts[1, 2]) >= 0.2 or float(kpts[2, 2]) >= 0.2
+
+    def extract(
+        self, frame: np.ndarray, det, student_id: int, suppress_mouth: bool = False
+    ) -> FaceSignals:
         crop, face_box = self._crop_face(frame, det.bbox_xyxy, det.keypoints)
         landmarks = self._landmarks(crop, det.keypoints, face_box)
+        pose_valid = self._pose_is_valid(det.keypoints)
         head_pose = self._head_pose(landmarks, det.keypoints)
         eye_aspect, mouth_aspect = self._aspects(landmarks)
         motion = self._motion(student_id, landmarks)
+
+        # Live eye/mouth evidence: eye openness stays on the eye-centred face
+        # crop, while mouth geometry reads directly from the full frame so
+        # turned profiles and tilted heads are never clipped by the face crop.
+        origin = (float(face_box[0]), float(face_box[1]))
+        eye_openness = face_evidence.eye_openness(crop, det.keypoints, origin)
+        mouth_open = face_evidence.mouth_openness(
+            frame, det.keypoints, (0.0, 0.0), bbox=det.bbox_xyxy
+        )
+        mouth_motion = 0.0
+        if suppress_mouth or not pose_valid:
+            self._prev_mouth_patches.pop(student_id, None)
+            self._prev_head_poses.pop(student_id, None)
+        else:
+            mouth_patch = face_evidence.mouth_patch(
+                frame, det.keypoints, (0.0, 0.0), bbox=det.bbox_xyxy
+            )
+            canon_patch = face_evidence.canonical_mouth_patch(mouth_patch)
+            if canon_patch is not None and float(np.abs(head_pose).sum()) > 0.0:
+                patch_hist = self._prev_mouth_patches.setdefault(student_id, [])
+                pose_hist = self._prev_head_poses.setdefault(student_id, [])
+
+                def _pose_stable(prev_pose: np.ndarray, max_deg: float) -> bool:
+                    dyaw = abs(((float(head_pose[0]) - float(prev_pose[0]) + 180.0) % 360.0) - 180.0)
+                    dpitch = abs(float(head_pose[1]) - float(prev_pose[1]))
+                    return dyaw <= max_deg and dpitch <= max_deg
+
+                if patch_hist and _pose_stable(pose_hist[-1], 5.5):
+                    mouth_motion = max(
+                        mouth_motion, face_evidence.mouth_activity(patch_hist[-1], canon_patch)
+                    )
+                if len(patch_hist) >= 2 and _pose_stable(pose_hist[-2], 6.5):
+                    mouth_motion = max(
+                        mouth_motion, 0.95 * face_evidence.mouth_activity(patch_hist[-2], canon_patch)
+                    )
+                patch_hist.append(canon_patch)
+                pose_hist.append(head_pose.copy())
+                if len(patch_hist) > 2:
+                    del patch_hist[:-2]
+                    del pose_hist[:-2]
 
         emotion = np.zeros(len(EMOTION_LABELS), np.float32)
         emotion[-1] = 1.0  # FER2013/RAF-DB are not used
@@ -80,7 +149,14 @@ class FaceModalityExtractor:
             eye_aspect=eye_aspect,
             mouth_aspect=mouth_aspect,
             landmarks=landmarks,
+            eye_openness=eye_openness,
+            mouth_openness=mouth_open,
+            mouth_motion=mouth_motion,
+            aspects_valid=eye_openness is not None or mouth_open is not None,
+            pose_valid=pose_valid,
         )
+
+
 
     def _crop_face(self, frame, bbox, kpts):
         h, w = frame.shape[:2]
@@ -111,10 +187,23 @@ class FaceModalityExtractor:
         if kpts is None or kpts.shape[0] < 5:
             return np.zeros(3, np.float32)
         nose, leye, reye, lear, rear = kpts[0], kpts[1], kpts[2], kpts[3], kpts[4]
-        mid_eye = (leye[:2] + reye[:2]) / 2.0
-        yaw = np.degrees(np.arctan2(nose[0] - mid_eye[0], abs(reye[0] - leye[0]) + 1e-6))
-        pitch = np.degrees(np.arctan2(nose[1] - mid_eye[1], abs(reye[0] - leye[0]) + 1e-6))
-        roll = np.degrees(np.arctan2(leye[1] - reye[1], leye[0] - reye[0] + 1e-6))
+        if float(nose[2]) < 0.2:
+            return np.zeros(3, np.float32)
+        le_ok = float(leye[2]) >= 0.2
+        re_ok = float(reye[2]) >= 0.2
+        if le_ok and re_ok:
+            mid_eye = (leye[:2] + reye[:2]) / 2.0
+            span = float(abs(reye[0] - leye[0])) + 1e-6
+            roll = np.degrees(np.arctan2(leye[1] - reye[1], leye[0] - reye[0] + 1e-6))
+        elif le_ok or re_ok:
+            vis_eye = leye if le_ok else reye
+            mid_eye = vis_eye[:2]
+            span = max(float(np.linalg.norm(nose[:2] - vis_eye[:2])) * 1.4, 4.0)
+            roll = 0.0
+        else:
+            return np.zeros(3, np.float32)
+        yaw = np.degrees(np.arctan2(nose[0] - mid_eye[0], span))
+        pitch = np.degrees(np.arctan2(nose[1] - mid_eye[1], span))
         # Small profile bias only. Side-classroom views normally hide one ear.
         if lear[2] > 0.3 and rear[2] < 0.15:
             yaw = np.clip(yaw - 12, -90, 90)
@@ -185,16 +274,41 @@ def geometric_posture(keypoints: np.ndarray) -> np.ndarray:
     l_sh, r_sh = keypoints[5], keypoints[6]
     l_wr, r_wr = keypoints[9], keypoints[10]
     l_hip, r_hip = keypoints[11], keypoints[12]
+    sh_ok = l_sh[2] > 0.2 and r_sh[2] > 0.2
+    hips_ok = l_hip[2] > 0.2 and r_hip[2] > 0.2
     sh_y = (l_sh[1] + r_sh[1]) / 2.0
     hip_y = (l_hip[1] + r_hip[1]) / 2.0
+    if sh_ok and hips_ok:
+        torso_h = max(abs(hip_y - sh_y), 1.0)
+    elif sh_ok:
+        torso_h = max(float(np.linalg.norm(l_sh[:2] - r_sh[:2])) * 1.4, 40.0)
+    else:
+        torso_h = 60.0
     head_gap = sh_y - nose[1]
-    looking_down = nose[2] > 0.2 and head_gap < 12
-    resting = nose[2] > 0.2 and nose[1] >= sh_y - 4
-    hand_raised = (l_wr[2] > 0.2 and l_wr[1] < sh_y - 10) or (
-        r_wr[2] > 0.2 and r_wr[1] < sh_y - 10
-    )
-    leaned = abs(((l_sh[0] + r_sh[0]) / 2) - ((l_hip[0] + r_hip[0]) / 2)) > 0.25 * max(
-        abs(hip_y - sh_y), 1.0
+    # Small downward offsets (-4..+12 px) occur routinely when leaning forward to write
+    # or read from elevated classroom cameras; only classify deep collapse as resting.
+    looking_down = sh_ok and nose[2] > 0.2 and head_gap < 12
+    resting = sh_ok and nose[2] > 0.2 and nose[1] >= sh_y + max(8.0, 0.08 * torso_h)
+    chin_r = max(0.32 * torso_h, 24.0)
+
+    def _is_raised_wrist(wr: np.ndarray) -> bool:
+        if wr[2] <= 0.2 or wr[1] >= sh_y - max(12.0, 0.12 * torso_h):
+            return False
+        if nose[2] > 0.2:
+            # Exclude hand resting against jaw/chin/cheek or scratching ear/neck below face level.
+            if wr[1] > nose[1] + 0.12 * torso_h:
+                return False
+            near_chin = float(np.linalg.norm(wr[:2] - nose[:2])) < chin_r and wr[1] >= nose[1] - 0.10 * torso_h
+            if near_chin:
+                return False
+        return True
+
+    hand_raised = sh_ok and (_is_raised_wrist(l_wr) or _is_raised_wrist(r_wr))
+    leaned = bool(
+        sh_ok
+        and hips_ok
+        and abs(((l_sh[0] + r_sh[0]) / 2) - ((l_hip[0] + r_hip[0]) / 2))
+        > 0.35 * max(abs(hip_y - sh_y), 1.0)
     )
     if hand_raised:
         probs[0] = 1.0
