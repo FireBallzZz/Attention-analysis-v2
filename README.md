@@ -61,7 +61,7 @@ The dashboard opens at http://127.0.0.1:8765. Under **Analyse a video**, upload 
 **Tests:**
 
 ```bash
-python -m pytest                          # 127 tests; data-dependent ones skip without the private data
+python -m pytest                          # public clone: 101 pass, 26 skip (they need the private classroom data)
 ```
 
 ## How to read the scores
