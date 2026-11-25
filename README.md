@@ -13,20 +13,7 @@ A six-stage pipeline that finds every student in a classroom video, measures pos
 
 The DAiSEE-only network (`checkpoints/baseline/fusion_daisee.pt`) and the classroom BiGRU (`checkpoints/final_human_v1.pt`) also run on every student. Their outputs are reported in the scores file but are not used in the score, because they lowered accuracy on unseen classrooms.
 
-## Accuracy (honest)
 
-Evaluated with human CVAT labels, **leave-one-classroom-out**: the model is fitted on two classrooms and tested on a third whose room, camera and students it has never seen. Mean over the three classrooms:
-
-| Measure | Value |
-|---|---|
-| **Balanced accuracy, unseen classroom** | **58.9%** (56.1 / 58.7 / 62.0%), chance = 50% |
-| Accuracy | 63.7% (always answering "attentive" gives 71.7%) |
-| Macro-F1 | 55.3% |
-| ROC-AUC | 0.648 |
-| With a short per-class calibration (teacher labels the start of the lesson) | ~71% balanced, ~81% accuracy |
-| Real (non-staged) annotated videos, verified student pairs | 69.2% balanced, 75.4% accuracy |
-
-Full method, every experiment (40+ variants, DAiSEE / SCB / SCB-Dataset5 tests, parameter sensitivity) and the corrections to an earlier, leaked evaluation are in **[DEFENCE_REPORT.md](DEFENCE_REPORT.md)** ([PDF](DEFENCE_REPORT.pdf)). `docs/Student_Attention_Model_Supervisor_Report.pdf` and the `audit/` folder are **superseded**: their headline numbers came from data leakage.
 
 ## Run it
 
