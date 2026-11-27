@@ -159,6 +159,8 @@ The result is identical for cut-offs from 0.3 to 0.5. Room C gains 6 points, and
 | **Peer-context scoring** (behaviour compared with the rest of the class, after "Context Matters", CVPR-W 2026; `scripts/peer_context_eval.py`) | 57.1–59.3% (strict) | 60.2%; behaving like the class predicts attention only in Room B (AUC 0.78), at chance elsewhere (0.49–0.50) |
 | **DAiSEE with unsupervised domain adaptation** (classifier trained only on 70,224 DAiSEE windows; classroom features aligned per video by standardisation or CORAL, no classroom labels; `scripts/daisee_uda_eval.py`) | AUC 0.46–0.49 (Classroom 01: 0.31–0.40, reversed) | DAiSEE engagement (webcam close-ups) does not transfer to classroom cameras even after alignment |
 
+| **Gaze target estimation** (Gaze-LLE, frozen DINOv2 ViT-B, `gazelle_dinov2_vitb14_inout`; where each student looks and whether the target is in frame; `scripts/gaze_target_eval.py`) | gaze cues alone 52.1%, with motion 56.0% (strict) | 59.6% on the same grid; cues flip between rooms (in-frame gaze AUC 0.58 / 0.15 / 0.45). Visual checks show the predicted targets collapse onto salient objects (one notebook, other faces) at classroom distance |
+
 So motion + study protection + phone-on-crop is the best model these features, these public datasets and this amount of labelled data support.
 
 ### 5.5 Parameter sensitivity
@@ -212,7 +214,7 @@ This uses the same students, at new moments. It suits a teacher's own class moni
 
 **Future work:**
 * **Request DIPSER** (54 students, 51 h, per-second attention ratings in a real classroom; access by application). It provides exactly what is missing: many students whose attention changes over time.
-* A board-relative gaze feature (one click per camera).
+* A board-relative gaze feature (one click per camera). A general gaze-target model (Gaze-LLE) was tested and does not work at classroom distance; this needs a gaze model trained on classroom footage.
 * A calibration step in the dashboard (label the first minutes of a class).
 * A second annotator, to report Cohen's κ.
 

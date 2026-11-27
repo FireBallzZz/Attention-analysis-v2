@@ -1,0 +1,106 @@
+{
+ "cue_auc": {
+  "inout": {
+   "classroom_01": 0.58,
+   "room_B": 0.154,
+   "room_C": 0.454
+  },
+  "dx": {
+   "classroom_01": 0.397,
+   "room_B": 0.452,
+   "room_C": 0.454
+  },
+  "dy": {
+   "classroom_01": 0.452,
+   "room_B": 0.402,
+   "room_C": 0.523
+  },
+  "on_peer": {
+   "classroom_01": 0.423,
+   "room_B": 0.582,
+   "room_C": 0.514
+  }
+ },
+ "variants": {
+  "current final (motion + rules)": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5522,
+     "auc": 0.6558
+    },
+    "room_B": {
+     "balacc": 0.6054,
+     "auc": 0.5797
+    },
+    "room_C": {
+     "balacc": 0.6309,
+     "auc": 0.7688
+    }
+   },
+   "mean": {
+    "balacc": 0.5962,
+    "auc": 0.6681
+   }
+  },
+  "gaze cues only (per fold)": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5,
+     "auc": 0.5479
+    },
+    "room_B": {
+     "balacc": 0.5613,
+     "auc": 0.5193
+    },
+    "room_C": {
+     "balacc": 0.5028,
+     "auc": 0.4523
+    }
+   },
+   "mean": {
+    "balacc": 0.5214,
+    "auc": 0.5065
+   }
+  },
+  "motion + gaze cues (per fold) + rules": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5212,
+     "auc": 0.6493
+    },
+    "room_B": {
+     "balacc": 0.5533,
+     "auc": 0.5725
+    },
+    "room_C": {
+     "balacc": 0.6066,
+     "auc": 0.7347
+    }
+   },
+   "mean": {
+    "balacc": 0.5604,
+    "auc": 0.6522
+   }
+  },
+  "motion only, same learner (per fold) + rules": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5349,
+     "auc": 0.6577
+    },
+    "room_B": {
+     "balacc": 0.6033,
+     "auc": 0.5764
+    },
+    "room_C": {
+     "balacc": 0.6314,
+     "auc": 0.7621
+    }
+   },
+   "mean": {
+    "balacc": 0.5899,
+    "auc": 0.6654
+   }
+  }
+ }
+}
