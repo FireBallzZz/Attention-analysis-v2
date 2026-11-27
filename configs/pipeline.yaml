@@ -81,6 +81,8 @@ fusion:
   #   blended    : the previous min / 0.4f+0.6h behaviour
   combine_mode: model_floor  # hard evidence (phone, sleep, head on desk) may only lower the score; see reports/final_model/pipeline_vs_human_floor.json
   study_protect: 0.3  # confident SCB reading/writing/hand-raising keeps the score >= 50 (reports/improvement/study_protection.json)
+  phone_crop: 0.25      # phone found on a student's enlarged crop -> score <= phone_crop_cap (reports/improvement/phone_crop.json)
+  phone_crop_cap: 30.0
   heuristic_weight: 0.6
 
 

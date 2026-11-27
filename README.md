@@ -7,7 +7,7 @@ A six-stage pipeline that finds every student in a classroom video, measures pos
 | 1 Input | Any video, analysed at 10 fps | — |
 | 2 Detect & track | YOLO11-Pose + ByteTrack | COCO pretrained (`yolo11n-pose.pt`) |
 | 3 Modalities | Head pose; L2CS-Net gaze; SCB-YOLO behaviour (hand-raise, reading, writing, phone…); box motion | Gaze360 (`checkpoints/l2cs_finetuned.pt`), SCB-dataset (`checkpoints/scb_yolo.pt`) |
-| 4 Attention | **Class-relative motion** over 1.6 s (P(HIGH) = sigmoid(a + b·z), z = student's log motion minus the class median). Hard evidence (phone, sleeping, head on desk) can only lower the score; confident SCB reading/writing/hand-raising keeps it ≥ 50 ("study protection") | `checkpoints/motion_rule_v1.json`, fitted on human labels |
+| 4 Attention | **Class-relative motion** over 1.6 s (P(HIGH) = sigmoid(a + b·z), z = student's log motion minus the class median). Hard evidence (phone, sleeping, head on desk) can only lower the score; a phone found on the student's enlarged crop caps it at 30; confident SCB reading/writing/hand-raising keeps it ≥ 50 ("study protection") | `checkpoints/motion_rule_v1.json`, fitted on human labels |
 | 5 Drop detector | Sustained (< 40 for 3 s) or sudden (≥ 20-point fall in 2 s), 8 s cooldown | Rules |
 | 6 Recommendation | Teaching suggestion per alert | Rules |
 
@@ -48,7 +48,7 @@ The dashboard opens at http://127.0.0.1:8765. Under **Analyse a video**, upload 
 **Tests:**
 
 ```bash
-python -m pytest                          # public clone: 101 pass, 26 skip (they need the private classroom data)
+python -m pytest                          # public clone: 102 pass, 26 skip (they need the private classroom data)
 ```
 
 ## How to read the scores

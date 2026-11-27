@@ -59,3 +59,18 @@ def test_config_uses_motion_rule():
 
     cfg = yaml.safe_load((ROOT / "configs/pipeline.yaml").read_text(encoding="utf-8"))
     assert cfg["models"]["motion_rule"].endswith("motion_rule_v1.json")
+
+
+def test_phone_crop_rule_configured_and_disabled_path_is_safe():
+    import yaml
+
+    from attention_pipeline.pipeline import AttentionPipeline
+    from attention_pipeline.utils import load_yaml
+
+    cfg = yaml.safe_load((ROOT / "configs/pipeline.yaml").read_text(encoding="utf-8"))
+    assert cfg["fusion"]["phone_crop"] == pytest.approx(0.25)
+    assert cfg["fusion"]["phone_crop_cap"] == pytest.approx(30.0)
+    c = load_yaml(str(ROOT / "configs/pipeline.yaml"))
+    c["fusion"]["phone_crop"] = 0.0
+    pipe = AttentionPipeline(c, load_weights=False)
+    assert pipe._phone_on_crops(np.zeros((100, 100, 3), np.uint8), []) == {}

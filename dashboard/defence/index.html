@@ -144,7 +144,7 @@ main{min-width:0}
     <div class="stage"><div class="num">STAGE 1</div><b>Video input</b><p>Any classroom video, resampled to 10 fps.</p></div>
     <div class="stage"><div class="num">STAGE 2</div><b>Detect &amp; track</b><p>YOLO11-Pose (COCO) + tracking: one ID per student.</p></div>
     <div class="stage"><div class="num">STAGE 3</div><b>Modalities</b><p>Head pose, L2CS gaze (Gaze360), SCB behaviour (reading, writing, hand-raise, phone).</p></div>
-    <div class="stage weak"><div class="num">STAGE 4</div><b>Attention model</b><p>Each student's movement relative to the class over 1.6 s. Hard evidence (phone, sleeping) lowers it; confident SCB reading/writing protects it. Chosen because it transfers between classrooms.</p></div>
+    <div class="stage weak"><div class="num">STAGE 4</div><b>Attention model</b><p>Each student's movement relative to the class over 1.6 s. Hard evidence (phone found on the student's crop, sleeping) lowers it; confident SCB reading/writing protects it. Chosen because it transfers between classrooms.</p></div>
     <div class="stage"><div class="num">STAGE 5</div><b>Drop detector</b><p>Sustained (&lt;40 for 3 s) or sudden (−20 in 2 s) drops, 8 s cooldown.</p></div>
     <div class="stage"><div class="num">STAGE 6</div><b>Recommendation</b><p>Rule-based teaching suggestion per alert (LLM option off).</p></div>
   </div>
@@ -511,6 +511,7 @@ $("#explain").innerHTML = [
   `The final <b>motion model</b> judges each student by how much they move <i>relative to their own class</i> (no labels needed for that). Leave-one-out it scores ${pct(un.balanced_accuracy)} vs ${D.improvement&&D.improvement.bigru_seeds?pct(D.improvement.bigru_seeds.mean_room_balacc[0]):"52%"} for the BiGRU (5 seeds).`,
   `Live end-to-end check (full pipeline vs human labels, 5 videos): mean AUC ${fm.live_mean?f2(fm.live_mean.auc):"—"}, balanced accuracy ${fm.live_mean?pct(fm.live_mean.balanced_accuracy):"—"} (rooms the rule's 2 coefficients were fitted on).`,
   `<b>Study protection</b>: motion alone scored 31% of attentive students LOW (writing moves the hands). When SCB confidently detects reading, writing or hand-raising, the score now stays ≥ 50: live-component test ${D.improvement&&D.improvement.datasets&&D.improvement.datasets[0]?pct(D.improvement.datasets[0].balacc)+" vs "+pct(D.improvement.datasets[1].balacc):"64.9% vs 63.1%"} balanced accuracy (mainly Room C, +6 points).`,
+  `<b>Phone detection on student crops</b>: each student's crop is enlarged and checked for a phone; a phone caps the score at 30. Strict unseen-classroom result: <b>60.2%</b> balanced accuracy, AUC 0.668 (58.9% / 0.648 before), better in every room.`,
   `Pooling all rooms into one number flatters results because rooms differ in how often students are LOW, so every number here is a mean over rooms.`,
   `Epoch and threshold were always chosen on held-out people from the training rooms — never on the test room.`].map(s=>`<li>${s}</li>`).join("");
 const tbl = (rows, extraRoom) => `<tr>${extraRoom?"<th>Test room</th>":""}<th>Model</th><th class="n">Accuracy</th><th class="n">Balanced acc.</th><th class="n">Macro-F1</th><th class="n">LOW recall</th><th class="n">ROC-AUC [95% CI]</th>${extraRoom?'<th class="n">Always-HIGH acc.</th>':""}</tr>` +

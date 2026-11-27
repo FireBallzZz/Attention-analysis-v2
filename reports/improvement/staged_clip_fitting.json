@@ -1,0 +1,22 @@
+{
+ "staged clip used for fitting": {
+  "cuts": {
+   "classroom_01": 49.5,
+   "room_B": 50.0,
+   "room_C": 50.5
+  },
+  "balacc_all": 0.6019101320980962,
+  "auc": 0.6680926813600417,
+  "balacc_real_videos": 0.6461968792889591
+ },
+ "staged clip left out of fitting": {
+  "cuts": {
+   "classroom_01": 49.0,
+   "room_B": 50.0,
+   "room_C": 52.0
+  },
+  "balacc_all": 0.6020111178665326,
+  "auc": 0.6680926813600417,
+  "balacc_real_videos": 0.6462978650573953
+ }
+}

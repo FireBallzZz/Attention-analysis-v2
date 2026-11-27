@@ -8,16 +8,16 @@
   "verified_pct": 89.2,
   "all_pairs": {
    "n": 1305,
-   "balanced_accuracy": 0.5713,
-   "accuracy": 0.7149,
-   "auc": 0.6253,
+   "balanced_accuracy": 0.5804,
+   "accuracy": 0.7188,
+   "auc": 0.6382,
    "always_high": 0.7885
   },
   "verified_pairs": {
    "n": 1164,
-   "balanced_accuracy": 0.5796,
-   "accuracy": 0.7345,
-   "auc": 0.6415,
+   "balanced_accuracy": 0.5896,
+   "accuracy": 0.7388,
+   "auc": 0.6548,
    "always_high": 0.7852
   }
  },
@@ -30,16 +30,16 @@
   "verified_pct": 89.1,
   "all_pairs": {
    "n": 1531,
-   "balanced_accuracy": 0.5783,
-   "accuracy": 0.7655,
-   "auc": 0.6813,
+   "balanced_accuracy": 0.5835,
+   "accuracy": 0.7616,
+   "auc": 0.682,
    "always_high": 0.919
   },
   "verified_pairs": {
    "n": 1364,
-   "balanced_accuracy": 0.6062,
-   "accuracy": 0.7676,
-   "auc": 0.6904,
+   "balanced_accuracy": 0.6125,
+   "accuracy": 0.7632,
+   "auc": 0.6914,
    "always_high": 0.9223
   }
  },
@@ -54,14 +54,14 @@
    "n": 1168,
    "balanced_accuracy": 0.74,
    "accuracy": 0.6729,
-   "auc": 0.7773,
+   "auc": 0.7771,
    "always_high": 0.8485
   },
   "verified_pairs": {
    "n": 835,
    "balanced_accuracy": 0.8317,
    "accuracy": 0.7461,
-   "auc": 0.8839,
+   "auc": 0.8837,
    "always_high": 0.9042
   }
  },
@@ -74,16 +74,16 @@
   "verified_pct": 50.7,
   "all_pairs": {
    "n": 1199,
-   "balanced_accuracy": 0.4753,
+   "balanced_accuracy": 0.4695,
    "accuracy": 0.5363,
-   "auc": 0.3986,
+   "auc": 0.3852,
    "always_high": 0.1226
   },
   "verified_pairs": {
    "n": 608,
-   "balanced_accuracy": 0.2914,
-   "accuracy": 0.5444,
-   "auc": 0.2294,
+   "balanced_accuracy": 0.2923,
+   "accuracy": 0.5461,
+   "auc": 0.233,
    "always_high": 0.0658
   }
  },
@@ -96,16 +96,16 @@
   "verified_pct": 93.5,
   "all_pairs": {
    "n": 1512,
-   "balanced_accuracy": 0.777,
-   "accuracy": 0.7679,
-   "auc": 0.8403,
+   "balanced_accuracy": 0.7838,
+   "accuracy": 0.7612,
+   "auc": 0.8476,
    "always_high": 0.8128
   },
   "verified_pairs": {
    "n": 1413,
-   "balanced_accuracy": 0.7508,
-   "accuracy": 0.7693,
-   "auc": 0.8129,
+   "balanced_accuracy": 0.762,
+   "accuracy": 0.7622,
+   "auc": 0.8252,
    "always_high": 0.8485
   }
  },

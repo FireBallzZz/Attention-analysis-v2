@@ -27,7 +27,7 @@ Everything works **offline**. Always start the dashboard with the `.bat` file: o
 3. Every number is the **mean over unseen classrooms**. Pooling flatters, because rooms differ in how often students are LOW.
 4. **DAiSEE** pre-training was measured: AUC 0.51 → 0.55. Adding DAiSEE clips to training gave nothing more.
 5. Learned models **recognise people, not attention**: AUC up to 0.95 on known students, about 0.5 on new ones.
-6. **Study protection**: confident reading/writing keeps a student at 50 or above. **Strict unseen-classroom result: 58.9% balanced, 63.7% accuracy, AUC 0.648** (61.8% if the cut-off is also fitted on the test room; don't quote that one). Live check on 5 videos, all detected students: AUC 0.66, balanced 62.8%, accuracy 69.1%.
+6. **Study protection**: confident reading/writing keeps a student at 50 or above. With phone detection on student crops, **strict unseen-classroom result: 60.2% balanced, 64.3% accuracy, AUC 0.668** (58.9% before the phone rule; the 61.8% figure let the cut-off see the test room, so don't quote it). Live check on 5 videos, all detected students: AUC 0.66, balanced 62.8%, accuracy 69.1%.
 7. **127 automated tests** pass.
 
 ## Likely questions, short answers

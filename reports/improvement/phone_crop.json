@@ -1,0 +1,118 @@
+{
+ "phone_rate": {
+  "11": {
+   "low_pct": 0.0,
+   "high_pct": 0.2
+  },
+  "clip_001": {
+   "low_pct": 1.6,
+   "high_pct": 0.7
+  },
+  "clip_004": {
+   "low_pct": 2.5,
+   "high_pct": 0.0
+  },
+  "non_attentive_1": {
+   "low_pct": 6.7,
+   "high_pct": 4.1
+  },
+  "test_8": {
+   "low_pct": 16.6,
+   "high_pct": 2.7
+  }
+ },
+ "variants": {
+  "current final": {
+   "per_room": {
+    "classroom_01": {
+     "cut": 49.5,
+     "balacc": 0.5608,
+     "auc": 0.648
+    },
+    "room_B": {
+     "cut": 50.0,
+     "balacc": 0.5866,
+     "auc": 0.5531
+    },
+    "room_C": {
+     "cut": 50.5,
+     "balacc": 0.6197,
+     "auc": 0.7421
+    }
+   },
+   "mean": {
+    "balacc": 0.589,
+    "auc": 0.6477
+   }
+  },
+  "phone >= 0.25 -> score <= 30": {
+   "per_room": {
+    "classroom_01": {
+     "cut": 49.5,
+     "balacc": 0.5704,
+     "auc": 0.6558
+    },
+    "room_B": {
+     "cut": 50.0,
+     "balacc": 0.6054,
+     "auc": 0.5797
+    },
+    "room_C": {
+     "cut": 50.5,
+     "balacc": 0.6299,
+     "auc": 0.7688
+    }
+   },
+   "mean": {
+    "balacc": 0.6019,
+    "auc": 0.6681
+   }
+  },
+  "phone >= 0.35 -> score <= 30": {
+   "per_room": {
+    "classroom_01": {
+     "cut": 49.5,
+     "balacc": 0.5644,
+     "auc": 0.6519
+    },
+    "room_B": {
+     "cut": 50.0,
+     "balacc": 0.6054,
+     "auc": 0.5792
+    },
+    "room_C": {
+     "cut": 50.5,
+     "balacc": 0.6336,
+     "auc": 0.7732
+    }
+   },
+   "mean": {
+    "balacc": 0.6011,
+    "auc": 0.6681
+   }
+  },
+  "phone >= 0.5 -> score <= 30": {
+   "per_room": {
+    "classroom_01": {
+     "cut": 49.5,
+     "balacc": 0.5608,
+     "auc": 0.648
+    },
+    "room_B": {
+     "cut": 50.0,
+     "balacc": 0.6054,
+     "auc": 0.5789
+    },
+    "room_C": {
+     "cut": 50.5,
+     "balacc": 0.625,
+     "auc": 0.7638
+    }
+   },
+   "mean": {
+    "balacc": 0.5971,
+    "auc": 0.6636
+   }
+  }
+ }
+}

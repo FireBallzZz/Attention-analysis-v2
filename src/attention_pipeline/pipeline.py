@@ -137,9 +137,17 @@ class AttentionPipeline:
         # SCB confidence (hand-raising / reading / writing) above which a student's
         # score is not allowed below 50 in model_floor mode; 0 disables it.
         self.study_protect = float(fusion_cfg.get("study_protect", 0.0))
+        # Phone detection on each student's enlarged crop (phones are a few pixels
+        # wide in the full frame). Confidence >= phone_crop caps the score at
+        # phone_crop_cap. 0 disables it. See scripts/phone_crop_eval.py.
+        self.phone_crop = float(fusion_cfg.get("phone_crop", 0.0))
+        self.phone_crop_cap = float(fusion_cfg.get("phone_crop_cap", 30.0))
         drop_cfg = cfg.get("drop", {})
         self.drop = AttentionDropDetector(DropConfig(**drop_cfg) if drop_cfg else DropConfig())
         phone_w = detect_cfg.get("person_weights") or "yolo11n.pt"
+        _pw = project_path(phone_w)
+        if _pw is not None and _pw.exists():
+            phone_w = str(_pw)  # do not depend on the working directory
         try:
             from ultralytics import YOLO
             self.phone_model = YOLO(phone_w)
@@ -519,6 +527,7 @@ class AttentionPipeline:
         for stale_tid in [k for k in self._talk_streak if k not in active_talk_ids]:
             del self._talk_streak[stale_tid]
 
+        phone_conf = self._phone_on_crops(frame, [obs for _t, obs, _s, _r, _f in pending])
         for (track, obs, score, _old, fusion_score), rubric in zip(pending, debounced_peer):
             # Multimodal Action-Aware Neural Attention Scoring:
             # If verified active academic behavior (reading/writing/hand-raising) is detected by the rubric,
@@ -527,8 +536,12 @@ class AttentionPipeline:
                 effective_score = self._combine_scores(
                     float(fusion_score), rubric, obs
                 )
-                band = "HIGH" if (effective_score / 100.0) >= self.binary_threshold else "LOW"
                 cue = rubric.cue
+                pc = phone_conf.get(int(obs.student_id), 0.0)
+                if self.phone_crop > 0 and pc >= self.phone_crop:
+                    effective_score = min(effective_score, self.phone_crop_cap)
+                    cue = "using phone"
+                band = "HIGH" if (effective_score / 100.0) >= self.binary_threshold else "LOW"
             elif not self.scorer.use_heuristic:
                 # In neural mode: student is in warmup until 16 sequential observations are available
                 effective_score = None
@@ -599,6 +612,36 @@ class AttentionPipeline:
         "hand raised",
         "standing / presenting",
     )
+
+    def _phone_on_crops(self, frame: np.ndarray, observations) -> dict[int, float]:
+        """Highest COCO 'cell phone' confidence on each student's enlarged crop."""
+        out: dict[int, float] = {}
+        if self.phone_crop <= 0 or self.phone_model is None or not observations:
+            return out
+        h, w = frame.shape[:2]
+        crops, ids = [], []
+        for obs in observations:
+            x1, y1, x2, y2 = (float(v) for v in obs.bbox)
+            mx, my = (x2 - x1) * 0.25, (y2 - y1) * 0.25
+            a, b = int(max(0, x1 - mx)), int(max(0, y1 - my))
+            c, d = int(min(w, x2 + mx)), int(min(h, y2 + my))
+            if c - a < 8 or d - b < 8:
+                continue
+            crop = frame[b:d, a:c]
+            s = 640.0 / max(crop.shape[:2])
+            crops.append(cv2.resize(crop, None, fx=s, fy=s, interpolation=cv2.INTER_CUBIC))
+            ids.append(int(obs.student_id))
+        if not crops:
+            return out
+        try:
+            results = self.phone_model.predict(crops, imgsz=640, conf=0.05, classes=[67],
+                                               device=self.device, verbose=False)
+        except Exception:
+            return out
+        for sid, res in zip(ids, results):
+            if res.boxes is not None and len(res.boxes):
+                out[sid] = float(res.boxes.conf.max())
+        return out
 
     def _combine_scores(self, fusion_score: float, rubric, obs) -> float:
         """Combine the trained model's score with the heuristic rubric.

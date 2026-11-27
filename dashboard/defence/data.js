@@ -1,9 +1,9 @@
 window.DASH = {
- "built": "2026-11-25 12:45",
+ "built": "2026-11-27 14:36",
  "tests": {
-  "passed": 127,
+  "passed": 128,
   "failed": 0,
-  "summary": "127 passed, 1 warning in 29.66s"
+  "summary": "128 passed, 1 warning in 26.40s"
  },
  "rooms": {
   "classroom_01": {
@@ -797,8 +797,8 @@ window.DASH = {
     ],
     [
      3.0,
-     50.7,
-     36.8,
+     49.7,
+     42.1,
      19
     ],
     [
@@ -827,7 +827,7 @@ window.DASH = {
     ],
     [
      3.5,
-     51.0,
+     50.1,
      36.8,
      19
     ],
@@ -863,8 +863,8 @@ window.DASH = {
     ],
     [
      4.1,
-     55.8,
-     10.5,
+     54.4,
+     15.8,
      19
     ],
     [
@@ -875,8 +875,8 @@ window.DASH = {
     ],
     [
      4.3,
-     56.9,
-     10.5,
+     55.6,
+     15.8,
      19
     ],
     [
@@ -917,8 +917,8 @@ window.DASH = {
     ],
     [
      5.0,
-     56.5,
-     5.3,
+     54.8,
+     10.5,
      19
     ],
     [
@@ -941,8 +941,8 @@ window.DASH = {
     ],
     [
      5.41,
-     55.6,
-     5.3,
+     53.9,
+     10.5,
      19
     ],
     [
@@ -989,7 +989,7 @@ window.DASH = {
     ],
     [
      6.21,
-     56.6,
+     55.6,
      10.5,
      19
     ],
@@ -1013,8 +1013,8 @@ window.DASH = {
     ],
     [
      6.61,
-     58.9,
-     0.0,
+     57.2,
+     5.3,
      19
     ],
     [
@@ -1025,8 +1025,8 @@ window.DASH = {
     ],
     [
      6.81,
-     59.3,
-     0.0,
+     56.4,
+     10.5,
      19
     ],
     [
@@ -1043,8 +1043,8 @@ window.DASH = {
     ],
     [
      7.11,
-     58.2,
-     0.0,
+     56.9,
+     5.3,
      19
     ],
     [
@@ -1085,8 +1085,8 @@ window.DASH = {
     ],
     [
      7.81,
-     56.4,
-     5.0,
+     55.0,
+     10.0,
      20
     ],
     [
@@ -1199,8 +1199,8 @@ window.DASH = {
     ],
     [
      9.71,
-     47.8,
-     40.0,
+     46.7,
+     45.0,
      20
     ],
     [
@@ -1271,8 +1271,8 @@ window.DASH = {
     {
      "id": 10,
      "n": 83,
-     "mean": 49.9,
-     "low_pct": 43.4,
+     "mean": 49.3,
+     "low_pct": 45.8,
      "cue": "hand raised",
      "alerts": 0,
      "daisee": 96.9,
@@ -1284,6 +1284,23 @@ window.DASH = {
      ],
      "scb": "reading",
      "scb_p": 0.24
+    },
+    {
+     "id": 15,
+     "n": 71,
+     "mean": 50.1,
+     "low_pct": 47.9,
+     "cue": "glancing left",
+     "alerts": 0,
+     "daisee": 99.2,
+     "daisee_aux": [
+      3.05,
+      -0.1,
+      0.35,
+      -0.13
+     ],
+     "scb": "hand-raising",
+     "scb_p": 0.17
     },
     {
      "id": 18,
@@ -1298,23 +1315,6 @@ window.DASH = {
       1.16,
       0.2,
       0.01
-     ],
-     "scb": "hand-raising",
-     "scb_p": 0.17
-    },
-    {
-     "id": 15,
-     "n": 71,
-     "mean": 51.7,
-     "low_pct": 43.7,
-     "cue": "glancing left",
-     "alerts": 0,
-     "daisee": 99.2,
-     "daisee_aux": [
-      3.05,
-      -0.1,
-      0.35,
-      -0.13
      ],
      "scb": "hand-raising",
      "scb_p": 0.17
@@ -1456,6 +1456,23 @@ window.DASH = {
      "scb_p": 0.17
     },
     {
+     "id": 14,
+     "n": 83,
+     "mean": 55.4,
+     "low_pct": 7.2,
+     "cue": "reading / writing",
+     "alerts": 0,
+     "daisee": 95.1,
+     "daisee_aux": [
+      2.95,
+      0.73,
+      0.5,
+      -0.12
+     ],
+     "scb": "hand-raising",
+     "scb_p": 0.17
+    },
+    {
      "id": 20,
      "n": 82,
      "mean": 55.6,
@@ -1536,23 +1553,6 @@ window.DASH = {
       0.34,
       0.52,
       -0.23
-     ],
-     "scb": "hand-raising",
-     "scb_p": 0.17
-    },
-    {
-     "id": 14,
-     "n": 83,
-     "mean": 57.6,
-     "low_pct": 0.0,
-     "cue": "reading / writing",
-     "alerts": 0,
-     "daisee": 95.1,
-     "daisee_aux": [
-      2.95,
-      0.73,
-      0.5,
-      -0.12
      ],
      "scb": "hand-raising",
      "scb_p": 0.17
@@ -1946,8 +1946,8 @@ window.DASH = {
      "cy": 0.5791,
      "w": 0.0753,
      "h": 0.2436,
-     "mean": 57.6,
-     "low_pct": 0.0,
+     "mean": 55.4,
+     "low_pct": 7.2,
      "cue": "reading / writing",
      "n": 83,
      "series": [
@@ -1973,7 +1973,7 @@ window.DASH = {
       ],
       [
        4.0,
-       56.3
+       50.9
       ],
       [
        4.5,
@@ -1981,11 +1981,11 @@ window.DASH = {
       ],
       [
        5.0,
-       63.5
+       56.7
       ],
       [
        5.5,
-       63.1
+       56.6
       ],
       [
        6.0,
@@ -1993,11 +1993,11 @@ window.DASH = {
       ],
       [
        6.5,
-       62.0
+       55.6
       ],
       [
        7.0,
-       61.9
+       55.4
       ],
       [
        7.5,
@@ -2017,7 +2017,7 @@ window.DASH = {
       ],
       [
        9.5,
-       53.3
+       48.9
       ],
       [
        10.0,
@@ -2031,8 +2031,8 @@ window.DASH = {
      "cy": 0.5638,
      "w": 0.0428,
      "h": 0.1248,
-     "mean": 51.7,
-     "low_pct": 43.7,
+     "mean": 50.1,
+     "low_pct": 47.9,
      "cue": "glancing left",
      "n": 71,
      "series": [
@@ -2054,7 +2054,7 @@ window.DASH = {
       ],
       [
        3.5,
-       48.1
+       44.5
       ],
       [
        4.0,
@@ -2074,7 +2074,7 @@ window.DASH = {
       ],
       [
        6.0,
-       49.1
+       45.2
       ],
       [
        6.5,
@@ -2082,7 +2082,7 @@ window.DASH = {
       ],
       [
        7.0,
-       54.2
+       44.6
       ],
       [
        7.5,
@@ -2090,7 +2090,7 @@ window.DASH = {
       ],
       [
        8.0,
-       59.2
+       53.3
       ],
       [
        8.5,
@@ -2189,8 +2189,8 @@ window.DASH = {
      "cy": 0.3268,
      "w": 0.0413,
      "h": 0.0882,
-     "mean": 49.9,
-     "low_pct": 43.4,
+     "mean": 49.3,
+     "low_pct": 45.8,
      "cue": "hand raised",
      "n": 83,
      "series": [
@@ -2208,7 +2208,7 @@ window.DASH = {
       ],
       [
        3.0,
-       50.0
+       46.0
       ],
       [
        3.5,
@@ -2220,7 +2220,7 @@ window.DASH = {
       ],
       [
        4.5,
-       55.0
+       50.0
       ],
       [
        5.0,
@@ -3275,8 +3275,8 @@ window.DASH = {
      ]
     }
    ],
-   "class_mean": 53.77,
-   "low_share": 21.21
+   "class_mean": 53.56,
+   "low_share": 21.9
   },
   {
    "key": "room_B_11",
@@ -3744,7 +3744,7 @@ window.DASH = {
     ],
     [
      9.3,
-     45.6,
+     45.0,
      76.9,
      13
     ],
@@ -3911,7 +3911,7 @@ window.DASH = {
     {
      "id": 6,
      "n": 91,
-     "mean": 48.1,
+     "mean": 48.0,
      "low_pct": 29.7,
      "cue": "reading / writing",
      "alerts": 0,
@@ -4640,7 +4640,7 @@ window.DASH = {
      "cy": 0.4912,
      "w": 0.0374,
      "h": 0.1264,
-     "mean": 48.1,
+     "mean": 48.0,
      "low_pct": 29.7,
      "cue": "reading / writing",
      "n": 91,
@@ -4707,7 +4707,7 @@ window.DASH = {
       ],
       [
        9.5,
-       38.1
+       36.4
       ],
       [
        10.0,
@@ -5347,7 +5347,7 @@ window.DASH = {
      ]
     }
    ],
-   "class_mean": 48.81,
+   "class_mean": 48.8,
    "low_share": 44.86
   },
   {
@@ -5372,133 +5372,133 @@ window.DASH = {
     ],
     [
      1.8,
-     46.2,
+     45.0,
      62.5,
      16
     ],
     [
      1.9,
-     47.5,
-     62.5,
+     44.5,
+     68.8,
      16
     ],
     [
      2.0,
-     46.6,
+     45.4,
      62.5,
      16
     ],
     [
      2.1,
-     48.9,
+     47.8,
      43.8,
      16
     ],
     [
      2.2,
-     49.0,
+     47.9,
      43.8,
      16
     ],
     [
      2.3,
-     47.1,
+     46.1,
      52.9,
      17
     ],
     [
      2.4,
-     49.0,
+     48.0,
      35.3,
      17
     ],
     [
      2.5,
-     49.0,
+     48.0,
      35.3,
      17
     ],
     [
      2.6,
-     48.7,
+     47.8,
      41.2,
      17
     ],
     [
      2.7,
-     46.8,
+     45.8,
      43.8,
      16
     ],
     [
      2.8,
-     48.4,
+     47.5,
      37.5,
      16
     ],
     [
      2.9,
-     47.9,
+     47.0,
      41.2,
      17
     ],
     [
      3.0,
-     47.5,
+     46.7,
      44.4,
      18
     ],
     [
      3.1,
-     47.1,
+     46.3,
      55.6,
      18
     ],
     [
      3.2,
-     46.8,
+     46.0,
      55.6,
      18
     ],
     [
      3.3,
-     46.1,
+     45.3,
      58.8,
      17
     ],
     [
      3.4,
-     46.0,
+     45.2,
      56.2,
      16
     ],
     [
      3.5,
-     47.5,
+     46.5,
      53.3,
      15
     ],
     [
      3.6,
-     47.5,
-     53.3,
+     44.8,
+     60.0,
      15
     ],
     [
      3.7,
-     47.2,
+     46.2,
      53.3,
      15
     ],
     [
      3.8,
-     47.1,
+     46.0,
      53.3,
      15
     ],
     [
      3.9,
-     45.0,
+     44.9,
      56.2,
      16
     ],
@@ -5510,13 +5510,13 @@ window.DASH = {
     ],
     [
      4.1,
-     45.0,
+     44.0,
      62.5,
      16
     ],
     [
      4.2,
-     43.5,
+     42.5,
      75.0,
      16
     ],
@@ -5552,7 +5552,7 @@ window.DASH = {
     ],
     [
      4.8,
-     42.7,
+     42.2,
      80.0,
      15
     ],
@@ -5648,7 +5648,7 @@ window.DASH = {
     ],
     [
      6.4,
-     44.8,
+     43.6,
      68.8,
      16
     ],
@@ -5720,8 +5720,8 @@ window.DASH = {
     ],
     [
      7.6,
-     48.2,
-     50.0,
+     46.4,
+     56.2,
      16
     ],
     [
@@ -5840,8 +5840,8 @@ window.DASH = {
     ],
     [
      9.6,
-     51.7,
-     37.5,
+     50.4,
+     43.8,
      16
     ],
     [
@@ -5975,7 +5975,7 @@ window.DASH = {
     {
      "id": 7,
      "n": 83,
-     "mean": 44.0,
+     "mean": 43.8,
      "low_pct": 66.3,
      "cue": "reading / writing",
      "alerts": 1,
@@ -6002,6 +6002,23 @@ window.DASH = {
       1.05,
       0.51,
       -0.03
+     ],
+     "scb": "hand-raising",
+     "scb_p": 0.17
+    },
+    {
+     "id": 10,
+     "n": 83,
+     "mean": 47.1,
+     "low_pct": 56.6,
+     "cue": "reading / writing",
+     "alerts": 1,
+     "daisee": 67.2,
+     "daisee_aux": [
+      2.48,
+      0.73,
+      0.1,
+      0.2
      ],
      "scb": "hand-raising",
      "scb_p": 0.17
@@ -6058,6 +6075,23 @@ window.DASH = {
      "scb_p": 0.17
     },
     {
+     "id": 4,
+     "n": 83,
+     "mean": 49.2,
+     "low_pct": 47.0,
+     "cue": "reading / writing",
+     "alerts": 1,
+     "daisee": 68.2,
+     "daisee_aux": [
+      2.42,
+      0.56,
+      0.12,
+      0.26
+     ],
+     "scb": "hand-raising",
+     "scb_p": 0.17
+    },
+    {
      "id": 9,
      "n": 83,
      "mean": 49.4,
@@ -6075,44 +6109,10 @@ window.DASH = {
      "scb_p": 0.17
     },
     {
-     "id": 4,
-     "n": 83,
-     "mean": 49.5,
-     "low_pct": 45.8,
-     "cue": "reading / writing",
-     "alerts": 1,
-     "daisee": 68.2,
-     "daisee_aux": [
-      2.42,
-      0.56,
-      0.12,
-      0.26
-     ],
-     "scb": "hand-raising",
-     "scb_p": 0.17
-    },
-    {
-     "id": 10,
-     "n": 83,
-     "mean": 51.6,
-     "low_pct": 56.6,
-     "cue": "reading / writing",
-     "alerts": 0,
-     "daisee": 67.2,
-     "daisee_aux": [
-      2.48,
-      0.73,
-      0.1,
-      0.2
-     ],
-     "scb": "hand-raising",
-     "scb_p": 0.17
-    },
-    {
      "id": 3,
      "n": 84,
-     "mean": 51.9,
-     "low_pct": 9.5,
+     "mean": 51.6,
+     "low_pct": 10.7,
      "cue": "reading / taking notes",
      "alerts": 0,
      "daisee": 76.6,
@@ -6179,8 +6179,8 @@ window.DASH = {
     {
      "id": 11,
      "n": 83,
-     "mean": 57.5,
-     "low_pct": 12.0,
+     "mean": 56.9,
+     "low_pct": 14.5,
      "cue": "reading / writing",
      "alerts": 0,
      "daisee": 68.8,
@@ -6208,7 +6208,7 @@ window.DASH = {
      "t": 4.2,
      "student": 7,
      "kind": "sustained",
-     "score": 33.1,
+     "score": 32.9,
      "cue": "reading / writing",
      "recommendation": "Pause for a 15-second retrieval prompt aimed at the whole class, then cold-call a nearby volunteer rather than the flagged seat.",
      "suggestion": "Circulate toward that side of the room and use a quiet check-in."
@@ -6228,6 +6228,15 @@ window.DASH = {
      "kind": "sustained",
      "score": 39.0,
      "cue": "reading / taking notes",
+     "recommendation": "Pause for a 15-second retrieval prompt aimed at the whole class, then cold-call a nearby volunteer rather than the flagged seat.",
+     "suggestion": "Circulate toward that side of the room and use a quiet check-in."
+    },
+    {
+     "t": 4.2,
+     "student": 10,
+     "kind": "sustained",
+     "score": 34.0,
+     "cue": "reading / writing",
      "recommendation": "Pause for a 15-second retrieval prompt aimed at the whole class, then cold-call a nearby volunteer rather than the flagged seat.",
      "suggestion": "Circulate toward that side of the room and use a quiet check-in."
     },
@@ -6271,7 +6280,7 @@ window.DASH = {
      "t": 8.8,
      "student": 4,
      "kind": "sudden",
-     "score": 41.1,
+     "score": 40.9,
      "cue": "reading / writing",
      "recommendation": "Pause for a 15-second retrieval prompt aimed at the whole class, then cold-call a nearby volunteer rather than the flagged seat.",
      "suggestion": "Wait one more cycle; brief dips are common."
@@ -6398,8 +6407,8 @@ window.DASH = {
      "cy": 0.4888,
      "w": 0.0423,
      "h": 0.0859,
-     "mean": 51.9,
-     "low_pct": 9.5,
+     "mean": 51.6,
+     "low_pct": 10.7,
      "cue": "reading / taking notes",
      "n": 84,
      "series": [
@@ -6469,7 +6478,7 @@ window.DASH = {
       ],
       [
        9.5,
-       50.2
+       46.1
       ],
       [
        10.0,
@@ -6564,8 +6573,8 @@ window.DASH = {
      "cy": 0.5332,
      "w": 0.0374,
      "h": 0.0961,
-     "mean": 49.5,
-     "low_pct": 45.8,
+     "mean": 49.2,
+     "low_pct": 47.0,
      "cue": "reading / writing",
      "n": 83,
      "series": [
@@ -6615,7 +6624,7 @@ window.DASH = {
       ],
       [
        7.5,
-       58.7
+       53.1
       ],
       [
        8.0,
@@ -6807,7 +6816,7 @@ window.DASH = {
      "cy": 0.5219,
      "w": 0.0596,
      "h": 0.1653,
-     "mean": 44.0,
+     "mean": 43.8,
      "low_pct": 66.3,
      "cue": "reading / writing",
      "n": 83,
@@ -6830,7 +6839,7 @@ window.DASH = {
       ],
       [
        4.0,
-       33.2
+       32.7
       ],
       [
        4.5,
@@ -6850,7 +6859,7 @@ window.DASH = {
       ],
       [
        6.5,
-       47.6
+       44.0
       ],
       [
        7.0,
@@ -6969,14 +6978,14 @@ window.DASH = {
      "cy": 0.6282,
      "w": 0.0505,
      "h": 0.1701,
-     "mean": 57.5,
-     "low_pct": 12.0,
+     "mean": 56.9,
+     "low_pct": 14.5,
      "cue": "reading / writing",
      "n": 83,
      "series": [
       [
        2.0,
-       60.8
+       54.7
       ],
       [
        2.5,
@@ -6988,7 +6997,7 @@ window.DASH = {
       ],
       [
        3.5,
-       55.7
+       50.7
       ],
       [
        4.0,
@@ -7249,30 +7258,30 @@ window.DASH = {
      "cy": 0.5761,
      "w": 0.0405,
      "h": 0.1374,
-     "mean": 51.6,
+     "mean": 47.1,
      "low_pct": 56.6,
      "cue": "reading / writing",
      "n": 83,
      "series": [
       [
        2.0,
-       48.4
+       30.0
       ],
       [
        2.5,
-       46.2
+       30.0
       ],
       [
        3.0,
-       44.3
+       30.0
       ],
       [
        3.5,
-       44.5
+       30.0
       ],
       [
        4.0,
-       45.8
+       36.4
       ],
       [
        4.5,
@@ -7280,7 +7289,7 @@ window.DASH = {
       ],
       [
        5.0,
-       37.5
+       35.8
       ],
       [
        5.5,
@@ -7634,8 +7643,8 @@ window.DASH = {
      ]
     }
    ],
-   "class_mean": 46.92,
-   "low_share": 57.43
+   "class_mean": 46.55,
+   "low_share": 57.74
   },
   {
    "key": "room_C_test_8",
@@ -7653,38 +7662,38 @@ window.DASH = {
    "timeline": [
     [
      1.71,
-     45.2,
-     30.8,
+     43.5,
+     38.5,
      13
     ],
     [
      1.83,
-     47.4,
-     28.6,
+     45.4,
+     38.1,
      21
     ],
     [
      1.92,
-     47.9,
-     28.6,
+     45.9,
+     38.1,
      21
     ],
     [
      2.0,
-     46.4,
-     33.3,
+     45.4,
+     38.1,
      21
     ],
     [
      2.12,
-     46.8,
-     33.3,
+     45.7,
+     38.1,
      21
     ],
     [
      2.21,
-     46.7,
-     33.3,
+     45.7,
+     38.1,
      21
     ],
     [
@@ -7701,62 +7710,62 @@ window.DASH = {
     ],
     [
      2.5,
-     47.3,
-     23.8,
+     46.0,
+     28.6,
      21
     ],
     [
      2.62,
-     47.5,
-     23.8,
+     46.1,
+     28.6,
      21
     ],
     [
      2.71,
-     48.0,
-     28.6,
-     21
-    ],
-    [
-     2.83,
-     47.8,
-     28.6,
-     21
-    ],
-    [
-     2.92,
-     48.7,
-     28.6,
-     21
-    ],
-    [
-     3.0,
-     47.6,
-     28.6,
-     21
-    ],
-    [
-     3.12,
-     47.8,
-     28.6,
-     21
-    ],
-    [
-     3.21,
-     47.5,
-     28.6,
-     21
-    ],
-    [
-     3.33,
-     45.9,
+     46.7,
      33.3,
      21
     ],
     [
+     2.83,
+     46.4,
+     33.3,
+     21
+    ],
+    [
+     2.92,
+     47.3,
+     33.3,
+     21
+    ],
+    [
+     3.0,
+     46.2,
+     33.3,
+     21
+    ],
+    [
+     3.12,
+     46.4,
+     33.3,
+     21
+    ],
+    [
+     3.21,
+     46.1,
+     33.3,
+     21
+    ],
+    [
+     3.33,
+     44.5,
+     38.1,
+     21
+    ],
+    [
      3.42,
-     47.2,
-     28.6,
+     45.8,
+     33.3,
      21
     ],
     [
@@ -7773,8 +7782,8 @@ window.DASH = {
     ],
     [
      3.71,
-     45.6,
-     33.3,
+     44.5,
+     38.1,
      21
     ],
     [
@@ -7869,7 +7878,7 @@ window.DASH = {
     ],
     [
      5.33,
-     43.4,
+     43.1,
      52.4,
      21
     ],
@@ -7905,13 +7914,13 @@ window.DASH = {
     ],
     [
      5.92,
-     45.5,
-     52.4,
+     44.1,
+     57.1,
      21
     ],
     [
      6.0,
-     46.1,
+     45.7,
      52.4,
      21
     ],
@@ -7989,14 +7998,14 @@ window.DASH = {
     ],
     [
      7.33,
-     46.0,
-     47.6,
+     44.9,
+     52.4,
      21
     ],
     [
      7.42,
-     46.6,
-     45.0,
+     45.3,
+     50.0,
      20
     ],
     [
@@ -8007,7 +8016,7 @@ window.DASH = {
     ],
     [
      7.62,
-     46.7,
+     46.3,
      45.0,
      20
     ],
@@ -8025,19 +8034,19 @@ window.DASH = {
     ],
     [
      7.92,
-     48.6,
-     30.0,
+     47.3,
+     35.0,
      20
     ],
     [
      8.0,
-     48.8,
-     36.8,
+     47.7,
+     42.1,
      19
     ],
     [
      8.12,
-     48.2,
+     47.8,
      36.8,
      19
     ],
@@ -8055,7 +8064,7 @@ window.DASH = {
     ],
     [
      8.42,
-     50.6,
+     50.4,
      26.3,
      19
     ],
@@ -8067,19 +8076,19 @@ window.DASH = {
     ],
     [
      8.62,
-     51.3,
+     51.0,
      26.3,
      19
     ],
     [
      8.71,
-     51.4,
+     51.1,
      26.3,
      19
     ],
     [
      8.83,
-     51.5,
+     51.2,
      26.3,
      19
     ],
@@ -8097,25 +8106,25 @@ window.DASH = {
     ],
     [
      9.12,
-     52.7,
+     52.2,
      20.0,
      20
     ],
     [
      9.21,
-     53.0,
+     52.4,
      20.0,
      20
     ],
     [
      9.33,
-     52.6,
+     52.0,
      20.0,
      20
     ],
     [
      9.42,
-     53.3,
+     52.7,
      20.0,
      20
     ],
@@ -8127,14 +8136,14 @@ window.DASH = {
     ],
     [
      9.62,
-     53.9,
-     10.0,
+     52.9,
+     15.0,
      20
     ],
     [
      9.71,
-     54.1,
-     10.0,
+     53.1,
+     15.0,
      20
     ],
     [
@@ -8145,7 +8154,7 @@ window.DASH = {
     ],
     [
      9.92,
-     54.6,
+     54.1,
      10.0,
      20
     ]
@@ -8171,9 +8180,9 @@ window.DASH = {
     {
      "id": 2,
      "n": 82,
-     "mean": 31.0,
-     "low_pct": 96.3,
-     "cue": "reading / writing",
+     "mean": 29.4,
+     "low_pct": 98.8,
+     "cue": "using phone",
      "alerts": 1,
      "daisee": 67.8,
      "daisee_aux": [
@@ -8184,6 +8193,23 @@ window.DASH = {
      ],
      "scb": "reading",
      "scb_p": 0.24
+    },
+    {
+     "id": 5,
+     "n": 82,
+     "mean": 37.0,
+     "low_pct": 81.7,
+     "cue": "reading / writing",
+     "alerts": 1,
+     "daisee": 75.4,
+     "daisee_aux": [
+      2.31,
+      0.44,
+      0.15,
+      0.33
+     ],
+     "scb": "hand-raising",
+     "scb_p": 0.17
     },
     {
      "id": 8,
@@ -8215,23 +8241,6 @@ window.DASH = {
       -0.07,
       0.26,
       0.02
-     ],
-     "scb": "hand-raising",
-     "scb_p": 0.17
-    },
-    {
-     "id": 5,
-     "n": 82,
-     "mean": 40.8,
-     "low_pct": 68.3,
-     "cue": "reading / writing",
-     "alerts": 1,
-     "daisee": 75.4,
-     "daisee_aux": [
-      2.31,
-      0.44,
-      0.15,
-      0.33
      ],
      "scb": "hand-raising",
      "scb_p": 0.17
@@ -8288,10 +8297,27 @@ window.DASH = {
      "scb_p": 0.4
     },
     {
+     "id": 18,
+     "n": 83,
+     "mean": 46.7,
+     "low_pct": 41.0,
+     "cue": "watching instructor",
+     "alerts": 0,
+     "daisee": 78.9,
+     "daisee_aux": [
+      2.32,
+      0.5,
+      0.06,
+      0.33
+     ],
+     "scb": "reading",
+     "scb_p": 0.41
+    },
+    {
      "id": 6,
      "n": 82,
-     "mean": 48.0,
-     "low_pct": 32.9,
+     "mean": 47.5,
+     "low_pct": 35.4,
      "cue": "reading / writing",
      "alerts": 1,
      "daisee": 76.7,
@@ -8305,21 +8331,21 @@ window.DASH = {
      "scb_p": 0.39
     },
     {
-     "id": 18,
-     "n": 83,
-     "mean": 48.3,
-     "low_pct": 33.7,
+     "id": 10,
+     "n": 82,
+     "mean": 49.3,
+     "low_pct": 28.0,
      "cue": "reading / writing",
      "alerts": 0,
-     "daisee": 78.9,
+     "daisee": 81.1,
      "daisee_aux": [
-      2.32,
-      0.5,
-      0.06,
-      0.33
+      2.38,
+      0.92,
+      0.21,
+      0.18
      ],
      "scb": "reading",
-     "scb_p": 0.41
+     "scb_p": 0.34
     },
     {
      "id": 15,
@@ -8341,7 +8367,7 @@ window.DASH = {
     {
      "id": 1,
      "n": 82,
-     "mean": 50.0,
+     "mean": 49.9,
      "low_pct": 9.8,
      "cue": "reading",
      "alerts": 0,
@@ -8354,23 +8380,6 @@ window.DASH = {
      ],
      "scb": "reading",
      "scb_p": 0.87
-    },
-    {
-     "id": 10,
-     "n": 82,
-     "mean": 50.1,
-     "low_pct": 25.6,
-     "cue": "reading / writing",
-     "alerts": 0,
-     "daisee": 81.1,
-     "daisee_aux": [
-      2.38,
-      0.92,
-      0.21,
-      0.18
-     ],
-     "scb": "reading",
-     "scb_p": 0.34
     },
     {
      "id": 12,
@@ -8392,8 +8401,8 @@ window.DASH = {
     {
      "id": 14,
      "n": 83,
-     "mean": 52.7,
-     "low_pct": 2.4,
+     "mean": 51.9,
+     "low_pct": 6.0,
      "cue": "reading",
      "alerts": 0,
      "daisee": 80.8,
@@ -8511,15 +8520,6 @@ window.DASH = {
    ],
    "alerts": [
     {
-     "t": 2.3,
-     "student": 2,
-     "kind": "sudden",
-     "score": 28.7,
-     "cue": "reading / writing",
-     "recommendation": "Pause for a 15-second retrieval prompt aimed at the whole class, then cold-call a nearby volunteer rather than the flagged seat.",
-     "suggestion": "Circulate toward that side of the room and use a quiet check-in."
-    },
-    {
      "t": 3.9,
      "student": 11,
      "kind": "sudden",
@@ -8556,13 +8556,22 @@ window.DASH = {
      "suggestion": "Circulate toward that side of the room and use a quiet check-in."
     },
     {
-     "t": 4.1,
+     "t": 4.3,
+     "student": 2,
+     "kind": "sustained",
+     "score": 22.0,
+     "cue": "using phone",
+     "recommendation": "Apply non-verbal proximity control: circulate calmly down the aisle near the flagged desk without halting instructional delivery.",
+     "suggestion": "Avoid public confrontation; private physical presence typically causes the student to stow the device naturally."
+    },
+    {
+     "t": 5.5,
      "student": 5,
      "kind": "sudden",
-     "score": 38.8,
+     "score": 24.8,
      "cue": "reading / writing",
      "recommendation": "Pause for a 15-second retrieval prompt aimed at the whole class, then cold-call a nearby volunteer rather than the flagged seat.",
-     "suggestion": "Wait one more cycle; brief dips are common."
+     "suggestion": "Circulate toward that side of the room and use a quiet check-in."
     },
     {
      "t": 6.3,
@@ -8581,8 +8590,8 @@ window.DASH = {
      "cy": 0.6403,
      "w": 0.0648,
      "h": 0.1746,
-     "mean": 52.7,
-     "low_pct": 2.4,
+     "mean": 51.9,
+     "low_pct": 6.0,
      "cue": "reading",
      "n": 83,
      "series": [
@@ -8624,7 +8633,7 @@ window.DASH = {
       ],
       [
        6.0,
-       50.0
+       46.0
       ],
       [
        6.5,
@@ -8652,11 +8661,11 @@ window.DASH = {
       ],
       [
        9.5,
-       54.0
+       46.0
       ],
       [
        10.0,
-       40.5
+       35.6
       ]
      ]
     },
@@ -9407,18 +9416,18 @@ window.DASH = {
      "cy": 0.3644,
      "w": 0.0379,
      "h": 0.1053,
-     "mean": 48.3,
-     "low_pct": 33.7,
-     "cue": "reading / writing",
+     "mean": 46.7,
+     "low_pct": 41.0,
+     "cue": "watching instructor",
      "n": 83,
      "series": [
       [
        1.5,
-       52.2
+       30.0
       ],
       [
        2.0,
-       52.3
+       30.0
       ],
       [
        2.5,
@@ -9662,7 +9671,7 @@ window.DASH = {
      "cy": 0.687,
      "w": 0.0918,
      "h": 0.2619,
-     "mean": 50.0,
+     "mean": 49.9,
      "low_pct": 9.8,
      "cue": "reading",
      "n": 82,
@@ -9697,7 +9706,7 @@ window.DASH = {
       ],
       [
        5.5,
-       47.4
+       46.0
       ],
       [
        6.0,
@@ -9743,8 +9752,8 @@ window.DASH = {
      "cy": 0.6005,
      "w": 0.0881,
      "h": 0.2231,
-     "mean": 40.8,
-     "low_pct": 68.3,
+     "mean": 37.0,
+     "low_pct": 81.7,
      "cue": "reading / writing",
      "n": 82,
      "series": [
@@ -9754,15 +9763,15 @@ window.DASH = {
       ],
       [
        2.5,
-       56.2
+       39.5
       ],
       [
        3.0,
-       59.0
+       30.0
       ],
       [
        3.5,
-       57.9
+       41.4
       ],
       [
        4.0,
@@ -9905,14 +9914,14 @@ window.DASH = {
      "cy": 0.641,
      "w": 0.0902,
      "h": 0.2523,
-     "mean": 31.0,
-     "low_pct": 96.3,
-     "cue": "reading / writing",
+     "mean": 29.4,
+     "low_pct": 98.8,
+     "cue": "using phone",
      "n": 82,
      "series": [
       [
        2.0,
-       33.2
+       25.2
       ],
       [
        2.5,
@@ -9956,23 +9965,23 @@ window.DASH = {
       ],
       [
        7.5,
-       38.7
+       37.1
       ],
       [
        8.0,
-       35.7
+       33.5
       ],
       [
        8.5,
-       35.1
+       31.9
       ],
       [
        9.0,
-       38.8
+       33.3
       ],
       [
        9.5,
-       44.7
+       39.8
       ],
       [
        10.0,
@@ -9986,8 +9995,8 @@ window.DASH = {
      "cy": 0.3494,
      "w": 0.0427,
      "h": 0.1117,
-     "mean": 48.0,
-     "low_pct": 32.9,
+     "mean": 47.5,
+     "low_pct": 35.4,
      "cue": "reading / writing",
      "n": 82,
      "series": [
@@ -10041,7 +10050,7 @@ window.DASH = {
       ],
       [
        8.0,
-       43.0
+       34.2
       ],
       [
        8.5,
@@ -10229,8 +10238,8 @@ window.DASH = {
      "cy": 0.6392,
      "w": 0.0866,
      "h": 0.2448,
-     "mean": 50.1,
-     "low_pct": 25.6,
+     "mean": 49.3,
+     "low_pct": 28.0,
      "cue": "reading / writing",
      "n": 82,
      "series": [
@@ -10268,7 +10277,7 @@ window.DASH = {
       ],
       [
        6.0,
-       40.8
+       36.7
       ],
       [
        6.5,
@@ -10280,7 +10289,7 @@ window.DASH = {
       ],
       [
        7.5,
-       56.7
+       46.4
       ],
       [
        8.0,
@@ -10305,8 +10314,8 @@ window.DASH = {
      ]
     }
    ],
-   "class_mean": 47.3,
-   "low_share": 36.11
+   "class_mean": 46.85,
+   "low_share": 37.65
   },
   {
    "key": "lecture_hall_video_project_3",

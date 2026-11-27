@@ -21,7 +21,8 @@ All evaluation uses **human labels only** (22,878 student windows, three classro
 | Neural model (BiGRU, DAiSEE-pretrained; 5 seeds) | 52.3% ± 2.3 | 0.53 |
 | Best of 40 other learned variants | 58.2% | — |
 | **Final model: class-relative motion + hard-evidence rules** (offline, human boxes) | **59.3%** | **0.62** |
-| **Final model + study protection, live pipeline, all detected students, strict leave-one-classroom-out** (cut-off chosen on the other two rooms) | **58.9%** | **0.65** |
+| Motion + study protection, live pipeline, strict leave-one-classroom-out | 58.9% | 0.65 |
+| **Final model: + phone detection on student crops, strict leave-one-classroom-out** (cut-off chosen on the other two rooms) | **60.2%** | **0.67** |
 
 | Teacher's own class, after a short calibration | Balanced acc. | Accuracy | Always-HIGH acc. |
 |---|---|---|---|
@@ -39,7 +40,7 @@ All evaluation uses **human labels only** (22,878 student windows, three classro
 | 1 Input | Any video, resampled to 10 fps | — |
 | 2 Detect & track | YOLO11-Pose + tracker | COCO pretrained |
 | 3 Modalities | Head pose; L2CS-Net gaze; SCB-YOLO behaviour (hand-raise, reading, writing…); box motion | Gaze360; SCB-dataset |
-| 4 Attention | **Class-relative motion over 1.6 s**: P(HIGH) = sigmoid(a + b·z), z = log(student motion) − median log motion of the class. Hard evidence (phone, sleeping, head on desk, peer talk) may only lower the score; confident SCB reading / writing / hand-raising keeps it ≥ 50 (study protection, section 5.4). | 2 coefficients + threshold fitted on human labels (`checkpoints/motion_rule_v1.json`) |
+| 4 Attention | **Class-relative motion over 1.6 s**: P(HIGH) = sigmoid(a + b·z), z = log(student motion) − median log motion of the class. Hard evidence (phone, sleeping, head on desk, peer talk) may only lower the score; a phone found on the student's enlarged crop caps it at 30; confident SCB reading / writing / hand-raising keeps it ≥ 50 (study protection, section 5.4). | 2 coefficients + threshold fitted on human labels (`checkpoints/motion_rule_v1.json`) |
 | 5 Drop detector | Sustained (< 40 for 3 s) or sudden (≥ 20-point fall in 2 s); 8 s cooldown | Rules |
 | 6 Recommendation | Context-aware teaching suggestion per alert | Rules (LLM option implemented but off) |
 
@@ -92,17 +93,19 @@ The threshold favours catching LOW moments, so accuracy falls below the always-H
 
 | Video | Verified pairs | Balanced acc. | Accuracy | AUC | Always-HIGH acc. |
 |---|---|---|---|---|---|
-| clip 007 | 89% | 58.0% | 73.5% | 0.64 | 78.5% |
-| clip 001 | 89% | 60.6% | 76.8% | 0.69 | 92.2% |
+| clip 007 | 89% | 59.0% | 73.9% | 0.65 | 78.5% |
+| clip 001 | 89% | 61.3% | 76.3% | 0.69 | 92.2% |
 | video 11 | 72% | 83.2% | 74.6% | 0.88 | 90.4% |
-| non attentive 1 (staged) | 51% | 29.1% | 54.4% | 0.23 | 6.6% |
-| Test 8 | 94% | 75.1% | 76.9% | 0.81 | 84.9% |
-| **Mean** | | **61.2%** | **71.2%** | 0.65 | |
-| **Mean without the staged clip** | | **69.2%** | **75.4%** | **0.76** | |
+| non attentive 1 (staged) | 51% | 29.2% | 54.6% | 0.23 | 6.6% |
+| Test 8 | 94% | 76.2% | 76.2% | 0.83 | 84.9% |
+| **Mean** | | **61.8%** | **71.1%** | 0.66 | |
+| **Mean without the staged clip** | | **69.9%** | **75.3%** | **0.76** | |
 
 In the staged clip the scores are reversed: students acting inattentive sit still with phones, while the few attentive ones move. A movement-based cue cannot handle this case.
 
-**Strict leave-one-classroom-out for the final model.** The deployed rule's 3 numbers (two coefficients and the cut-off) are fitted on all three classrooms, so the per-room figures above and in 5.3–5.5 (mean 61.8%) let the cut-off see the test room. With the cut-off chosen on the other two rooms only, the result is Classroom 01 56.1%, Room B 58.7%, Room C 62.0%: **mean 58.9% balanced accuracy, 63.7% accuracy, macro-F1 55.3%, AUC 0.648, 51.2% of LOW moments caught**. This matches the offline 59.3% and is the number to quote for an unseen classroom.
+**Strict leave-one-classroom-out for the final model.** The deployed rule's 3 numbers (two coefficients and the cut-off) are fitted on all three classrooms, so the per-room figures above and in 5.3–5.5 (mean 61.8%) let the cut-off see the test room. With the cut-off chosen on the other two rooms only, the result is Classroom 01 56.1%, Room B 58.7%, Room C 62.0%: **mean 58.9% balanced accuracy, 63.7% accuracy, macro-F1 55.3%, AUC 0.648, 51.2% of LOW moments caught**. This matches the offline 59.3%  **Adding phone detection on enlarged student crops** (below) raises the strict result to Classroom 01 57.0%, Room B 60.5%, Room C 63.0%: **mean 60.2% balanced accuracy, 64.3% accuracy, macro-F1 56.3%, AUC 0.668, 54.3% of LOW moments caught. This is the number to quote for an unseen classroom.**
+
+**Phone detection on student crops** (`scripts/phone_crop_eval.py`). Phones are only a few pixels wide in the full frame; the full-frame detector found one in 3.9% of student-frames of the phone clip. The pipeline now enlarges each student's crop to 640 px and runs the COCO phone detector (`yolo11n.pt`, class "cell phone"). Confidence ≥ 0.25 caps the score at 30. This is a fixed rule; nothing is fitted on the labels, and the result is the same for cut-offs 0.25–0.35. It improves every classroom (strict 58.9% → 60.2%, AUC 0.648 → 0.668). Leaving the staged clip out of fitting changed nothing (cut-offs 49–52, same 60.2%).
 
 ### 5.2 Why learned models do not transfer
 
@@ -218,6 +221,7 @@ python scripts/evaluate_pipeline_vs_human.py --combine model_floor     # live en
 python scripts/daisee_ablation.py                                      # DAiSEE contribution (pre-training)
 python scripts/collect_components.py && python scripts/ensemble_eval.py  # DAiSEE / SCB / motion combinations
 python scripts/study_protection_eval.py                               # study protection
+python scripts/phone_crop_eval.py                                     # phone detection on crops
 python scripts/loro_experiments.py                                     # 32-D learned variants
 python scripts/identity_check.py                                       # identity vs attention
 python -m pytest                                                       # 127 tests
