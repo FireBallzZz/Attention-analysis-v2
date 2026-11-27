@@ -1,0 +1,109 @@
+{
+ "peer_similarity_auc": {
+  "classroom_01": 0.499,
+  "room_B": 0.783,
+  "room_C": 0.491
+ },
+ "variants": {
+  "current final": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5704,
+     "auc": 0.6558
+    },
+    "room_B": {
+     "balacc": 0.6054,
+     "auc": 0.5797
+    },
+    "room_C": {
+     "balacc": 0.6299,
+     "auc": 0.7688
+    }
+   },
+   "mean": {
+    "balacc": 0.6019,
+    "auc": 0.6681
+   }
+  },
+  "+ peer rule (lowest 10% -> <= 45)": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5368,
+     "auc": 0.6237
+    },
+    "room_B": {
+     "balacc": 0.5701,
+     "auc": 0.5655
+    },
+    "room_C": {
+     "balacc": 0.6267,
+     "auc": 0.7653
+    }
+   },
+   "mean": {
+    "balacc": 0.5779,
+    "auc": 0.6515
+   }
+  },
+  "+ peer rule (lowest 20% -> <= 45)": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5368,
+     "auc": 0.6113
+    },
+    "room_B": {
+     "balacc": 0.5701,
+     "auc": 0.57
+    },
+    "room_C": {
+     "balacc": 0.6167,
+     "auc": 0.7649
+    }
+   },
+   "mean": {
+    "balacc": 0.5745,
+    "auc": 0.6487
+   }
+  },
+  "+ peer rule (lowest 30% -> <= 45)": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5368,
+     "auc": 0.5865
+    },
+    "room_B": {
+     "balacc": 0.5701,
+     "auc": 0.5772
+    },
+    "room_C": {
+     "balacc": 0.6059,
+     "auc": 0.7629
+    }
+   },
+   "mean": {
+    "balacc": 0.5709,
+    "auc": 0.6422
+   }
+  },
+  "learned: motion + peer + phone (per fold)": {
+   "per_room": {
+    "classroom_01": {
+     "balacc": 0.5605,
+     "auc": 0.6719
+    },
+    "room_B": {
+     "balacc": 0.5977,
+     "auc": 0.5832
+    },
+    "room_C": {
+     "balacc": 0.6204,
+     "auc": 0.7601
+    }
+   },
+   "mean": {
+    "balacc": 0.5929,
+    "auc": 0.6717
+   }
+  }
+ }
+}

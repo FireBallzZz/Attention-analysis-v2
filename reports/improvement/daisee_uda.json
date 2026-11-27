@@ -1,0 +1,122 @@
+{
+ "all channels | none": {
+  "per_room": {
+   "classroom_01": {
+    "auc": 0.3087,
+    "balacc": 0.347
+   },
+   "room_B": {
+    "auc": 0.5707,
+    "balacc": 0.4648
+   },
+   "room_C": {
+    "auc": 0.5785,
+    "balacc": 0.5555
+   }
+  },
+  "mean": {
+   "auc": 0.486,
+   "balacc": 0.4558
+  }
+ },
+ "all channels | standardise": {
+  "per_room": {
+   "classroom_01": {
+    "auc": 0.3253,
+    "balacc": 0.4355
+   },
+   "room_B": {
+    "auc": 0.5742,
+    "balacc": 0.4926
+   },
+   "room_C": {
+    "auc": 0.5123,
+    "balacc": 0.4456
+   }
+  },
+  "mean": {
+   "auc": 0.4706,
+   "balacc": 0.4579
+  }
+ },
+ "all channels | coral": {
+  "per_room": {
+   "classroom_01": {
+    "auc": 0.3232,
+    "balacc": 0.4476
+   },
+   "room_B": {
+    "auc": 0.5025,
+    "balacc": 0.4798
+   },
+   "room_C": {
+    "auc": 0.5653,
+    "balacc": 0.438
+   }
+  },
+  "mean": {
+   "auc": 0.4637,
+   "balacc": 0.4551
+  }
+ },
+ "no camera-relative | none": {
+  "per_room": {
+   "classroom_01": {
+    "auc": 0.4028,
+    "balacc": 0.4696
+   },
+   "room_B": {
+    "auc": 0.5087,
+    "balacc": 0.4986
+   },
+   "room_C": {
+    "auc": 0.5365,
+    "balacc": 0.5589
+   }
+  },
+  "mean": {
+   "auc": 0.4827,
+   "balacc": 0.509
+  }
+ },
+ "no camera-relative | standardise": {
+  "per_room": {
+   "classroom_01": {
+    "auc": 0.3399,
+    "balacc": 0.4262
+   },
+   "room_B": {
+    "auc": 0.6228,
+    "balacc": 0.4523
+   },
+   "room_C": {
+    "auc": 0.4277,
+    "balacc": 0.4132
+   }
+  },
+  "mean": {
+   "auc": 0.4635,
+   "balacc": 0.4306
+  }
+ },
+ "no camera-relative | coral": {
+  "per_room": {
+   "classroom_01": {
+    "auc": 0.3335,
+    "balacc": 0.4415
+   },
+   "room_B": {
+    "auc": 0.5583,
+    "balacc": 0.4536
+   },
+   "room_C": {
+    "auc": 0.4764,
+    "balacc": 0.4282
+   }
+  },
+  "mean": {
+   "auc": 0.4561,
+   "balacc": 0.4411
+  }
+ }
+}

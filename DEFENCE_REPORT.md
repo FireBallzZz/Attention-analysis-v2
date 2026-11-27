@@ -156,7 +156,10 @@ The result is identical for cut-offs from 0.3 to 0.5. Room C gains 6 points, and
 | Optical flow instead of pixel difference (`scripts/optical_flow_eval.py`) | 56.0% | pixel difference 59.3% (same protocol) |
 | **SCB-Dataset5** ([official release](https://huggingface.co/datasets/wintonYF/SCB-Dataset)): new detectors for bow head, turn head and discussion, trained on 3,274 SCB images (val mAP50 0.43 and 0.70) and used as hard evidence or in a learned combination (`scripts/train_scb5_detectors.py`, `scripts/scb5_eval.py`) | 61.5–61.6% as hard evidence; 56.4% learned | 61.8%; the cues fire on only 0–1.5% of student-frames in these classrooms, and "turn head" flips direction between rooms |
 
-So motion + study protection is the best model these features, these public datasets and this amount of labelled data support.
+| **Peer-context scoring** (behaviour compared with the rest of the class, after "Context Matters", CVPR-W 2026; `scripts/peer_context_eval.py`) | 57.1–59.3% (strict) | 60.2%; behaving like the class predicts attention only in Room B (AUC 0.78), at chance elsewhere (0.49–0.50) |
+| **DAiSEE with unsupervised domain adaptation** (classifier trained only on 70,224 DAiSEE windows; classroom features aligned per video by standardisation or CORAL, no classroom labels; `scripts/daisee_uda_eval.py`) | AUC 0.46–0.49 (Classroom 01: 0.31–0.40, reversed) | DAiSEE engagement (webcam close-ups) does not transfer to classroom cameras even after alignment |
+
+So motion + study protection + phone-on-crop is the best model these features, these public datasets and this amount of labelled data support.
 
 ### 5.5 Parameter sensitivity
 
